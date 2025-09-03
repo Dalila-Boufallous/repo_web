@@ -1,0 +1,45 @@
+<div class="container mt-4">
+  <h2>Confirmations de rendez-vous</h2>
+
+  <div *ngIf="loading">Chargement…</div>
+  <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+
+  <table class="table table-bordered table-striped" *ngIf="!loading && data.length">
+    <thead>
+      <tr>
+        <th>ID Conf.</th>
+        <th>ID</th>
+        <th>Acte</th>
+        <th>Personnel</th>
+        <th>Fauteuil</th>
+        <th>Date RDV</th>
+        <th>Heure RDV</th>
+        <th>Date arrivée</th>
+        <th>Heure arrivée</th>
+        <th>Durée</th>
+        <th>Heure salle attente</th>
+        <th>Heure sortie</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let c of data">
+        <td>{{ c.id_dim_confirmation_rendez_vous }}</td>
+        <td>{{ c.id }}</td>
+        <td>{{ c.id_acte }}</td>
+        <td>{{ c.id_personnel }}</td>
+        <td>{{ c.id_fauteuil }}</td>
+        <td>{{ c.date_rdv_confirme }}</td>
+        <td>{{ c.heure_rdv_confirme }}</td>
+        <td>{{ c.date_arrivee_patient }}</td>
+        <td>{{ c.heure_arrivee_patient }}</td>
+        <td>{{ c.rdv_duree }}</td>
+        <td>{{ c.heure_salle_attente }}</td>
+        <td>{{ c.heure_sortie }}</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div *ngIf="!loading && !data.length" class="text-muted">
+    Aucun enregistrement trouvé.
+  </div>
+</div>
