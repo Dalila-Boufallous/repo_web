@@ -61,7 +61,7 @@ export class ConfirmationRendezVousComponent implements OnInit {
       });
   }
 
-  // Activer le mode édition (sans modifier les IDs)
+  // Activer le mode édition
   editRendezVous(rdv: RendezVous): void {
     this.editRendezVousId = rdv.idDimConfirmationRendezVous;
     this.editedRendezVous = { ...rdv };

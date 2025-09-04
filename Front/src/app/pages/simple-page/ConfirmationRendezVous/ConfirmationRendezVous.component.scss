@@ -71,3 +71,21 @@
   70% { opacity: 1; transform: translateY(0); }
   100% { opacity: 0; transform: translateY(10px); }
 }
+/* Tous les boutons du composant */
+.btn {
+  border-radius: 0.5rem;            /* coins arrondis */
+  border: 1px solid #ccc;           /* cadre gris clair */
+  box-shadow: 1px 2px 4px rgba(0,0,0,0.1); /* petite ombre */
+  transition: all 0.2s ease-in-out;
+}
+
+/* Effet hover : intensifier l’ombre */
+.btn:hover {
+  box-shadow: 2px 4px 6px rgba(0,0,0,0.15);
+  cursor: pointer;
+}
+/* Centrer le titre et ajouter un espacement en bas */
+h2 {
+  text-align: center;     /* centrer horizontalement */
+  margin-bottom: 2rem;    /* espacement entre le titre et la table */
+}

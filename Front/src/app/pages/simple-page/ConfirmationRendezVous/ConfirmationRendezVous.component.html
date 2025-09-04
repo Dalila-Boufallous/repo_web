@@ -4,8 +4,8 @@
   <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
   <div *ngIf="loading" class="alert alert-info">Chargement...</div>
 
-  <!-- Conteneur scroll -->
-  <div class="table-responsive-scroll">
+  <!-- Conteneur scroll compact -->
+  <div class="table-responsive-scroll table-compact">
     <table class="table table-bordered table-striped" *ngIf="rendezVousList.length > 0">
       <thead>
         <tr>
@@ -89,7 +89,7 @@
 
   <div *ngIf="rendezVousList.length === 0 && !loading">Aucun rendez-vous à afficher.</div>
 
-  <!-- Modal suppression et messages -->
+  <!-- Modal et messages -->
   <div *ngIf="showDeleteConfirm" class="modal-backdrop">
     <div class="modal-dialog">
       <div class="modal-content p-3">
@@ -109,8 +109,15 @@
 
 <style>
 .table-responsive-scroll {
-  max-height: 500px;  /* hauteur visible, modifiable */
-  overflow: auto;      /* scroll vertical + horizontal si nécessaire */
+  max-height: 500px;   /* Hauteur fixe */
+  overflow: auto;       /* Scroll vertical + horizontal */
+}
+
+.table-compact th,
+.table-compact td {
+  padding: 0.25rem 0.5rem;  /* Réduit le padding des cellules */
+  font-size: 0.85rem;       /* Texte plus petit */
+  white-space: nowrap;       /* Empêche le retour à la ligne dans les colonnes */
 }
 
 .modal-backdrop {
