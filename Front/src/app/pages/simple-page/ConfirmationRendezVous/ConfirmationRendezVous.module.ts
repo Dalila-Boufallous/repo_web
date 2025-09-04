@@ -1,22 +1,23 @@
-import { NgModule } from '@angular/core';
+import { NgModule } from '@angular/core'; 
 import { CommonModule } from '@angular/common';
-import { RouterModule, Routes } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
-import {SharedModule} from '../../../shared/shared.module';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';  // ✅ pour les formulaires
+import { SharedModule } from '../../../shared/shared.module';
+import { ConfirmationRendezVousRoutingModule } from './ConfirmationRendezVous-routing.module'; // ✅ routing séparé
 
 import { ConfirmationRendezVousComponent } from './ConfirmationRendezVous.component';
 
-const routes: Routes = [
-  { path: '', component: ConfirmationRendezVousComponent } // /bootstrap-table
-];
-
 @NgModule({
-  declarations: [ConfirmationRendezVousComponent], // ✅ déclaré ici (et ici uniquement)
+  declarations: [
+    ConfirmationRendezVousComponent  // ✅ déclarer uniquement ici
+  ],
   imports: [
     CommonModule,
     HttpClientModule,
-    RouterModule.forChild(routes),
-    SharedModule
+    FormsModule,            // ✅ support pour ngModel
+    ReactiveFormsModule,    // ✅ support pour les formulaires réactifs
+    SharedModule,
+    ConfirmationRendezVousRoutingModule // ✅ routing importé
   ]
 })
 export class ConfirmationRendezVousModule {}

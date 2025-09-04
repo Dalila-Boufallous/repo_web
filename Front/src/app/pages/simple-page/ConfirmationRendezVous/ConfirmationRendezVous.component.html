@@ -1,279 +1,127 @@
+<div class="container mt-4">
+  <h2 class="mb-4">Gestion des rendez-vous</h2>
 
-      <div class="row">
-  <div class="col-sm-12">
-    <!-- Basic table card start -->
-    <app-card [title]="'Basic table'" [classHeader]="true" [blockClass]="'table-border-style'">
-      <span class="code-header">use class <code>table</code> inside table element</span>
-      <div class="table-responsive">
-       <div class="container mt-4">
-  <h2>Liste des rendez-vous</h2>
+  <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
+  <div *ngIf="loading" class="alert alert-info">Chargement...</div>
 
-  <div *ngIf="loading">Chargement…</div>
-  <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+  <!-- Conteneur scroll -->
+  <div class="table-responsive-scroll">
+    <table class="table table-bordered table-striped" *ngIf="rendezVousList.length > 0">
+      <thead>
+        <tr>
+          <th>ID Dim</th>
+          <th>ID</th>
+          <th>Acte</th>
+          <th>Personnel</th>
+          <th>Fauteuil</th>
+          <th>Date RDV</th>
+          <th>Heure RDV</th>
+          <th>Date arrivée</th>
+          <th>Heure arrivée</th>
+          <th>Durée</th>
+          <th>Salle d'attente</th>
+          <th>Heure sortie</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let rdv of rendezVousList">
+          <td>{{ rdv.idDimConfirmationRendezVous }}</td>
+          <td>{{ rdv.id }}</td>
+          <td *ngIf="editRendezVousId !== rdv.idDimConfirmationRendezVous">{{ rdv.idActe }}</td>
+          <td *ngIf="editRendezVousId === rdv.idDimConfirmationRendezVous">
+            <input [(ngModel)]="editedRendezVous.idActe" class="form-control"/>
+          </td>
+          <td *ngIf="editRendezVousId !== rdv.idDimConfirmationRendezVous">{{ rdv.idPersonnel }}</td>
+          <td *ngIf="editRendezVousId === rdv.idDimConfirmationRendezVous">
+            <input [(ngModel)]="editedRendezVous.idPersonnel" class="form-control"/>
+          </td>
+          <td *ngIf="editRendezVousId !== rdv.idDimConfirmationRendezVous">{{ rdv.idFauteuil }}</td>
+          <td *ngIf="editRendezVousId === rdv.idDimConfirmationRendezVous">
+            <input [(ngModel)]="editedRendezVous.idFauteuil" class="form-control"/>
+          </td>
+          <td *ngIf="editRendezVousId !== rdv.idDimConfirmationRendezVous">{{ rdv.dateRdvConfirme }}</td>
+          <td *ngIf="editRendezVousId === rdv.idDimConfirmationRendezVous">
+            <input [(ngModel)]="editedRendezVous.dateRdvConfirme" type="date" class="form-control"/>
+          </td>
+          <td *ngIf="editRendezVousId !== rdv.idDimConfirmationRendezVous">{{ rdv.heureRdvConfirme }}</td>
+          <td *ngIf="editRendezVousId === rdv.idDimConfirmationRendezVous">
+            <input [(ngModel)]="editedRendezVous.heureRdvConfirme" type="time" class="form-control"/>
+          </td>
+          <td *ngIf="editRendezVousId !== rdv.idDimConfirmationRendezVous">{{ rdv.dateArriveePatient }}</td>
+          <td *ngIf="editRendezVousId === rdv.idDimConfirmationRendezVous">
+            <input [(ngModel)]="editedRendezVous.dateArriveePatient" type="date" class="form-control"/>
+          </td>
+          <td *ngIf="editRendezVousId !== rdv.idDimConfirmationRendezVous">{{ rdv.heureArriveePatient }}</td>
+          <td *ngIf="editRendezVousId === rdv.idDimConfirmationRendezVous">
+            <input [(ngModel)]="editedRendezVous.heureArriveePatient" type="time" class="form-control"/>
+          </td>
+          <td *ngIf="editRendezVousId !== rdv.idDimConfirmationRendezVous">{{ rdv.rdvDuree }}</td>
+          <td *ngIf="editRendezVousId === rdv.idDimConfirmationRendezVous">
+            <input [(ngModel)]="editedRendezVous.rdvDuree" type="number" class="form-control"/>
+          </td>
+          <td *ngIf="editRendezVousId !== rdv.idDimConfirmationRendezVous">{{ rdv.heureSalleAttente }}</td>
+          <td *ngIf="editRendezVousId === rdv.idDimConfirmationRendezVous">
+            <input [(ngModel)]="editedRendezVous.heureSalleAttente" type="time" class="form-control"/>
+          </td>
+          <td *ngIf="editRendezVousId !== rdv.idDimConfirmationRendezVous">{{ rdv.heureSortie }}</td>
+          <td *ngIf="editRendezVousId === rdv.idDimConfirmationRendezVous">
+            <input [(ngModel)]="editedRendezVous.heureSortie" type="time" class="form-control"/>
+          </td>
+          <td>
+            <button *ngIf="editRendezVousId !== rdv.idDimConfirmationRendezVous" class="btn btn-sm btn-primary" (click)="editRendezVous(rdv)">
+              Modifier
+            </button>
+            <button *ngIf="editRendezVousId === rdv.idDimConfirmationRendezVous" class="btn btn-sm btn-success" (click)="saveRendezVous()">
+              Sauvegarder
+            </button>
+            <button *ngIf="editRendezVousId === rdv.idDimConfirmationRendezVous" class="btn btn-sm btn-secondary" (click)="cancelEdit()">
+              Annuler
+            </button>
+            <button class="btn btn-sm btn-danger" (click)="confirmDelete(rdv.idDimConfirmationRendezVous)">
+              Supprimer
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 
-    <div class="table-viewport">
-  <table class="table table-bordered table-striped" *ngIf="!loading && data.length">
-    <thead>
-      <tr>
-        <th>ID Conf.</th>
-        <th>ID</th>
-        <th>Acte</th>
-        <th>Personnel</th>
-        <th>Fauteuil</th>
-        <th>Date RDV</th>
-        <th>Heure RDV</th>
-        <th>Date arrivée</th>
-        <th>Heure arrivée</th>
-        <th>Durée</th>
-        <th>Salle d’attente</th>
-        <th>Heure sortie</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let c of data">
-        <td>{{ c.idDimConfirmationRendezVous }}</td>
-        <td>{{ c.id }}</td>
-        <td>{{ c.idActe }}</td>
-        <td>{{ c.idPersonnel }}</td>
-        <td>{{ c.idFauteuil }}</td>
-        <td>{{ c.dateRdvConfirme }}</td>
-        <td>{{ c.heureRdvConfirme }}</td>
-        <td>{{ c.dateArriveePatient }}</td>
-        <td>{{ c.heureArriveePatient }}</td>
-        <td>{{ c.rdvDuree }}</td>
-        <td>{{ c.heureSalleAttente }}</td>
-        <td>{{ c.heureSortie }}</td>
-      </tr>
-    </tbody>
-  </table>
-</div>
+  <div *ngIf="rendezVousList.length === 0 && !loading">Aucun rendez-vous à afficher.</div>
 
-  <div *ngIf="!loading && !data.length" class="text-muted">
-    Aucun rendez-vous trouvé.
+  <!-- Modal suppression et messages -->
+  <div *ngIf="showDeleteConfirm" class="modal-backdrop">
+    <div class="modal-dialog">
+      <div class="modal-content p-3">
+        <h5>Êtes-vous sûr de supprimer ce rendez-vous ?</h5>
+        <div class="mt-3 d-flex justify-content-end">
+          <button class="btn btn-danger me-2" (click)="delete(selectedId)">Oui</button>
+          <button class="btn btn-secondary" (click)="cancelDelete()">Annuler</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="deleteSuccess" class="alert alert-success mt-3">
+    Rendez-vous supprimé ✅
   </div>
 </div>
-      </div>
-    </app-card>
-    <!-- Basic table card end -->
-    <!-- Inverse table card start -->
-    <app-card [title]="'Inverse table'" [classHeader]="true" [blockClass]="'table-border-style'">
-      <span class="code-header">use class <code>table-inverse</code> inside table element</span>
-      <div class="table-responsive">
-        <table class="table table-inverse">
-          <thead>
-          <tr>
-            <th>#</th>
-            <th>First Name</th>
-            <th>Last Name</th>
-            <th>Username</th>
-          </tr>
-          </thead>
-          <tbody>
-          <tr>
-            <th scope="row">1</th>
-            <td>Mark</td>
-            <td>Otto</td>
-            <td>@mdo</td>
-          </tr>
-          <tr>
-            <th scope="row">2</th>
-            <td>Jacob</td>
-            <td>Thornton</td>
-            <td>@fat</td>
-          </tr>
-          <tr>
-            <th scope="row">3</th>
-            <td>Larry</td>
-            <td>the Bird</td>
-            <td>@twitter</td>
-          </tr>
-          </tbody>
-        </table>
-      </div>
-    </app-card>
-    <!-- Inverse table card end -->
-    <!-- Hover table card start -->
-    <app-card [title]="'Hover table'" [classHeader]="true" [blockClass]="'table-border-style'">
-      <span class="code-header">use class <code>table-hover</code> inside table element</span>
-      <div class="table-responsive">
-        <table class="table table-hover">
-          <thead>
-          <tr>
-            <th>#</th>
-            <th>First Name</th>
-            <th>Last Name</th>
-            <th>Username</th>
-          </tr>
-          </thead>
-          <tbody>
-          <tr>
-            <th scope="row">1</th>
-            <td>Mark</td>
-            <td>Otto</td>
-            <td>@mdo</td>
-          </tr>
-          <tr>
-            <th scope="row">2</th>
-            <td>Jacob</td>
-            <td>Thornton</td>
-            <td>@fat</td>
-          </tr>
-          <tr>
-            <th scope="row">3</th>
-            <td>Larry</td>
-            <td>the Bird</td>
-            <td>@twitter</td>
-          </tr>
-          </tbody>
-        </table>
-      </div>
-    </app-card>
-    <!-- Hover table card end -->
-    <!-- Contextual classes table starts -->
-    <app-card [title]="'Contextual classes'" [classHeader]="true" [blockClass]="'table-border-style'">
-      <span class="code-header">For Make row Contextual add Contextual class like <code>.table-success</code> in <code> tr tag</code> and For cell add Contextual class in <code> td or th tag</code> . </span>
-      <div class="table-responsive">
-        <table class="table">
-          <thead>
-          <tr>
-            <th>#</th>
-            <th>First Name</th>
-            <th>Last Name</th>
-            <th>Username</th>
-          </tr>
-          </thead>
-          <tbody>
-          <tr class="table-active">
-            <th scope="row">1</th>
-            <td>Mark</td>
-            <td>Otto</td>
-            <td>@mdo</td>
-          </tr>
-          <tr>
-            <th scope="row">2</th>
-            <td>Jacob</td>
-            <td>Thornton</td>
-            <td>@fat</td>
-          </tr>
-          <tr class="table-success">
-            <th scope="row">3</th>
-            <td>Larry</td>
-            <td>the Bird</td>
-            <td>@twitter</td>
-          </tr>
-          <tr>
-            <th scope="row">4</th>
-            <td>Larry</td>
-            <td>the Bird</td>
-            <td>@twitter</td>
-          </tr>
-          <tr class="table-warning">
-            <th scope="row">5</th>
-            <td>Larry</td>
-            <td>the Bird</td>
-            <td>@twitter</td>
-          </tr>
-          <tr>
-            <th scope="row">6</th>
-            <td>Larry</td>
-            <td>the Bird</td>
-            <td>@twitter</td>
-          </tr>
-          <tr class="table-danger">
-            <th scope="row">7</th>
-            <td>Larry</td>
-            <td>the Bird</td>
-            <td>@twitter</td>
-          </tr>
-          <tr>
-            <th scope="row">8</th>
-            <td>Larry</td>
-            <td>the Bird</td>
-            <td>@twitter</td>
-          </tr>
-          <tr class="table-info">
-            <th scope="row">9</th>
-            <td>Larry</td>
-            <td>the Bird</td>
-            <td>@twitter</td>
-          </tr>
-          </tbody>
-        </table>
-      </div>
-    </app-card>
-    <!-- Contextual classes table ends -->
-    <!-- Background Utilities table start -->
-    <app-card [title]="'Background Utilities'" [classHeader]="true" [blockClass]="'table-border-style'">
-      <span class="code-header">Regular table background variants are not available with the inverse table, however, you may use <code>text or background utilities</code> to achieve similar styles.</span>
-      <div class="table-responsive">
-        <table class="table table-inverse">
-          <thead>
-          <tr>
-            <th>#</th>
-            <th>First Name</th>
-            <th>Last Name</th>
-            <th>Username</th>
-          </tr>
-          </thead>
-          <tbody>
-          <tr class="bg-primary">
-            <th scope="row">1</th>
-            <td>Mark</td>
-            <td>Otto</td>
-            <td>@mdo</td>
-          </tr>
-          <tr>
-            <th scope="row">2</th>
-            <td>Jacob</td>
-            <td>Thornton</td>
-            <td>@fat</td>
-          </tr>
-          <tr class="bg-success">
-            <th scope="row">3</th>
-            <td>Larry</td>
-            <td>the Bird</td>
-            <td>@twitter</td>
-          </tr>
-          <tr>
-            <th scope="row">4</th>
-            <td>Larry</td>
-            <td>the Bird</td>
-            <td>@twitter</td>
-          </tr>
-          <tr class="bg-warning">
-            <th scope="row">5</th>
-            <td>Larry</td>
-            <td>the Bird</td>
-            <td>@twitter</td>
-          </tr>
-          <tr>
-            <th scope="row">6</th>
-            <td>Larry</td>
-            <td>the Bird</td>
-            <td>@twitter</td>
-          </tr>
-          <tr class="bg-danger">
-            <th scope="row">7</th>
-            <td>Larry</td>
-            <td>the Bird</td>
-            <td>@twitter</td>
-          </tr>
-          <tr>
-            <th scope="row">8</th>
-            <td>Larry</td>
-            <td>the Bird</td>
-            <td>@twitter</td>
-          </tr>
-          <tr class="bg-info">
-            <th scope="row">9</th>
-            <td>Larry</td>
-            <td>the Bird</td>
-            <td>@twitter</td>
-          </tr>
-          </tbody>
-        </table>
-      </div>
-    </app-card>
-    <!-- Background Utilities table end -->
-  </div>
-</div>
+
+<style>
+.table-responsive-scroll {
+  max-height: 500px;  /* hauteur visible, modifiable */
+  overflow: auto;      /* scroll vertical + horizontal si nécessaire */
+}
+
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+</style>

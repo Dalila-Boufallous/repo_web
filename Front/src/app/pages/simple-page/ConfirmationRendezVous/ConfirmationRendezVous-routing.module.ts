@@ -1,15 +1,15 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import {ConfirmationRendezVousComponent} from './ConfirmationRendezVous.component';
+import { ConfirmationRendezVousComponent } from './ConfirmationRendezVous.component';
 
 const routes: Routes = [
   {
     path: '',
     component: ConfirmationRendezVousComponent,
     data: {
-      breadcrumb: 'Default',
-      icon: 'icofont-home bg-c-blue',
-      status: false
+      breadcrumb: 'Confirmation RDV', // titre plus explicite
+      icon: 'icofont-calendar bg-c-blue', // icône représentative
+      status: true // true pour activer le menu si nécessaire
     }
   }
 ];
@@ -18,4 +18,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule]
 })
-export class ConfirmationRendezVousRoutingModule { }
+export class ConfirmationRendezVousRoutingModule {}

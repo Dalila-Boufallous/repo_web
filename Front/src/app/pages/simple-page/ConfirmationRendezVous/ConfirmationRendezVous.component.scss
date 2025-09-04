@@ -22,3 +22,52 @@
 .table-viewport .table {
   table-layout: auto; /* ou fixed; si tu veux largeur fixe */
 }
+/* Limite la hauteur du tableau et active un scroll interne (évite double vertical scrollbar) */
+.table-viewport {
+  max-height: calc(100vh - 300px); /* ajuste selon ton header/footers */
+  overflow: auto;
+}
+
+/* styles basiques du tableau */
+.table {
+  width: 100%;
+  white-space: nowrap; /* empêche les wraps non désirés (garde une seule ligne par cellule) */
+}
+
+/* Modal custom (centrée, couvrant l'écran) */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.45);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+}
+
+.modal-dialog {
+  max-width: 480px;
+  width: 90%;
+}
+
+.modal-content {
+  background: #fff;
+  padding: 18px;
+  border-radius: 8px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+}
+
+/* message succès */
+.alert-success {
+  position: fixed;
+  right: 16px;
+  bottom: 24px;
+  z-index: 2100;
+  animation: fadeOut 2.5s forwards;
+}
+
+@keyframes fadeOut {
+  0% { opacity: 1; transform: translateY(0); }
+  70% { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(10px); }
+}
