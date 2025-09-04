@@ -1,0 +1,24 @@
+/* viewport vertical pour le 1er tableau */
+.table-viewport {
+  max-height: 420px;   /* ajuste la hauteur selon ton besoin */
+  overflow-y: auto;
+}
+
+/* éviter l'espace sous le tableau dans le viewport */
+.table-viewport .table {
+  margin-bottom: 0;
+}
+
+/* optionnel : header collant pendant le scroll */
+.table-viewport thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: #fff;             /* ou #f8f9fa si tu préfères */
+  /* Pour un thème sombre, adapte la couleur */
+}
+
+/* (optionnel) si tu veux des colonnes plus stables avec beaucoup de données */
+.table-viewport .table {
+  table-layout: auto; /* ou fixed; si tu veux largeur fixe */
+}

@@ -10,6 +10,8 @@ import { TitleComponent } from './layout/admin/title/title.component';
 import { AuthComponent } from './layout/auth/auth.component';
 import {SharedModule} from './shared/shared.module';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import { ConfirmationRendezVousComponent } from './pages/simple-page/ConfirmationRendezVous/ConfirmationRendezVous.component';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -23,7 +25,8 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
     BrowserModule,
     BrowserAnimationsModule,
     AppRoutingModule,
-    SharedModule
+    SharedModule,
+     HttpClientModule
   ],
   schemas: [ NO_ERRORS_SCHEMA ],
   providers: [],
