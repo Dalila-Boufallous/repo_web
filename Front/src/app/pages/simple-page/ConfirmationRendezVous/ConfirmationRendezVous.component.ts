@@ -3,13 +3,13 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
-export interface RendezVous {
-  idDimConfirmationRendezVous: number;
+export interface ConfirmationRendezVous {
+  idDimConfirmationRendezVous?: number;
   id: number;
   idActe: string;
   idPersonnel: string;
   idFauteuil: string;
-  dateRdvConfirme: string;
+  dateRdvConfirme: string; // yyyy-MM-dd
   heureRdvConfirme: string;
   dateArriveePatient: string;
   heureArriveePatient: string;
@@ -25,103 +25,169 @@ export interface RendezVous {
 })
 export class ConfirmationRendezVousComponent implements OnInit {
 
-  rendezVousList: RendezVous[] = [];
+  rendezVousList: ConfirmationRendezVous[] = [];
+  filteredRendezVousList: ConfirmationRendezVous[] = [];
   loading: boolean = false;
   errorMessage: string = '';
-  editRendezVousId: number | null = null; // idDimConfirmationRendezVous en édition
-  editedRendezVous: Partial<RendezVous> = {};
-
+  editRendezVousId: number | null = null;
+  editedRendezVous: Partial<ConfirmationRendezVous> = {};
   showDeleteConfirm: boolean = false;
   selectedId: number | null = null;
   deleteSuccess: boolean = false;
+  saveSuccess: boolean = false;
 
+  // Ajout
+  newRdv: Partial<ConfirmationRendezVous> = {};
+  addSuccess: boolean = false;
+
+  selectedDate: string = '';
   private apiUrl = 'http://localhost:8081/api/rendezvous';
 
   constructor(private http: HttpClient) {}
 
   ngOnInit(): void {
+    // const today = new Date();
+    // this.selectedDate = this.formatDate(today);
     this.getRendezVous();
   }
 
-  // Récupérer les rendez-vous
   getRendezVous(): void {
     this.loading = true;
     this.errorMessage = '';
-    this.http.get<RendezVous[]>(this.apiUrl)
-      .pipe(catchError((error) => this.handleError(error)))
+    this.http.get<ConfirmationRendezVous[]>(this.apiUrl)
+      .pipe(catchError(error => this.handleError(error)))
       .subscribe({
-        next: (data) => {
+        next: data => {
           this.rendezVousList = Array.isArray(data) ? data : [];
+          this.applyDateFilter();
           this.loading = false;
         },
-        error: (error) => {
+        error: error => {
           this.errorMessage = error;
           this.loading = false;
         }
       });
   }
 
-  // Activer le mode édition
-  editRendezVous(rdv: RendezVous): void {
-    this.editRendezVousId = rdv.idDimConfirmationRendezVous;
+  applyDateFilter(): void {
+    if (!this.selectedDate) {
+      this.filteredRendezVousList = [...this.rendezVousList];
+      return;
+    }
+    this.filteredRendezVousList = this.rendezVousList.filter(rdv =>
+      rdv.dateRdvConfirme === this.selectedDate
+    );
+  }
+
+  showTodayRendezVous(): void {
+    const today = new Date();
+    this.selectedDate = this.formatDate(today);
+    this.applyDateFilter();
+  }
+
+  private formatDate(date: Date): string {
+    const yyyy = date.getFullYear();
+    const mm = ('0' + (date.getMonth() + 1)).slice(-2);
+    const dd = ('0' + date.getDate()).slice(-2);
+    return `${yyyy}-${mm}-${dd}`;
+  }
+
+  // Édition
+  editRendezVous(rdv: ConfirmationRendezVous): void {
+    this.editRendezVousId = rdv.idDimConfirmationRendezVous || null;
     this.editedRendezVous = { ...rdv };
   }
 
-  // Annuler l'édition
   cancelEdit(): void {
     this.editRendezVousId = null;
     this.editedRendezVous = {};
   }
 
-  // Sauvegarder les modifications
   saveRendezVous(): void {
     if (this.editRendezVousId === null) return;
 
-    this.http.put<RendezVous>(`${this.apiUrl}/${this.editRendezVousId}`, this.editedRendezVous)
-      .pipe(catchError((error) => this.handleError(error)))
+    this.http.put<ConfirmationRendezVous>(`${this.apiUrl}/${this.editRendezVousId}`, this.editedRendezVous)
+      .pipe(catchError(error => this.handleError(error)))
       .subscribe({
-        next: (updatedRdv) => {
+        next: updatedRdv => {
           const index = this.rendezVousList.findIndex(r => r.idDimConfirmationRendezVous === updatedRdv.idDimConfirmationRendezVous);
           if (index > -1) this.rendezVousList[index] = updatedRdv;
+          this.applyDateFilter();
           this.cancelEdit();
+
+          // Popup sauvegarde
+          this.saveSuccess = true;
+          setTimeout(() => this.saveSuccess = false, 3000);
         },
-        error: (error) => this.errorMessage = error
+        error: error => this.errorMessage = error
       });
   }
 
-  // Préparer la suppression
+  // Suppression
   confirmDelete(id: number): void {
     this.selectedId = id;
     this.showDeleteConfirm = true;
   }
 
-  // Annuler la suppression
   cancelDelete(): void {
     this.selectedId = null;
     this.showDeleteConfirm = false;
   }
 
-  // Supprimer le rendez-vous
   delete(id: number | null): void {
     if (!id) return;
 
     this.http.delete(`${this.apiUrl}/${id}`)
-      .pipe(catchError((error) => this.handleError(error)))
+      .pipe(catchError(error => this.handleError(error)))
       .subscribe({
         next: () => {
           this.rendezVousList = this.rendezVousList.filter(r => r.idDimConfirmationRendezVous !== id);
+          this.applyDateFilter();
           this.showDeleteConfirm = false;
           this.deleteSuccess = true;
           setTimeout(() => this.deleteSuccess = false, 3000);
         },
-        error: (error) => {
+        error: error => {
           this.errorMessage = error;
           this.showDeleteConfirm = false;
         }
       });
   }
 
-  // Gestion des erreurs
+  // Ajout
+  addRendezVous(): void {
+    // Réinitialiser le message d'erreur
+    this.errorMessage = '';
+
+    // Vérifier que les champs obligatoires sont remplis
+    if (!this.newRdv.id || !this.newRdv.idActe || !this.newRdv.idPersonnel) {
+      this.errorMessage = 'Veuillez remplir tous les champs obligatoires';
+      return;
+    }
+
+    // Créer un payload sans idDimConfirmationRendezVous
+    const payload = { ...this.newRdv };
+    delete payload.idDimConfirmationRendezVous;
+
+    this.http.post<ConfirmationRendezVous>(this.apiUrl, payload)
+      .pipe(catchError(error => this.handleError(error)))
+      .subscribe({
+        next: addedRdv => {
+          this.rendezVousList.push(addedRdv);
+          this.applyDateFilter();
+          this.newRdv = {};
+          this.addSuccess = true;
+
+          // Réinitialiser le message succès après 3s
+          setTimeout(() => this.addSuccess = false, 3000);
+
+          // Réinitialiser le message d'erreur si succès
+          this.errorMessage = '';
+        },
+        error: () => this.errorMessage = 'Erreur lors de l’ajout'
+      });
+  }
+
   private handleError(error: HttpErrorResponse) {
     let message = '';
     if (error.error instanceof ErrorEvent) {
@@ -131,4 +197,5 @@ export class ConfirmationRendezVousComponent implements OnInit {
     }
     return throwError(() => message);
   }
+
 }

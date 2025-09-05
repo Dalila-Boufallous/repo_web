@@ -1,40 +1,37 @@
-/* viewport vertical pour le 1er tableau */
-.table-viewport {
-  max-height: 420px;   /* ajuste la hauteur selon ton besoin */
-  overflow-y: auto;
+@import "~flatpickr/dist/flatpickr.min.css";
+
+/* ================= Table scrollable ================= */
+.table-container {
+  max-height: 500px;          /* Hauteur du viewport */
+  overflow: auto;             /* Scroll vertical + horizontal */
+  border: 1px solid #ccc;     /* Cadre léger autour du tableau */
 }
 
-/* éviter l'espace sous le tableau dans le viewport */
-.table-viewport .table {
+.table-container table {
+  width: 100%;
+  table-layout: auto;         /* Colonnes ajustées automatiquement */
+  white-space: nowrap;        /* Empêche les retours à la ligne */
+  border-collapse: collapse;
   margin-bottom: 0;
 }
 
-/* optionnel : header collant pendant le scroll */
-.table-viewport thead th {
-  position: sticky;
+.table-container thead th {
+  position: sticky;           /* Header collant */
   top: 0;
-  z-index: 1;
-  background: #fff;             /* ou #f8f9fa si tu préfères */
-  /* Pour un thème sombre, adapte la couleur */
+  background: #fff;
+  z-index: 2;
+  text-align: center;
+  padding: 0.5rem;
+  border-bottom: 2px solid #ccc;
 }
 
-/* (optionnel) si tu veux des colonnes plus stables avec beaucoup de données */
-.table-viewport .table {
-  table-layout: auto; /* ou fixed; si tu veux largeur fixe */
-}
-/* Limite la hauteur du tableau et active un scroll interne (évite double vertical scrollbar) */
-.table-viewport {
-  max-height: calc(100vh - 300px); /* ajuste selon ton header/footers */
-  overflow: auto;
+.table-container tbody td {
+  padding: 0.35rem 0.75rem;
+  text-align: center;
+  border-bottom: 1px solid #e0e0e0;
 }
 
-/* styles basiques du tableau */
-.table {
-  width: 100%;
-  white-space: nowrap; /* empêche les wraps non désirés (garde une seule ligne par cellule) */
-}
-
-/* Modal custom (centrée, couvrant l'écran) */
+/* ================= Modal personnalisé ================= */
 .modal-backdrop {
   position: fixed;
   inset: 0;
@@ -57,7 +54,7 @@
   box-shadow: 0 10px 30px rgba(0,0,0,0.15);
 }
 
-/* message succès */
+/* ================= Alert succès ================= */
 .alert-success {
   position: fixed;
   right: 16px;
@@ -71,21 +68,100 @@
   70% { opacity: 1; transform: translateY(0); }
   100% { opacity: 0; transform: translateY(10px); }
 }
-/* Tous les boutons du composant */
-.btn {
-  border-radius: 0.5rem;            /* coins arrondis */
-  border: 1px solid #ccc;           /* cadre gris clair */
-  box-shadow: 1px 2px 4px rgba(0,0,0,0.1); /* petite ombre */
+
+/* ================= Boutons ================= */
+.btn, .btn-today {
+  border-radius: 0.5rem;
+  border: 1px solid #ccc;
+  box-shadow: 1px 2px 4px rgba(0,0,0,0.1);
   transition: all 0.2s ease-in-out;
+  padding: 0.35rem 0.75rem;
 }
 
-/* Effet hover : intensifier l’ombre */
-.btn:hover {
+.btn:hover, .btn-today:hover {
   box-shadow: 2px 4px 6px rgba(0,0,0,0.15);
   cursor: pointer;
 }
-/* Centrer le titre et ajouter un espacement en bas */
+
+/* Bouton spécifique "Rendez-vous du jour" */
+.btn-today {
+  background-color: #e231bf;
+  color: #fff;
+  border: 1px solid #e231bf;
+}
+
+.btn-today:hover {
+  background-color: #f561d7;
+  border-color: #f561d7;
+}
+
+/* ================= Titres ================= */
 h2 {
-  text-align: center;     /* centrer horizontalement */
-  margin-bottom: 2rem;    /* espacement entre le titre et la table */
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+/* ================= Contrôles calendrier ================= */
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.controls input[type="date"] {
+  border-radius: 0.5rem;
+  border: 1px solid #ccc;
+  padding: 0.35rem 0.5rem;
+  box-shadow: 1px 2px 4px rgba(0,0,0,0.1);
+}
+
+.controls input[type="date"].today {
+  background-color: #2E4894;
+  color: #fff;
+}
+.popup-success {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2200;
+  background-color: #eef9f1;
+  color: #0c2e14;
+  padding: 0.6rem 1.2rem;       /* plus large horizontalement et verticalement */
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-weight: 500;
+  font-size: 1rem;              /* un peu plus grand */
+  white-space: nowrap;
+  animation: fadeOut 2.5s forwards;
+}
+
+@keyframes fadeOut {
+  0% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  70% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(1.05); }
+}
+.table-container {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.popup-success {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #eef9f1;
+  color: #041207;
+  padding: 15px 25px;
+  border-radius: 10px;
+  font-weight: bold;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  z-index: 1050;
+  text-align: center;
+  min-width: 220px;
 }

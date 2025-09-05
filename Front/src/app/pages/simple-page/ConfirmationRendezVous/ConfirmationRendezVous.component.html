@@ -1,12 +1,65 @@
 <div class="container mt-4">
-  <h2 class="mb-4">Gestion des rendez-vous</h2>
+  <h2 class="mb-4 text-center">Gestion des rendez-vous</h2>
+
+  <!-- Filtre par date + bouton jour -->
+  <div class="controls mb-3">
+    <input type="date" [(ngModel)]="selectedDate" (change)="applyDateFilter()">
+    <button class="btn-today" (click)="showTodayRendezVous()">Rendez-vous du jour</button>
+  </div>
 
   <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
   <div *ngIf="loading" class="alert alert-info">Chargement...</div>
 
-  <!-- Conteneur scroll compact -->
-  <div class="table-responsive-scroll table-compact">
-    <table class="table table-bordered table-striped" *ngIf="rendezVousList.length > 0">
+  <!-- Formulaire d'ajout -->
+  <div class="mb-3 p-3 border rounded">
+    <h5>Ajouter un rendez-vous</h5>
+    <div class="row g-2">
+      <div class="col">
+        <input type="number" class="form-control" placeholder="ID" [(ngModel)]="newRdv.id">
+      </div>
+      <div class="col">
+        <input type="text" class="form-control" placeholder="Acte" [(ngModel)]="newRdv.idActe">
+      </div>
+      <div class="col">
+        <input type="text" class="form-control" placeholder="Personnel" [(ngModel)]="newRdv.idPersonnel">
+      </div>
+      <div class="col">
+        <input type="text" class="form-control" placeholder="Fauteuil" [(ngModel)]="newRdv.idFauteuil">
+      </div>
+    </div>
+    <div class="row g-2 mt-2">
+      <div class="col">
+        <input type="date" class="form-control" placeholder="Date RDV" [(ngModel)]="newRdv.dateRdvConfirme">
+      </div>
+      <div class="col">
+        <input type="time" class="form-control" placeholder="Heure RDV" [(ngModel)]="newRdv.heureRdvConfirme">
+      </div>
+      <div class="col">
+        <input type="date" class="form-control" placeholder="Date arrivée" [(ngModel)]="newRdv.dateArriveePatient">
+      </div>
+      <div class="col">
+        <input type="time" class="form-control" placeholder="Heure arrivée" [(ngModel)]="newRdv.heureArriveePatient">
+      </div>
+    </div>
+    <div class="row g-2 mt-2">
+      <div class="col">
+        <input type="number" class="form-control" placeholder="Durée" [(ngModel)]="newRdv.rdvDuree">
+      </div>
+      <div class="col">
+        <input type="time" class="form-control" placeholder="Salle attente" [(ngModel)]="newRdv.heureSalleAttente">
+      </div>
+      <div class="col">
+        <input type="time" class="form-control" placeholder="Heure sortie" [(ngModel)]="newRdv.heureSortie">
+      </div>
+      <div class="col">
+        <button class="btn btn-success" (click)="addRendezVous()">Ajouter</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tableau scrollable -->
+  <div class="table-container">
+    <table class="table table-bordered table-striped" *ngIf="filteredRendezVousList.length > 0">
       <thead>
         <tr>
           <th>ID Dim</th>
@@ -19,13 +72,13 @@
           <th>Date arrivée</th>
           <th>Heure arrivée</th>
           <th>Durée</th>
-          <th>Salle d'attente</th>
+          <th>Salle attente</th>
           <th>Heure sortie</th>
           <th>Actions</th>
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let rdv of rendezVousList">
+        <tr *ngFor="let rdv of filteredRendezVousList">
           <td>{{ rdv.idDimConfirmationRendezVous }}</td>
           <td>{{ rdv.id }}</td>
           <td *ngIf="editRendezVousId !== rdv.idDimConfirmationRendezVous">{{ rdv.idActe }}</td>
@@ -69,27 +122,21 @@
             <input [(ngModel)]="editedRendezVous.heureSortie" type="time" class="form-control"/>
           </td>
           <td>
-            <button *ngIf="editRendezVousId !== rdv.idDimConfirmationRendezVous" class="btn btn-sm btn-primary" (click)="editRendezVous(rdv)">
-              Modifier
-            </button>
-            <button *ngIf="editRendezVousId === rdv.idDimConfirmationRendezVous" class="btn btn-sm btn-success" (click)="saveRendezVous()">
-              Sauvegarder
-            </button>
-            <button *ngIf="editRendezVousId === rdv.idDimConfirmationRendezVous" class="btn btn-sm btn-secondary" (click)="cancelEdit()">
-              Annuler
-            </button>
-            <button class="btn btn-sm btn-danger" (click)="confirmDelete(rdv.idDimConfirmationRendezVous)">
-              Supprimer
-            </button>
+            <button *ngIf="editRendezVousId !== rdv.idDimConfirmationRendezVous" class="btn btn-primary btn-sm" (click)="editRendezVous(rdv)">Modifier</button>
+            <button *ngIf="editRendezVousId === rdv.idDimConfirmationRendezVous" class="btn btn-success btn-sm" (click)="saveRendezVous()">Sauvegarder</button>
+            <button *ngIf="editRendezVousId === rdv.idDimConfirmationRendezVous" class="btn btn-secondary btn-sm" (click)="cancelEdit()">Annuler</button>
+            <button class="btn btn-danger btn-sm" (click)="confirmDelete(rdv.idDimConfirmationRendezVous)">Supprimer</button>
           </td>
         </tr>
       </tbody>
     </table>
+
+    <div *ngIf="filteredRendezVousList.length === 0 && !loading" class="text-center p-2">
+      Aucun rendez-vous à afficher.
+    </div>
   </div>
 
-  <div *ngIf="rendezVousList.length === 0 && !loading">Aucun rendez-vous à afficher.</div>
-
-  <!-- Modal et messages -->
+  <!-- Popup suppression -->
   <div *ngIf="showDeleteConfirm" class="modal-backdrop">
     <div class="modal-dialog">
       <div class="modal-content p-3">
@@ -102,33 +149,18 @@
     </div>
   </div>
 
-  <div *ngIf="deleteSuccess" class="alert alert-success mt-3">
-    Rendez-vous supprimé ✅
+  <!-- Popup succès suppression -->
+  <div *ngIf="deleteSuccess" class="popup-success">
+    ✅ Rendez-vous supprimé
+  </div>
+
+  <!-- Popup succès ajout -->
+  <div *ngIf="addSuccess" class="popup-success">
+    ✅ Rendez-vous ajouté
+  </div>
+
+  <!-- Popup succès sauvegarde -->
+  <div *ngIf="saveSuccess" class="popup-success">
+    ✅ Données sauvegardées
   </div>
 </div>
-
-<style>
-.table-responsive-scroll {
-  max-height: 500px;   /* Hauteur fixe */
-  overflow: auto;       /* Scroll vertical + horizontal */
-}
-
-.table-compact th,
-.table-compact td {
-  padding: 0.25rem 0.5rem;  /* Réduit le padding des cellules */
-  font-size: 0.85rem;       /* Texte plus petit */
-  white-space: nowrap;       /* Empêche le retour à la ligne dans les colonnes */
-}
-
-.modal-backdrop {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0,0,0,0.4);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-</style>
