@@ -2,10 +2,47 @@
   <h2 class="mb-4 text-center">Gestion des rendez-vous</h2>
 
   <!-- Filtre par date + bouton jour -->
-  <div class="controls mb-3">
-    <input type="date" [(ngModel)]="selectedDate" (change)="applyDateFilter()">
-    <button class="btn-today" (click)="showTodayRendezVous()">Rendez-vous du jour</button>
+  <!-- === Mini-calendrier (remplace le bloc "Filtre par date + bouton jour") === -->
+<div class="mini-calendar-wrapper mb-3">
+  <div class="mini-calendar">
+    <div class="mc-header">
+  <select class="mc-select" [(ngModel)]="calMonth" (change)="buildCalendar()">
+    <option *ngFor="let m of monthNames; let i=index" [ngValue]="i">{{ m }}</option>
+  </select>
+
+  <select class="mc-select" [(ngModel)]="calYear" (change)="buildCalendar()">
+    <option *ngFor="let y of yearRange" [value]="y">{{ y }}</option>
+  </select>
+</div>
+
+
+    <div class="mc-weekdays">
+      <div *ngFor="let wd of weekdayNames" class="mc-wd">{{ wd }}</div>
+    </div>
+
+    <div class="mc-weeks">
+      <div class="mc-week" *ngFor="let week of calendarWeeks">
+        <button
+          class="mc-day"
+          *ngFor="let day of week"
+          [class.empty]="!day"
+          [class.today]="day && isToday(day)"
+          [class.selected]="day && selectedDate === formatDate(day)"
+          (click)="selectCalendarDate(day)"
+          [disabled]="!day"
+        >
+          {{ day ? day.getDate() : '' }}
+        </button>
+      </div>
+    </div>
+
+    <div class="mc-footer">
+      <button class="btn btn-sm mc-today" (click)="showTodayRendezVous()">Rendez-vous du jour</button>
+    </div>
   </div>
+</div>
+<!-- === fin mini-calendrier === -->
+
 
   <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
   <div *ngIf="loading" class="alert alert-info">Chargement...</div>

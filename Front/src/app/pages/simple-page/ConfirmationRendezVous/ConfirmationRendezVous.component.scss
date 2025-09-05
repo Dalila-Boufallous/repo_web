@@ -83,13 +83,6 @@
   cursor: pointer;
 }
 
-/* Bouton spécifique "Rendez-vous du jour" */
-.btn-today {
-  background-color: #e231bf;
-  color: #fff;
-  border: 1px solid #e231bf;
-}
-
 .btn-today:hover {
   background-color: #f561d7;
   border-color: #f561d7;
@@ -128,14 +121,14 @@ h2 {
   z-index: 2200;
   background-color: #eef9f1;
   color: #0c2e14;
-  padding: 0.6rem 1.2rem;       /* plus large horizontalement et verticalement */
+  padding: 0.6rem 1.2rem;       
   border-radius: 6px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.2);
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
   font-weight: 500;
-  font-size: 1rem;              /* un peu plus grand */
+  font-size: 1rem;              
   white-space: nowrap;
   animation: fadeOut 2.5s forwards;
 }
@@ -164,4 +157,166 @@ h2 {
   z-index: 1050;
   text-align: center;
   min-width: 220px;
+}
+/* Mini calendrier */
+.mini-calendar-wrapper {
+  display: block;
+  margin-bottom: 1rem;
+}
+
+.mini-calendar {
+  width: 260px;               
+  border: 1px solid #e0e0e0;
+  padding: 8px;
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  font-family: inherit;
+}
+
+.mc-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.mc-title {
+  font-weight: 600;
+  font-size: 0.95rem;
+  text-align: center;
+  flex: 1;
+}
+
+.mc-nav {
+  background: transparent;
+  border: none;
+  font-size: 1.05rem;
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.mc-nav:hover { background: #f1f1f1; }
+
+.mc-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+  margin-bottom: 6px;
+  font-size: 0.75rem;
+  color: #666;
+  text-align: center;
+}
+
+.mc-wd { font-weight: 600; }
+
+.mc-weeks {
+  display: grid;
+  gap: 4px;
+}
+
+.mc-week {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+
+.mc-day {
+  width: 32px;
+  height: 32px;
+  line-height: 32px;
+  font-size: 0.85rem;
+  border: none;
+  background: transparent;
+  border-radius: 6px;
+  text-align: center;
+  cursor: pointer;
+  transition: background 0.12s, transform 0.08s;
+}
+
+.mc-day:hover { background: #f6f6f6; transform: translateY(-1px); }
+
+.mc-day.empty { cursor: default; background: transparent; color: transparent; }
+
+.mc-day.today {
+  /* cercle autour d'aujourd'hui */
+  background-color: #e29531;
+  color: #fff;
+  border-radius: 50%;
+  width: 34px;
+  height: 34px;
+  line-height: 34px;
+  margin: 0 auto;
+  box-shadow: 0 3px 8px rgba(46,72,148,0.25);
+}
+
+.mc-day.selected {
+  outline: 2px solid #f9dab0;
+  border-radius: 6px;
+  color: #f9dab0;
+  font-weight: 600;
+}
+
+/* footer */
+.mc-footer {
+  margin-top: 8px;
+  text-align: center;
+}
+
+.mc-today {
+  background: #e29531;
+  color: white;
+  border: none;
+  padding: 6px 8px;
+  border-radius: 6px;
+}
+.mc-select {
+  padding: 4px 6px;
+  font-size: 0.85rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  margin: 0 4px;
+  background: #fff;
+  cursor: pointer;
+}
+.mc-select:focus {
+  outline: none;
+  border-color: #f9db94;
+}
+/* Date d’aujourd’hui dans le calendrier */
+.mc-day.today {
+  background-color: #f7c041;
+  color: #fff;
+  border-radius: 50%;
+  width: 34px;
+  height: 34px;
+  line-height: 34px;
+  margin: 0 auto;
+  box-shadow: 0 3px 8px rgba(180, 212, 77, 0.35);
+  transition: all 0.2s ease-in-out;   /* ajout animation fluide */
+}
+
+/* Effet hover sur la date d’aujourd’hui */
+.mc-day.today:hover {
+  background-color: #f9db94;   
+  transform: scale(1.08);      /* léger zoom */
+  box-shadow: 0 4px 10px rgba(180, 212, 77, 0.35);
+}
+
+/* Bouton "Aujourd’hui" en bas du calendrier */
+.mc-today {
+  background: #f7c041;
+  color: white;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 6px;
+  transition: all 0.2s ease-in-out;
+}
+
+/* Effet hover sur le bouton "Aujourd’hui" */
+.mc-today:hover {
+  background: #f9db94;     
+  box-shadow: 0 3px 8px rgba(0,0,0,0.25);
+  cursor: pointer;
 }

@@ -49,6 +49,8 @@ export class ConfirmationRendezVousComponent implements OnInit {
     // const today = new Date();
     // this.selectedDate = this.formatDate(today);
     this.getRendezVous();
+    this.initCalendar();
+    
   }
 
   getRendezVous(): void {
@@ -197,5 +199,81 @@ export class ConfirmationRendezVousComponent implements OnInit {
     }
     return throwError(() => message);
   }
+  // === mini-calendar state (à ajouter dans la classe) ===
+monthNames = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Aoû', 'Sep', 'Oct', 'Nov', 'Déc'];
+weekdayNames = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
+
+calYear!: number;
+calMonth!: number; // 0..11
+calendarWeeks: (Date | null)[][] = [];
+yearRange: number[] = []; // années disponibles
+
+initCalendar(): void {
+  const now = new Date();
+  // plage d'années (par ex. 1980 -> 2050, tu peux adapter)
+  this.yearRange = Array.from({length: 71}, (_, i) => 1980 + i);
+
+  if (this.selectedDate) {
+    const parts = this.selectedDate.split('-').map(p => +p);
+    if (parts.length === 3) {
+      this.calYear = parts[0];
+      this.calMonth = parts[1] - 1;
+    }
+  } else {
+    this.calYear = now.getFullYear();
+    this.calMonth = now.getMonth();
+  }
+  this.buildCalendar();
+}
+
+/** initialise le mini-calendrier (appelé depuis ngOnInit) */
+
+
+/** construit la grille (array of weeks) */
+buildCalendar(): void {
+  const first = new Date(this.calYear, this.calMonth, 1);
+  // Monday-first index: (0=Monday .. 6=Sunday)
+  const firstWeekday = (first.getDay() + 6) % 7;
+  const daysInMonth = new Date(this.calYear, this.calMonth + 1, 0).getDate();
+
+  const days: (Date | null)[] = [];
+  for (let i = 0; i < firstWeekday; i++) days.push(null);
+  for (let d = 1; d <= daysInMonth; d++) days.push(new Date(this.calYear, this.calMonth, d));
+  while (days.length % 7 !== 0) days.push(null);
+
+  this.calendarWeeks = [];
+  for (let i = 0; i < days.length; i += 7) {
+    this.calendarWeeks.push(days.slice(i, i + 7));
+  }
+}
+
+/** mois précédent / suivant */
+prevMonth(): void {
+  this.calMonth--;
+  if (this.calMonth < 0) { this.calMonth = 11; this.calYear--; }
+  this.buildCalendar();
+}
+nextMonth(): void {
+  this.calMonth++;
+  if (this.calMonth > 11) { this.calMonth = 0; this.calYear++; }
+  this.buildCalendar();
+}
+
+/** utilitaires */
+isToday(d: Date | null): boolean {
+  if (!d) return false;
+  const t = new Date();
+  return t.getFullYear() === d.getFullYear() && t.getMonth() === d.getMonth() && t.getDate() === d.getDate();
+}
+
+/** sélection d'une date dans le calendrier -> met selectedDate et applique le filtre */
+selectCalendarDate(d: Date | null): void {
+  if (!d) return;
+  this.selectedDate = this.formatDate(d); // utilise ta méthode formatDate(date: Date)
+  this.applyDateFilter();
+  // conserver visuel selectionné sans fermer le calendrier
+  this.buildCalendar();
+}
+
 
 }
