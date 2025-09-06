@@ -78,15 +78,8 @@
   padding: 0.35rem 0.75rem;
 }
 
-.btn:hover, .btn-today:hover {
-  box-shadow: 2px 4px 6px rgba(0,0,0,0.15);
-  cursor: pointer;
-}
 
-.btn-today:hover {
-  background-color: #f561d7;
-  border-color: #f561d7;
-}
+
 
 /* ================= Titres ================= */
 h2 {
@@ -110,7 +103,7 @@ h2 {
 }
 
 .controls input[type="date"].today {
-  background-color: #2E4894;
+  background-color: #7f9df6;
   color: #fff;
 }
 .popup-success {
@@ -241,20 +234,20 @@ h2 {
 
 .mc-day.today {
   /* cercle autour d'aujourd'hui */
-  background-color: #e29531;
+  background-color: #cdbbfa;
   color: #fff;
   border-radius: 50%;
   width: 34px;
   height: 34px;
   line-height: 34px;
   margin: 0 auto;
-  box-shadow: 0 3px 8px rgba(46,72,148,0.25);
+  box-shadow: 0 3px 8px rgba(167, 185, 239, 0.25);
 }
 
 .mc-day.selected {
-  outline: 2px solid #f9dab0;
+  outline: 2px solid #cdbbfa;
   border-radius: 6px;
-  color: #f9dab0;
+  color: #cdbbfa;
   font-weight: 600;
 }
 
@@ -265,7 +258,7 @@ h2 {
 }
 
 .mc-today {
-  background: #e29531;
+  background: #cdbbfa;
   color: white;
   border: none;
   padding: 6px 8px;
@@ -275,18 +268,26 @@ h2 {
   padding: 4px 6px;
   font-size: 0.85rem;
   border: 1px solid #ccc;
+  background: #aec0f2;         /* bleu de ta palette */
+  color: #f5f4fc;  
   border-radius: 6px;
   margin: 0 4px;
-  background: #fff;
+  background: #b094f9;
   cursor: pointer;
 }
 .mc-select:focus {
   outline: none;
-  border-color: #f9db94;
+  border-color: #cdbbfa;
 }
+.mc-select option {
+  background-color: #987ed4;  /* fond des options */
+  color: #ffffff;                /* texte */
+  
+}
+
 /* Date d’aujourd’hui dans le calendrier */
 .mc-day.today {
-  background-color: #f7c041;
+  background-color: #b094f9;
   color: #fff;
   border-radius: 50%;
   width: 34px;
@@ -299,14 +300,14 @@ h2 {
 
 /* Effet hover sur la date d’aujourd’hui */
 .mc-day.today:hover {
-  background-color: #f9db94;   
+  background-color: #cdbbfa;   
   transform: scale(1.08);      /* léger zoom */
   box-shadow: 0 4px 10px rgba(180, 212, 77, 0.35);
 }
 
 /* Bouton "Aujourd’hui" en bas du calendrier */
 .mc-today {
-  background: #f7c041;
+  background: #b094f9;
   color: white;
   border: none;
   padding: 6px 10px;
@@ -316,7 +317,251 @@ h2 {
 
 /* Effet hover sur le bouton "Aujourd’hui" */
 .mc-today:hover {
-  background: #f9db94;     
+  background: #cdbbfa;     
   box-shadow: 0 3px 8px rgba(0,0,0,0.25);
   cursor: pointer;
 }
+
+/* Conteneur carte */
+/* .mini-card {
+  width: 220px;
+  height: 140px;
+  background: #f5fdf5;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  cursor: pointer;
+} */
+
+/* .mini-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 14px rgba(0,0,0,0.12);
+}
+
+Icône circulaire
+.mini-card .icon.blue {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 10px;
+  font-size: 22px;
+  color: #fff;
+}
+
+Couleurs disponibles
+.icon.blue { background: #eb2897; }
+.icon.green { background: #10b981; }
+.icon.pink { background: #ec4899; }
+
+Nombre principal
+.mini-card h4 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin: 0;
+  color: #273551;
+  text-align: center;
+}
+ */
+/* .widget-card span {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #f0253d  ; 
+  text-align: center;
+}
+
+valeur principale (h4)
+.widget-card h4 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin: 0;
+  color: #112711; 
+}
+.mini-card:hover {
+  transform: translateY(-4px);
+}
+
+texte
+.mini-card .content h4 {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #111827;
+}
+
+.mini-card .content .title {
+  display: block;
+  font-size: 0.85rem;
+  color: #3f4e69;
+  margin-bottom: 2px;
+  font-weight: bold;
+}
+
+couleurs
+.mini-card.blue  .icon { background: #3b82f6; }
+.mini-card.pink  .icon { background: #ec4899; }
+.mini-card.green .icon { background: #10b981; }
+
+variantes de placement
+.mini-card.left  { flex-direction: row; }
+.mini-card.right { flex-direction: row-reverse; }
+.mini-card.top   { flex-direction: column; text-align: center; }
+.mini-card.top .icon { margin-bottom: 6px; }
+  */
+
+  /* Conteneur carte */
+.mini-card {
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  cursor: pointer;
+  height: 160px; /* même hauteur partout */
+}
+
+.mini-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 14px rgba(0,0,0,0.12);
+}
+
+/* Icône */
+.mini-card .icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 40%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 10px;
+  font-size: 22px;
+  color: #fff;
+}
+
+/* Couleurs */
+.icon.blue { background: #3b82f6; }
+.icon.green { background: #10b981; }
+.icon.pink { background: #ec4899; }
+
+/* Contenu en colonne bien alignée */
+.mini-card .content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  flex-grow: 1;
+}
+
+/* Titre */
+.mini-card .title {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #374151;
+  margin-bottom: 6px;
+  text-align: center;
+}
+
+/* Nombre */
+.mini-card h4 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin: 0;
+  color: #111827;
+}
+
+/* Sous-titre (toujours présent, même vide) */
+.mini-card .subtitle {
+  font-size: 0.75rem;
+  color: #6b7280;
+  margin-top: 6px;
+  text-align: center;
+  min-height: 18px; /* réserve de place pour aligner */
+}
+.mini-card {
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start; /* IMPORTANT pour uniformiser */
+  padding: 20px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  cursor: pointer;
+  height: 180px; /* même hauteur partout */
+}
+
+.mini-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 14px rgba(0,0,0,0.12);
+}
+
+/* Icône */
+.mini-card .icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 12px;
+  font-size: 22px;
+  color: #fff;
+}
+
+.icon.blue { background: #3b82f6; }
+.icon.green { background: #10b981; }
+.icon.pink { background: #ec4899; }
+
+/* Contenu en colonne */
+.mini-card .content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-grow: 1;
+  text-align: center;
+}
+
+.mini-card .title {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #374151;
+  margin-bottom: 6px;
+  text-align: center;
+  min-height: 36px; /* réserve de place pour 2 lignes si nécessaire */
+}
+
+
+.mini-card h4 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin: 0;
+  color: #111827;
+}
+
+.mini-card .subtitle {
+  font-size: 0.75rem;
+  color: #6b7280;
+  margin-top: 8px;
+  min-height: 18px; /* espace réservé même si vide */
+}
+.mini-card {
+  margin-bottom: 30px; /* espace vertical entre les cartes */
+}
+
+.col-md-6.col-xl-4 {
+  padding-left: 40px;
+  padding-right: 10px;
+}
+
