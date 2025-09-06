@@ -3,6 +3,23 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
+
+export interface Utilisateur {
+  idUtilisateur: number;
+  nom: string;
+  prenom: string;
+  genre?: string;
+  age?: number;
+  type?: string;
+  categorie?: string;
+  persoActif?: boolean;
+  dateEmbauche?: string;
+  dateFinContrat?: string;
+  idEntiteJuridique?: number;
+  dateNaissance?: string;
+}
+
+
 export interface ConfirmationRendezVous {
   idDimConfirmationRendezVous?: number;
   id: number;
@@ -42,7 +59,10 @@ export class ConfirmationRendezVousComponent implements OnInit {
 
   selectedDate: string = '';
   private apiUrl = 'http://localhost:8081/api/rendezvous';
-
+  actesList: string[] = [];       // liste de tous les actes existants
+  personnelsList: Utilisateur[] = [];
+  // liste de tous les personnels existants
+ 
   // -------------------------
   // Nouveauté : carte "Rendez-vous de la semaine"
   // -------------------------
@@ -53,6 +73,9 @@ export class ConfirmationRendezVousComponent implements OnInit {
     this.getRendezVous();
     this.initCalendar();
     this.calculateWeeklyRendezVous(); // initialise le compteur
+      // récupération des actes/personnels 
+    
+
   }
 
   // -------------------------
@@ -167,35 +190,61 @@ export class ConfirmationRendezVousComponent implements OnInit {
       });
   }
 
-  // -------------------------
-  // Ajout
-  // -------------------------
-  addRendezVous(): void {
-    this.errorMessage = '';
+  // Ajout rendez-vous
 
-    if (!this.newRdv.id || !this.newRdv.idActe || !this.newRdv.idPersonnel) {
-      this.errorMessage = 'Veuillez remplir tous les champs obligatoires';
-      return;
-    }
+addRendezVous(): void {
+  this.errorMessage = '';
 
-    const payload = { ...this.newRdv };
-    delete payload.idDimConfirmationRendezVous;
-
-    this.http.post<ConfirmationRendezVous>(this.apiUrl, payload)
-      .pipe(catchError(error => this.handleError(error)))
-      .subscribe({
-        next: addedRdv => {
-          this.rendezVousList.push(addedRdv);
-          this.applyDateFilter();
-          this.newRdv = {};
-          this.addSuccess = true;
-          setTimeout(() => this.addSuccess = false, 3000);
-          this.errorMessage = '';
-          this.calculateWeeklyRendezVous();
-        },
-        error: () => this.errorMessage = 'Erreur lors de l’ajout'
-      });
+  // Validation de l'ID rendez-vous
+  if (!this.newRdv.id) {
+    this.errorMessage = 'Veuillez saisir un ID pour le rendez-vous.';
+    return;
   }
+  if (this.rendezVousList.some(r => r.id === this.newRdv.id)) {
+    this.errorMessage = 'L’ID du rendez-vous existe déjà, veuillez en choisir un nouveau.';
+    return;
+  }
+
+  // Validation de l'acte
+  if (!this.newRdv.idActe) {
+    this.errorMessage = 'Veuillez sélectionner un acte.';
+    return;
+  }
+  
+  // Validation du personnel
+  if (!this.newRdv.idPersonnel) {
+    this.errorMessage = 'Veuillez sélectionner un personnel.';
+    return;
+  }
+  
+
+  // Validation du fauteuil
+  if (!this.newRdv.idFauteuil) {
+    this.errorMessage = 'Veuillez sélectionner un fauteuil.';
+    return;
+  }
+ 
+  // Si tout est correct, envoi au serveur
+  const payload = { ...this.newRdv };
+  delete payload.idDimConfirmationRendezVous;
+
+  this.http.post<ConfirmationRendezVous>(this.apiUrl, payload)
+    .pipe(catchError(error => this.handleError(error)))
+    .subscribe({
+      next: addedRdv => {
+        this.rendezVousList.push(addedRdv);
+        this.applyDateFilter();
+        this.newRdv = {};
+        this.addSuccess = true;
+        setTimeout(() => this.addSuccess = false, 3000);
+        this.errorMessage = '';
+        this.calculateWeeklyRendezVous();
+      },
+      error: () => this.errorMessage = 'Erreur lors de l’ajout'
+    });
+}
+
+
 
   private handleError(error: HttpErrorResponse) {
     let message = '';
