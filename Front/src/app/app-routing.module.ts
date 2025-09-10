@@ -3,6 +3,8 @@ import { Routes, RouterModule } from '@angular/router';
 import {AdminComponent} from './layout/admin/admin.component';
 import {AuthComponent} from './layout/auth/auth.component';
 import { ConfirmationRendezVousComponent } from './pages/simple-page/ConfirmationRendezVous/ConfirmationRendezVous.component';
+import { PersonnelComponent } from './pages/simple-page/Personnel/Personnel.component';
+
 
 const routes: Routes = [
   {
@@ -28,7 +30,7 @@ const routes: Routes = [
       {
         path: 'bootstrap-table',
         loadChildren: () => import('./pages/simple-page/ConfirmationRendezVous/ConfirmationRendezVous.module')
-          .then(m => m.ConfirmationRendezVousModule) // ✅ le bon nom de module
+          .then(m => m.ConfirmationRendezVousModule) 
       },
       {
         path: 'map',
@@ -57,8 +59,18 @@ const routes: Routes = [
           .then(m => m.AuthModule)
       }
     ]
+    
+  },
+  {
+  path: 'bootstrap-table/patients',
+  loadChildren: () => import('./pages/simple-page/Patient/Patient.module')
+    .then(m => m.PatientModule)
+  },
+  {
+  path: 'bootstrap-table/personnel',
+  loadChildren: () => import('./pages/simple-page/personnel/personnel.module')
+    .then(m => m.PersonnelModule)
   }
-
 ];
 
 @NgModule({

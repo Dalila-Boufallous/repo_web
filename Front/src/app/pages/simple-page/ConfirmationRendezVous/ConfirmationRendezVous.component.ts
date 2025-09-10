@@ -4,7 +4,7 @@ import { throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
 
-export interface Utilisateur {
+ interface Utilisateur {
   idUtilisateur: number;
   nom: string;
   prenom: string;
@@ -64,7 +64,7 @@ export class ConfirmationRendezVousComponent implements OnInit {
   // liste de tous les personnels existants
  
   // -------------------------
-  // Nouveauté : carte "Rendez-vous de la semaine"
+  //  carte "Rendez-vous de la semaine"
   // -------------------------
 
   constructor(private http: HttpClient) {}

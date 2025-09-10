@@ -3,6 +3,7 @@ package com.example.back.entities;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -15,26 +16,27 @@ public class Utilisateur {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_dim_utilisateur")
-    private Long idDimUtilisateur;
+    private Integer idDimUtilisateur;
 
     @Column(name = "id_utilisateur")
-    private Long idUtilisateur;
+    private Integer idUtilisateur;
 
-    @Column(columnDefinition = "TEXT")
+    @Column(name = "nom", columnDefinition = "TEXT")
     private String nom;
 
-    @Column(columnDefinition = "TEXT")
+    @Column(name = "prenom", columnDefinition = "TEXT")
     private String prenom;
 
-    @Column(columnDefinition = "TEXT")
+    @Column(name = "genre", columnDefinition = "TEXT")
     private String genre;
 
-    private Long age;
+    @Column(name = "age")
+    private Integer age;
 
-    @Column(columnDefinition = "TEXT")
+    @Column(name = "type", columnDefinition = "TEXT")
     private String type;
 
-    @Column(columnDefinition = "TEXT")
+    @Column(name = "categorie", columnDefinition = "TEXT")
     private String categorie;
 
     @Column(name = "perso_actif", columnDefinition = "TEXT")
@@ -47,8 +49,8 @@ public class Utilisateur {
     private LocalDateTime dateFinContrat;
 
     @Column(name = "id_entite_juridique")
-    private Long idEntiteJuridique;
+    private Integer idEntiteJuridique;
 
     @Column(name = "date_naissance")
-    private LocalDateTime dateNaissance;
+    private LocalDate dateNaissance;
 }

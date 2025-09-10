@@ -22,7 +22,7 @@ public class UtilisateurController {
     }
 
     @GetMapping("/{id}")
-    public Optional<Utilisateur> getById(@PathVariable Long id) {
+    public Optional<Utilisateur> getById(@PathVariable Integer id) {
         return repository.findById(id);
     }
 
@@ -32,7 +32,7 @@ public class UtilisateurController {
     }
 
     @PutMapping("/{id}")
-    public Utilisateur update(@PathVariable Long id, @RequestBody Utilisateur newUtilisateur) {
+    public Utilisateur update(@PathVariable Integer id, @RequestBody Utilisateur newUtilisateur) {
         return repository.findById(id)
                 .map(u -> {
                     u.setIdUtilisateur(newUtilisateur.getIdUtilisateur());
@@ -56,7 +56,7 @@ public class UtilisateurController {
     }
 
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable Long id) {
+    public void delete(@PathVariable Integer id) {
         repository.deleteById(id);
     }
 }

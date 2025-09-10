@@ -1,0 +1,192 @@
+@import "~flatpickr/dist/flatpickr.min.css";
+
+/* ================= Table scrollable ================= */
+.table-container {
+  max-height: 400px;          /* Hauteur du viewport */
+  overflow-y: auto;           /* Scroll vertical */
+  border: 1px solid #ccc;
+}
+
+.table-container table {
+  width: 100%;
+  table-layout: auto;
+  white-space: nowrap;
+  border-collapse: collapse;
+  margin-bottom: 0;
+}
+
+.table-container thead th {
+  position: sticky;
+  top: 0;
+  background: #fff;
+  z-index: 2;
+  text-align: center;
+  padding: 0.5rem;
+  border-bottom: 2px solid #ccc;
+}
+
+.table-container tbody td {
+  padding: 0.35rem 0.75rem;
+  text-align: center;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+/* ================= Mini-Cards ================= */
+.mini-card {
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 20px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  cursor: pointer;
+  height: 180px;
+  margin-bottom: 30px;
+}
+
+.mini-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 14px rgba(0,0,0,0.12);
+}
+
+.mini-card .icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 12px;
+  font-size: 22px;
+  color: #fff;
+}
+
+.icon.blue { background: #f68c3b; }
+.icon.green { background: #1cda42; }
+.icon.pink { background: #de3232; }
+
+.mini-card .content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-grow: 1;
+  text-align: center;
+}
+
+.mini-card .title {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #374151;
+  margin-bottom: 6px;
+  text-align: center;
+  min-height: 36px;
+}
+
+.mini-card h4 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin: 0;
+  color: #111827;
+}
+
+.mini-card .subtitle {
+  font-size: 0.75rem;
+  color: #6b7280;
+  margin-top: 8px;
+  min-height: 18px;
+}
+
+/* ================= Formulaire ================= */
+form .form-control {
+  border-radius: 0.5rem;
+  border: 1px solid #ccc;
+  padding: 0.35rem 0.5rem;
+  box-shadow: 1px 2px 4px rgba(0,0,0,0.1);
+}
+
+form .btn {
+  border-radius: 0.5rem;
+  border: 1px solid #ccc;
+  box-shadow: 1px 2px 4px rgba(0,0,0,0.1);
+  transition: all 0.2s ease-in-out;
+  padding: 0.35rem 0.75rem;
+}
+
+form .btn-success {
+  background-color: #10b981;
+  color: #fff;
+  border: none;
+}
+
+form .btn-success:hover {
+  background-color: #0f9a70;
+}
+
+form .btn-secondary {
+  background-color: #6b7280;
+  color: #fff;
+  border: none;
+}
+
+form .btn-secondary:hover {
+  background-color: #4b5563;
+}
+
+/* Formulaire conteneur */
+.form-container {
+  margin-bottom: 20px;
+  padding: 15px;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  background: #f9fafb;
+}
+
+/* ================= Popups ================= */
+.popup-success {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #eef9f1;
+  color: #041207;
+  padding: 15px 25px;
+  border-radius: 10px;
+  font-weight: bold;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  z-index: 1050;
+  text-align: center;
+  min-width: 220px;
+  animation: fadeOut 2.5s forwards;
+}
+
+@keyframes fadeOut {
+  0% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  70% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(1.05); }
+}
+
+/* Modal suppression */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0,0,0,0.45);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+}
+
+.modal-dialog {
+  max-width: 480px;
+  width: 90%;
+}
+
+.modal-content {
+  background: #fff;
+  padding: 18px;
+  border-radius: 8px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+}
