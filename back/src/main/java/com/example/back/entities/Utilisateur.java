@@ -43,10 +43,10 @@ public class Utilisateur {
     private String persoActif;
 
     @Column(name = "date_embauche")
-    private LocalDateTime dateEmbauche;
+    private LocalDate dateEmbauche;
 
     @Column(name = "date_fin_contrat")
-    private LocalDateTime dateFinContrat;
+    private LocalDate dateFinContrat;
 
     @Column(name = "id_entite_juridique")
     private Integer idEntiteJuridique;

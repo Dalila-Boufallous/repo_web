@@ -1,192 +1,194 @@
-@import "~flatpickr/dist/flatpickr.min.css";
-
-/* ================= Table scrollable ================= */
-.table-container {
-  max-height: 400px;          /* Hauteur du viewport */
-  overflow-y: auto;           /* Scroll vertical */
-  border: 1px solid #ccc;
-}
-
-.table-container table {
-  width: 100%;
-  table-layout: auto;
-  white-space: nowrap;
-  border-collapse: collapse;
-  margin-bottom: 0;
-}
-
-.table-container thead th {
-  position: sticky;
-  top: 0;
-  background: #fff;
-  z-index: 2;
-  text-align: center;
-  padding: 0.5rem;
-  border-bottom: 2px solid #ccc;
-}
-
-.table-container tbody td {
-  padding: 0.35rem 0.75rem;
-  text-align: center;
-  border-bottom: 1px solid #e0e0e0;
-}
-
-/* ================= Mini-Cards ================= */
+/* ===================== Cartes ===================== */
 .mini-card {
-  background: #ffffff;
-  border-radius: 16px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  background-color: #f8f9fa; /* Fond clair visible */
+  border-radius: 10px;
+  padding: 15px;
   display: flex;
-  flex-direction: column;
   align-items: center;
-  justify-content: flex-start;
-  padding: 20px;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  cursor: pointer;
-  height: 180px;
-  margin-bottom: 30px;
+  transition: transform 0.3s, box-shadow 0.3s;
+  border: 1px solid #dee2e6;
 }
 
 .mini-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 6px 14px rgba(0,0,0,0.12);
+  transform: translateY(-5px);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
 }
 
 .mini-card .icon {
-  width: 52px;
-  height: 52px;
+  width: 60px;
+  height: 60px;
   border-radius: 50%;
+  color: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 12px;
-  font-size: 22px;
-  color: #fff;
+  margin-right: 15px;
+  font-size: 1.5rem;
 }
 
-.icon.blue { background: #f68c3b; }
-.icon.green { background: #1cda42; }
-.icon.pink { background: #de3232; }
+.mini-card .icon.blue { background-color: #007bff; }
+.mini-card .icon.pink { background-color: #e83e8c; }
+.mini-card .icon.green { background-color: #28a745; }
 
-.mini-card .content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  flex-grow: 1;
-  text-align: center;
-}
-
-.mini-card .title {
-  font-size: 0.9rem;
+.mini-card .content .title {
   font-weight: 500;
-  color: #374151;
-  margin-bottom: 6px;
-  text-align: center;
-  min-height: 36px;
+  font-size: 0.9rem;
 }
 
-.mini-card h4 {
-  font-size: 1.6rem;
-  font-weight: 700;
+.mini-card .content h4 {
   margin: 0;
-  color: #111827;
+  font-weight: 700;
+  font-size: 1.3rem;
 }
 
-.mini-card .subtitle {
-  font-size: 0.75rem;
-  color: #6b7280;
-  margin-top: 8px;
-  min-height: 18px;
-}
 
-/* ================= Formulaire ================= */
-form .form-control {
-  border-radius: 0.5rem;
-  border: 1px solid #ccc;
-  padding: 0.35rem 0.5rem;
-  box-shadow: 1px 2px 4px rgba(0,0,0,0.1);
-}
-
-form .btn {
-  border-radius: 0.5rem;
-  border: 1px solid #ccc;
-  box-shadow: 1px 2px 4px rgba(0,0,0,0.1);
-  transition: all 0.2s ease-in-out;
-  padding: 0.35rem 0.75rem;
-}
-
-form .btn-success {
-  background-color: #10b981;
+/* ===================== Boutons ===================== */
+.btn-add {
+  background-color: #8bbc47
+;
   color: #fff;
   border: none;
+  padding: 8px 18px;
+  font-size: 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s;
 }
+.btn-add:hover { background-color: #a7e157; }
 
-form .btn-success:hover {
-  background-color: #0f9a70;
-}
-
-form .btn-secondary {
-  background-color: #6b7280;
+.btn-modify {
+  background-color: #4A90E2;
   color: #fff;
   border: none;
+  padding: 8px 18px;
+  font-size: 14px;
+  border-radius: 6px ;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+.btn-modify:hover { background-color: #55a3fd; }
+
+.btn-delete {
+  background-color: #F85C74;
+  color: #fff;
+  border: none;
+  padding: 8px 18px;
+  font-size: 14px;
+  border-radius: 6px ;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+.btn-delete:hover { background-color: #f990a0; }
+
+.btn-enregistrer {
+  background-color: #8bbc47;
+  color: #fff;
+  border: none;
+  padding: 8px 18px;
+  font-size: 14px;
+  border-radius: 6px !important ;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+.btn-enregistrer:hover { background-color: #b5f360; }
+
+.btn-annuler {
+  background-color: #6c757d;
+  color: #fff;
+  border: none;
+  padding: 8px 18px;
+  font-size: 14px;
+  border-radius: 6px ;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+.btn-annuler:hover { background-color: #8a8d91; }
+
+/* ===================== Table ===================== */
+.table-striped > tbody > tr:nth-of-type(odd) {
+  background-color: #f9f9f9;
 }
 
-form .btn-secondary:hover {
-  background-color: #4b5563;
+/* Pas de couleur sur les titres de colonnes */
+.table th {
+  background-color: transparent;
+  font-weight: 600;
 }
 
-/* Formulaire conteneur */
-.form-container {
-  margin-bottom: 20px;
-  padding: 15px;
-  border: 1px solid #e0e0e0;
-  border-radius: 12px;
-  background: #f9fafb;
-}
-
-/* ================= Popups ================= */
-.popup-success {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background-color: #eef9f1;
-  color: #041207;
-  padding: 15px 25px;
-  border-radius: 10px;
-  font-weight: bold;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-  z-index: 1050;
-  text-align: center;
-  min-width: 220px;
-  animation: fadeOut 2.5s forwards;
-}
-
-@keyframes fadeOut {
-  0% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-  70% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-  100% { opacity: 0; transform: translate(-50%, -50%) scale(1.05); }
-}
-
-/* Modal suppression */
+/* ===================== Popups ===================== */
 .modal-backdrop {
   position: fixed;
-  inset: 0;
-  background-color: rgba(0,0,0,0.45);
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.3);
   display: flex;
-  justify-content: center;
   align-items: center;
-  z-index: 2000;
+  justify-content: center;
+  z-index: 1050;
 }
 
 .modal-dialog {
-  max-width: 480px;
-  width: 90%;
+  max-width: 400px;
+  width: 100%;
 }
 
 .modal-content {
   background: #fff;
-  padding: 18px;
-  border-radius: 8px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+  border-radius: 10px;
+}
+.card.shadow-sm {
+  border: 0;
+  box-shadow: 0 4px 12px rgba(25, 35, 50, 0.06);
+}
+
+.card .card-header {
+  border-bottom: 1px solid #eef0f3;
+}
+
+.form-label {
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.btn-sm { padding: 0.35rem 0.6rem; }
+
+.card .card-body .small { line-height: 1.35; }
+
+/* Responsive tweaks: one column on small screens */
+@media (max-width: 767px) {
+  .col-md-3 { flex: 0 0 100%; max-width: 100%; }
+}
+/* Espace entre la mini-card et le formulaire */
+.mini-card {
+  margin-bottom: 30px; 
+}
+/* Conteneur recherche */
+.mb-3 input.form-control {
+  width: 250px;        /* largeur raisonnable */
+  display: inline-block;
+  margin-bottom: 20px; /* espace sous le champ */
+  padding-left: 35px;  /* pour icône */
+  border-radius: 25px; /* arrondi doux */
+  border: 1px solid #ccc;
+  transition: all 0.3s ease;
+}
+
+/* Icône 🔍 à l'intérieur du champ */
+.mb-3 input.form-control::placeholder {
+  font-size: 0.9rem;
+  color: #888;
+}
+
+/* Effet focus */
+.mb-3 input.form-control:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+  outline: none;
+}
+
+/* Pour l'aligner avec les mini-cards */
+.mb-3 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }

@@ -1,188 +1,188 @@
-<div class="row">
-  <div class="container mt-4">
-    <h2 class="mb-4 text-center">Gestion des patients</h2>
+<div class="container mt-4">
+  <!-- Titre -->
+  <h2 class="mb-4 text-center">Gestion des Patients</h2>
 
-    <!-- Mini-cards -->
-    <div class="row g-3 mb-4">
-      <div class="col-md-6 col-xl-4">
-        <div class="mini-card">
-          <div class="icon blue">
-            <i class="icofont icofont-users-alt-2"></i>
-          </div>
-          <div class="content">
-            <span class="title">Total Patients</span>
-            <h4>{{ patients.length }}</h4>
-          </div>
+  <!-- Mini-cards -->
+  <div class="row g-3 mb-4">
+    <div class="col-md-4">
+      <div class="mini-card shadow-sm">
+        <div class="icon blue">
+          <i class="icofont icofont-users-alt-2"></i>
         </div>
-      </div>
-      <div class="col-md-6 col-xl-4">
-        <div class="mini-card">
-          <div class="icon pink">
-            <i class="icofont icofont-user-alt-3"></i>
-          </div>
-          <div class="content">
-            <span class="title">Patients actifs</span>
-            <h4>{{ patients.length }}</h4>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-6 col-xl-4">
-        <div class="mini-card clickable-card" (click)="loadPatients()">
-          <div class="icon green">
-            <i class="icofont icofont-refresh"></i>
-          </div>
-          <div class="content">
-            <span class="title">Actualiser la liste</span>
-            <h4>&nbsp;</h4>
-          </div>
+        <div class="content">
+          <span class="title">Total Patients</span>
+          <h4>{{ patients.length }}</h4>
         </div>
       </div>
     </div>
-
-<!-- Formulaire ajout par défaut -->
-<div class="mb-3 p-3 border rounded">
-  <h5>Ajouter un patient</h5>
-  <div class="row g-2">
-    <div class="col">
-      <input type="number" class="form-control" placeholder="ID Personne" [(ngModel)]="newPatient.idPersonne" name="idPersonne">
+    <div class="col-md-4">
+      <div class="mini-card shadow-sm">
+        <div class="icon pink">
+          <i class="icofont icofont-user-alt-3"></i>
+        </div>
+        <div class="content">
+          <span class="title">Patients Actifs</span>
+          <h4>{{ patients.length }}</h4>
+        </div>
+      </div>
     </div>
-    <div class="col-md-3">
-      <input type="text" class="form-control" placeholder="Nom" [(ngModel)]="newPatient.nom" name="nom">
-    </div>
-    <div class="col-md-3">
-      <input type="text" class="form-control" placeholder="Prénom" [(ngModel)]="newPatient.prenom" name="prenom">
-    </div>
-    <div class="col-md-2">
-      <select class="form-select" [(ngModel)]="newPatient.genre" name="genre">
-        <option value="" disabled selected>Genre</option>
-        <option value="M">M</option>
-        <option value="F">F</option>
-      </select>
-    </div>
-    <div class="col-md-2">
-      <input type="date" class="form-control" [(ngModel)]="newPatient.dateNaissance" name="dateNaissance">
-    </div>
-    <div class="col-md-2">
-      <input type="date" class="form-control" [(ngModel)]="newPatient.dateCreation" name="dateCreation">
+    <div class="col-md-4">
+      <div class="mini-card shadow-sm clickable-card" (click)="loadPatients()">
+        <div class="icon green">
+          <i class="icofont icofont-refresh"></i>
+        </div>
+        <div class="content">
+          <span class="title">Actualiser la liste</span>
+          <h4>&nbsp;</h4>
+        </div>
+      </div>
     </div>
   </div>
 
-  <div class="row g-2 mt-2">
-    <div class="col-md-3">
-      <select class="form-select" [(ngModel)]="newPatient.statutMarital" name="statutMarital">
-        <option value="" disabled selected>Statut marital</option>
-        <option value="Célibataire">Célibataire</option>
-        <option value="Marié">Marié</option>
-        <option value="Divorcé">Divorcé</option>
-      </select>
+  <!-- Recherche -->
+  <div class="mb-3">
+    <input type="text" class="form-control w-25" placeholder="Rechercher un patient"
+           [(ngModel)]="searchPatient">
+  </div>
+
+  <!-- Formulaire ajout -->
+  <div class="card mb-4 shadow-sm rounded-3">
+    <div class="card-header bg-light">
+      <h5 class="mb-0">➕ Ajouter un patient</h5>
     </div>
-    <div class="col-md-3">
-      <input type="text" class="form-control" placeholder="Couverture sociale" [(ngModel)]="newPatient.couvertureSociale" name="couvertureSociale">
-    </div>
-    <div class="col-md-2">
-      <button class="btn btn-success w-100" (click)="savePatient()">Ajouter</button>
+    <div class="card-body">
+      <form #addForm="ngForm" (ngSubmit)="addPatient()" novalidate>
+        <div class="row g-3">
+          <div class="col-md-3">
+            <label class="form-label">ID Patient *</label>
+            <input type="number" class="form-control" name="idPersonne" [(ngModel)]="newPatient.idPersonne" required>
+          </div>
+          <div class="col-md-3">
+            <label class="form-label">Nom *</label>
+            <input type="text" class="form-control" name="nom" [(ngModel)]="newPatient.nom" required>
+          </div>
+          <div class="col-md-3">
+            <label class="form-label">Prénom *</label>
+            <input type="text" class="form-control" name="prenom" [(ngModel)]="newPatient.prenom" required>
+          </div>
+          <div class="col-md-3">
+            <label class="form-label">Genre</label>
+            <select class="form-select" name="genre" [(ngModel)]="newPatient.genre">
+              <option value="">Sélectionner</option>
+              <option value="M">Masculin</option>
+              <option value="F">Féminin</option>
+            </select>
+          </div>
+          <div class="col-md-3">
+            <label class="form-label">Date Naissance</label>
+            <input type="date" class="form-control" name="dateNaissance" [(ngModel)]="newPatient.dateNaissance">
+          </div>
+          <div class="col-md-3">
+            <label class="form-label">Date Création</label>
+            <input type="date" class="form-control" name="dateCreation" [(ngModel)]="newPatient.dateCreation">
+          </div>
+          <div class="col-md-3">
+            <label class="form-label">Statut Marital</label>
+            <select class="form-select" name="statutMarital" [(ngModel)]="newPatient.statutMarital">
+              <option value="">Sélectionner</option>
+              <option value="Célibataire">Célibataire</option>
+              <option value="Marié">Marié</option>
+              <option value="Divorcé">Divorcé</option>
+            </select>
+          </div>
+          <div class="col-md-3">
+            <label class="form-label">Couverture Sociale</label>
+            <input type="text" class="form-control" name="couvertureSociale" [(ngModel)]="newPatient.couvertureSociale">
+          </div>
+        </div>
+
+        <div class="mt-3 text-end">
+          <button type="submit" class="btn btn-success" [disabled]="addForm.invalid">Ajouter</button>
+          <button type="button" class="btn btn-outline-secondary ms-2" (click)="resetAddForm(addForm)">Réinitialiser</button>
+        </div>
+      </form>
     </div>
   </div>
-</div>
 
-    <!-- Tableau scrollable -->
-    <div class="table-container">
-      <table class="table table-bordered table-striped">
-        <thead>
-          <tr>
-            <th>ID Dim</th>
-            <th>ID Personne</th>
-            <th>Nom</th>
-            <th>Prénom</th>
-            <th>Genre</th>
-            <th>Date Naissance</th>
-            <th>Date Création</th>
-            <th>Statut Marital</th>
-            <th>Couverture Sociale</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let patient of patients">
-            <td>{{ patient.idDimPatient }}</td>
-            <td>{{ patient.idPersonne }}</td>
+  <!-- Liste Patients avec édition inline -->
+  <div class="row g-4">
+    <div class="col-md-4" *ngFor="let patient of filteredPatients">
+      <div class="card shadow-sm rounded-3 h-100">
+        <div class="card-body">
+          <h5 class="card-title">
+            <span *ngIf="editingPatientId !== patient.idDimPatient">
+              <i class="icofont icofont-user-alt-3 blue"></i>
+              {{ patient.nom }} {{ patient.prenom }}
+            </span>
+            <div *ngIf="editingPatientId === patient.idDimPatient" class="row g-2">
+              <div class="col-6"><input [(ngModel)]="editedPatient.nom" class="form-control form-control-sm"></div>
+              <div class="col-6"><input [(ngModel)]="editedPatient.prenom" class="form-control form-control-sm"></div>
+            </div>
+          </h5>
+          <h6 class="card-subtitle mb-2 text-muted">ID: {{ patient.idDimPatient }}</h6>
 
-            <!-- Edition en ligne -->
-            <td *ngIf="editingPatientId !== patient.idDimPatient">{{ patient.nom }}</td>
-            <td *ngIf="editingPatientId === patient.idDimPatient">
-              <input [(ngModel)]="editedPatient.nom" class="form-control"/>
-            </td>
+          <ul class="list-unstyled mt-3 mb-4 small">
+            <li><i class="icofont icofont-gender text-primary"></i> Genre: 
+                <span *ngIf="editingPatientId !== patient.idDimPatient">{{ patient.genre }}</span>
+                <select *ngIf="editingPatientId === patient.idDimPatient" [(ngModel)]="editedPatient.genre" class="form-select form-select-sm">
+                  <option value="M">M</option><option value="F">F</option>
+                </select>
+            </li>
+            <li><i class="icofont icofont-birthday-cake text-danger"></i> Date Naissance: 
+                <span *ngIf="editingPatientId !== patient.idDimPatient">{{ patient.dateNaissance | date }}</span>
+                <input *ngIf="editingPatientId === patient.idDimPatient" type="date" [(ngModel)]="editedPatient.dateNaissance" class="form-control form-control-sm">
+            </li>
+            <li><i class="icofont icofont-calendar text-success"></i> Date Création: 
+                <span *ngIf="editingPatientId !== patient.idDimPatient">{{ patient.dateCreation | date }}</span>
+                <input *ngIf="editingPatientId === patient.idDimPatient" type="date" [(ngModel)]="editedPatient.dateCreation" class="form-control form-control-sm">
+            </li>
+            <li><i class="icofont icofont-users-alt-5 text-warning"></i> Statut marital: 
+                <span *ngIf="editingPatientId !== patient.idDimPatient">{{ patient.statutMarital }}</span>
+                <select *ngIf="editingPatientId === patient.idDimPatient" [(ngModel)]="editedPatient.statutMarital" class="form-select form-select-sm">
+                  <option value="Célibataire">Célibataire</option>
+                  <option value="Marié">Marié</option>
+                  <option value="Divorcé">Divorcé</option>
+                </select>
+            </li>
+            <li><i class="icofont icofont-shield-alt text-info"></i> Couverture Sociale: 
+                <span *ngIf="editingPatientId !== patient.idDimPatient">{{ patient.couvertureSociale }}</span>
+                <input *ngIf="editingPatientId === patient.idDimPatient" type="text" [(ngModel)]="editedPatient.couvertureSociale" class="form-control form-control-sm">
+            </li>
+          </ul>
 
-            <td *ngIf="editingPatientId !== patient.idDimPatient">{{ patient.prenom }}</td>
-            <td *ngIf="editingPatientId === patient.idDimPatient">
-              <input [(ngModel)]="editedPatient.prenom" class="form-control"/>
-            </td>
-
-            <td *ngIf="editingPatientId !== patient.idDimPatient">{{ patient.genre }}</td>
-            <td *ngIf="editingPatientId === patient.idDimPatient">
-              <select class="form-select" [(ngModel)]="editedPatient.genre">
-                <option value="M">M</option>
-                <option value="F">F</option>
-              </select>
-            </td>
-
-            <td *ngIf="editingPatientId !== patient.idDimPatient">{{ patient.dateNaissance }}</td>
-            <td *ngIf="editingPatientId === patient.idDimPatient">
-              <input type="date" [(ngModel)]="editedPatient.dateNaissance" class="form-control"/>
-            </td>
-
-            <td *ngIf="editingPatientId !== patient.idDimPatient">{{ patient.dateCreation }}</td>
-            <td *ngIf="editingPatientId === patient.idDimPatient">
-              <input type="date" [(ngModel)]="editedPatient.dateCreation" class="form-control"/>
-            </td>
-
-            <td *ngIf="editingPatientId !== patient.idDimPatient">{{ patient.statutMarital }}</td>
-            <td *ngIf="editingPatientId === patient.idDimPatient">
-              <select class="form-select" [(ngModel)]="editedPatient.statutMarital">
-                <option value="Célibataire">Célibataire</option>
-                <option value="Marié">Marié</option>
-                <option value="Divorcé">Divorcé</option>
-              </select>
-            </td>
-
-            <td *ngIf="editingPatientId !== patient.idDimPatient">{{ patient.couvertureSociale }}</td>
-            <td *ngIf="editingPatientId === patient.idDimPatient">
-              <input type="text" [(ngModel)]="editedPatient.couvertureSociale" class="form-control"/>
-            </td>
-
-            <!-- Actions -->
-            <td>
-              <button *ngIf="editingPatientId !== patient.idDimPatient" class="btn btn-primary btn-sm" (click)="startEdit(patient)">Modifier</button>
-              <button *ngIf="editingPatientId === patient.idDimPatient" class="btn btn-success btn-sm" (click)="savePatient()">Sauvegarder</button>
-              <button *ngIf="editingPatientId === patient.idDimPatient" class="btn btn-secondary btn-sm" (click)="cancelEdit()">Annuler</button>
-              <button class="btn btn-danger btn-sm" (click)="confirmDelete(patient.idDimPatient!)">Supprimer</button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-
-      <div *ngIf="patients.length === 0" class="text-center p-2">
-        Aucun patient à afficher.
-      </div>
-    </div>
-
-    <!-- Popups -->
-    <div *ngIf="addSuccess" class="popup-success">✅ Patient ajouté</div>
-    <div *ngIf="saveSuccess" class="popup-success">✅ Données sauvegardées</div>
-
-    <!-- Popup suppression -->
-    <div *ngIf="showDeleteConfirm" class="modal-backdrop">
-      <div class="modal-dialog">
-        <div class="modal-content p-3">
-          <h5>Êtes-vous sûr de supprimer ce patient ?</h5>
-          <div class="mt-3 d-flex justify-content-end">
-            <button class="btn btn-danger me-2" (click)="deletePatient()">Oui</button>
-            <button class="btn btn-secondary" (click)="cancelDelete()">Annuler</button>
+          <div class="d-flex justify-content-between">
+            <button *ngIf="editingPatientId !== patient.idDimPatient" class="btn btn-sm btn-primary" (click)="startEdit(patient)">
+              <i class="icofont-edit"></i> Modifier
+            </button>
+            <div *ngIf="editingPatientId === patient.idDimPatient" class="d-flex gap-2">
+              <button class="btn btn-sm btn-success" (click)="saveEditedPatient(patient)">
+                <i class="icofont-check-circled"></i> Enregistrer
+              </button>
+              <button class="btn btn-sm btn-secondary" (click)="cancelEdit()">Annuler</button>
+            </div>
+            <button class="btn btn-sm btn-danger" (click)="confirmDelete(patient.idDimPatient)">
+              <i class="icofont-trash"></i> Supprimer
+            </button>
           </div>
         </div>
       </div>
     </div>
+  </div>
 
-    <div *ngIf="deleteSuccess" class="popup-success">✅ Patient supprimé</div>
+  <!-- Popups succès & suppression -->
+  <div *ngIf="addSuccess" class="popup-success">✅ Patient ajouté</div>
+  <div *ngIf="saveSuccess" class="popup-success">✅ Données sauvegardées</div>
+  <div *ngIf="deleteSuccess" class="popup-success">✅ Patient supprimé</div>
+
+  <div *ngIf="showDeleteConfirm" class="modal-backdrop">
+    <div class="modal-dialog">
+      <div class="modal-content p-3">
+        <h5>Êtes-vous sûr de supprimer ce patient ?</h5>
+        <div class="mt-3 d-flex justify-content-end">
+          <button class="btn btn-danger me-2" (click)="deletePatient()">Oui</button>
+          <button class="btn btn-secondary" (click)="cancelDelete()">Annuler</button>
+        </div>
+      </div>
+    </div>
   </div>
 </div>

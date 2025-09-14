@@ -24,37 +24,18 @@ export interface Utilisateur {
 })
 export class PersonnelComponent implements OnInit {
   utilisateurs: Utilisateur[] = [];
+  newUtilisateur: Utilisateur = {};
+  editingId: number | null = null;
 
-  // Initialisation avec tous les champs pour éviter les erreurs
-  newUtilisateur: Utilisateur = {
-    idDimUtilisateur: null,
-    idUtilisateur: null,
-    nom: '',
-    prenom: '',
-    genre: '',
-    age: null,
-    type: '',
-    categorie: '',
-    persoActif: '',
-    dateEmbauche: '',
-    dateFinContrat: '',
-    idEntiteJuridique: null,
-    dateNaissance: ''
-  };
-
-  editedUtilisateur: Utilisateur = {};
-  editingUtilisateurId: number | null = null;
-
-  // Messages succès
+  // Popups
   addSuccess = false;
   saveSuccess = false;
   deleteSuccess = false;
 
-  // Popup suppression
   showDeleteConfirm = false;
   selectedDeleteId: number | null = null;
 
-  private baseUrl = 'http://localhost:8081/api/utilisateurs'; // ton endpoint backend
+  private baseUrl = 'http://localhost:8081/api/utilisateurs';
 
   constructor(private http: HttpClient) {}
 
@@ -68,75 +49,55 @@ export class PersonnelComponent implements OnInit {
     });
   }
 
-  saveUtilisateur(): void {
-    if (this.editingUtilisateurId) {
-      // mise à jour
-      this.http.put<Utilisateur>(`${this.baseUrl}/${this.editingUtilisateurId}`, this.newUtilisateur)
-        .subscribe({
-          next: data => {
-            this.loadUtilisateurs();
-            this.saveSuccess = true;
-            setTimeout(() => this.saveSuccess = false, 2000);
-            this.cancelEdit();
-          },
-          error: err => console.error('Erreur mise à jour', err)
-        });
-    } else {
-      // ajout
-      this.http.post<Utilisateur>(this.baseUrl, this.newUtilisateur)
-        .subscribe({
-          next: data => {
-            this.loadUtilisateurs();
-            this.addSuccess = true;
-            setTimeout(() => this.addSuccess = false, 2000);
-            // réinitialiser le formulaire après ajout
-            this.newUtilisateur = {
-              idDimUtilisateur: null,
-              idUtilisateur: null,
-              nom: '',
-              prenom: '',
-              genre: '',
-              age: null,
-              type: '',
-              categorie: '',
-              persoActif: '',
-              dateEmbauche: '',
-              dateFinContrat: '',
-              idEntiteJuridique: null,
-              dateNaissance: ''
-            };
-          },
-          error: err => console.error('Erreur ajout', err)
-        });
-    }
+  saveNewUtilisateur(addForm: any): void {
+  if (addForm.invalid) {
+    // Marque tous les champs comme touchés pour afficher les messages d'erreur
+    Object.keys(addForm.controls).forEach(field => {
+      const control = addForm.controls[field];
+      control.markAsTouched({ onlySelf: true });
+    });
+    return; // Arrête l'ajout si formulaire invalide
   }
 
-  startEdit(utilisateur: Utilisateur): void {
-    this.editingUtilisateurId = utilisateur.idDimUtilisateur!;
-    this.newUtilisateur = { ...utilisateur };
+  // Si tout est valide, on ajoute
+  this.http.post<Utilisateur>(this.baseUrl, this.newUtilisateur).subscribe({
+    next: () => {
+      this.addSuccess = true;
+      setTimeout(() => this.addSuccess = false, 3000);
+      this.newUtilisateur = {};
+      this.loadUtilisateurs();
+      addForm.resetForm(); // Réinitialise le formulaire
+    },
+    error: err => console.error('Erreur ajout', err)
+  });
+}
+
+
+  startEdit(id: number): void {
+    this.editingId = id;
   }
 
   cancelEdit(): void {
-    this.editingUtilisateurId = null;
-    this.newUtilisateur = {
-      idDimUtilisateur: null,
-      idUtilisateur: null,
-      nom: '',
-      prenom: '',
-      genre: '',
-      age: null,
-      type: '',
-      categorie: '',
-      persoActif: '',
-      dateEmbauche: '',
-      dateFinContrat: '',
-      idEntiteJuridique: null,
-      dateNaissance: ''
-    };
+    this.editingId = null;
+    this.loadUtilisateurs();
   }
 
-  confirmDelete(id: number): void {
-    this.selectedDeleteId = id;
+  saveUtilisateurInline(utilisateur: Utilisateur): void {
+    if (!utilisateur.nom || !utilisateur.prenom || !utilisateur.age) return;
+    this.http.put(`${this.baseUrl}/${utilisateur.idDimUtilisateur}`, utilisateur).subscribe({
+      next: () => {
+        this.saveSuccess = true;
+        setTimeout(() => this.saveSuccess = false, 3000);
+        this.editingId = null;
+        this.loadUtilisateurs();
+      },
+      error: err => console.error('Erreur mise à jour', err)
+    });
+  }
+
+  confirmDelete(utilisateur: Utilisateur): void {
+    if (!utilisateur.idDimUtilisateur) return;
+    this.selectedDeleteId = utilisateur.idDimUtilisateur;
     this.showDeleteConfirm = true;
   }
 
@@ -146,13 +107,34 @@ export class PersonnelComponent implements OnInit {
   }
 
   deleteUtilisateur(): void {
-    if (this.selectedDeleteId === null) return;
-    this.http.delete(`${this.baseUrl}/${this.selectedDeleteId}`).subscribe(() => {
-      this.loadUtilisateurs();
-      this.showDeleteConfirm = false;
-      this.deleteSuccess = true;
-      setTimeout(() => this.deleteSuccess = false, 2000);
-      this.selectedDeleteId = null;
+    if (!this.selectedDeleteId) return;
+    this.http.delete(`${this.baseUrl}/${this.selectedDeleteId}`).subscribe({
+      next: () => {
+        this.deleteSuccess = true;
+        setTimeout(() => this.deleteSuccess = false, 3000);
+        this.showDeleteConfirm = false;
+        this.selectedDeleteId = null;
+        this.loadUtilisateurs();
+      },
+      error: err => {
+        console.error('Erreur suppression', err);
+        this.showDeleteConfirm = false;
+      }
     });
   }
+  searchTerm: string = '';
+
+get filteredUtilisateurs() {
+  if (!this.searchTerm) return this.utilisateurs;
+  const term = this.searchTerm.toLowerCase();
+  return this.utilisateurs.filter(u =>
+    (u.nom && u.nom.toLowerCase().includes(term)) ||
+    (u.prenom && u.prenom.toLowerCase().includes(term)) ||
+    (u.idDimUtilisateur && u.idDimUtilisateur.toString().includes(term)) ||
+    (u.genre && u.genre.toLowerCase().includes(term)) ||
+    (u.type && u.type.toLowerCase().includes(term)) ||
+    (u.categorie && u.categorie.toLowerCase().includes(term))
+  );
+}
+
 }

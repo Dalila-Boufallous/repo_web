@@ -34,6 +34,7 @@ export class PatientComponent implements OnInit {
 };
   editedPatient: Patient = {};
   editingPatientId: number | null = null;
+  searchPatient: string = '';
 
   // Messages
   addSuccess = false;
@@ -57,29 +58,28 @@ export class PatientComponent implements OnInit {
   }
 
   // Ajouter ou sauver patient
-  savePatient(): void {
-  console.log(this.newPatient); // ← voir si toutes les valeurs sont présentes
-  this.http.post<Patient>(this.baseUrl, this.newPatient)
+  // Ajouter cette méthode dans PatientComponent
+saveEditedPatient(patient: Patient): void {
+  // Copier les valeurs éditées
+  const updatedPatient = { ...patient, ...this.editedPatient };
+
+  this.http.put<Patient>(`${this.baseUrl}/${patient.idDimPatient}`, updatedPatient)
     .subscribe({
       next: data => {
-        console.log('Patient ajouté', data);
-        this.loadPatients();
-        this.addSuccess = true;
-        setTimeout(() => this.addSuccess = false, 2000);
-        this.newPatient = {
-          idPersonne: null,
-          nom: '',
-          prenom: '',
-          genre: '',
-          dateNaissance: '',
-          dateCreation: '',
-          statutMarital: '',
-          couvertureSociale: ''
-        };
+        // Mettre à jour la liste localement
+        const index = this.patients.findIndex(p => p.idDimPatient === patient.idDimPatient);
+        if (index !== -1) this.patients[index] = data;
+
+        this.saveSuccess = true;
+        setTimeout(() => this.saveSuccess = false, 2000);
+
+        this.cancelEdit();
       },
-      error: err => console.error('Erreur ajout patient', err)
+      error: err => console.error('Erreur mise à jour patient', err)
     });
 }
+
+
 
   // Commencer l’édition
   startEdit(patient: Patient): void {
@@ -113,4 +113,42 @@ export class PatientComponent implements OnInit {
       this.selectedDeleteId = null;
     });
   }
+  get filteredPatients() {
+  return this.patients.filter(p =>
+    p.nom.toLowerCase().includes((this.searchPatient || '').toLowerCase()) ||
+    p.prenom.toLowerCase().includes((this.searchPatient || '').toLowerCase())
+  );
+}
+// Ajouter un nouveau patient
+addPatient(): void {
+  // Crée une copie pour éviter les références directes
+  const patientToAdd: Patient = { ...this.newPatient };
+
+  this.http.post<Patient>(this.baseUrl, patientToAdd)
+    .subscribe({
+      next: data => {
+        // Actualiser la liste des patients
+        this.loadPatients();
+
+        // Message succès
+        this.addSuccess = true;
+        setTimeout(() => this.addSuccess = false, 2000);
+
+        // Réinitialiser le formulaire
+        this.newPatient = {
+          idPersonne: null,
+          nom: '',
+          prenom: '',
+          genre: '',
+          dateNaissance: '',
+          dateCreation: '',
+          statutMarital: '',
+          couvertureSociale: ''
+        };
+      },
+      error: err => console.error('Erreur ajout patient', err)
+    });
+}
+
+
 }
