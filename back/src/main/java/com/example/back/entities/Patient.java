@@ -36,10 +36,10 @@ public class Patient {
     private Long age;
 
     @Column(name = "date_naissance")
-    private LocalDateTime dateNaissance;
+    private LocalDate dateNaissance;
 
     @Column(name = "date_creation")
-    private LocalDateTime dateCreation;
+    private LocalDate dateCreation;
 
     @Column(name = "assistante_resp")
     private Integer assistanteResp;
@@ -81,11 +81,11 @@ public class Patient {
     public Long getAge() { return age; }
     public void setAge(Long age) { this.age = age; }
 
-    public LocalDateTime getDateNaissance() { return dateNaissance; }
-    public void setDateNaissance(LocalDateTime dateNaissance) { this.dateNaissance = dateNaissance; }
+    public LocalDate getDateNaissance() { return dateNaissance; }
+    public void setDateNaissance(LocalDate dateNaissance) { this.dateNaissance = dateNaissance; }
 
-    public LocalDateTime getDateCreation() { return dateCreation; }
-    public void setDateCreation(LocalDateTime dateCreation) { this.dateCreation = dateCreation; }
+    public LocalDate getDateCreation() { return dateCreation; }
+    public void setDateCreation(LocalDate dateCreation) { this.dateCreation = dateCreation; }
 
     public Integer getAssistanteResp() { return assistanteResp; }
     public void setAssistanteResp(Integer assistanteResp) { this.assistanteResp = assistanteResp; }

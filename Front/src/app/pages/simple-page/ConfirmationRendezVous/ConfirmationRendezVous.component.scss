@@ -1,212 +1,208 @@
-@import "~flatpickr/dist/flatpickr.min.css";
-
-/* ================= Table scrollable ================= */
-.table-container {
-  max-height: 500px;          /* Hauteur du viewport */
-  overflow: auto;             /* Scroll vertical + horizontal */
-  border: 1px solid #ccc;     /* Cadre léger autour du tableau */
+/* Conteneur principal */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
-.table-container table {
-  width: 100%;
-  table-layout: auto;         /* Colonnes ajustées automatiquement */
-  white-space: nowrap;        /* Empêche les retours à la ligne */
-  border-collapse: collapse;
-  margin-bottom: 0;
-}
-
-.table-container thead th {
-  position: sticky;           /* Header collant */
-  top: 0;
+/* Mini-cards */
+.mini-card {
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+  border-radius: 12px;
   background: #fff;
-  z-index: 2;
-  text-align: center;
-  padding: 0.5rem;
-  border-bottom: 2px solid #ccc;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+  .icon {
+    font-size: 1.8rem;
+    margin-right: 0.8rem;
+  }
+
+  .content {
+    .title {
+      font-size: 0.9rem;
+      color: #6c757d;
+    }
+    h4 {
+      margin: 0;
+      font-weight: 600;
+    }
+  }
+
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  &.clickable-card {
+    cursor: pointer;
+  }
 }
 
-.table-container tbody td {
-  padding: 0.35rem 0.75rem;
-  text-align: center;
-  border-bottom: 1px solid #e0e0e0;
+/* Couleurs pour icônes */
+.blue {
+  color: #007bff;
+}
+.green {
+  color: #28a745;
+}
+.pink {
+  color: #e83e8c;
 }
 
-/* ================= Modal personnalisé ================= */
+/* Wrapper scrollable */
+.cards-scroll-wrapper {
+  overflow-x: auto;
+  overflow-y: auto;
+  padding: 1rem 0;
+
+  /* Masquer la scrollbar (optionnel, dépend du navigateur) */
+  &::-webkit-scrollbar {
+    height: 8px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 4px;
+  }
+}
+
+/* Conteneur des cartes */
+.cards-container {
+  display: flex;
+  gap: 1rem;
+}
+
+/* Style des cartes patient/rdv */
+.patient-card {
+  flex: 0 0 auto;
+  width: 300px; /* 🔹 Limite la largeur */
+}
+
+.card {
+  height: 100%;
+  border: none;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+
+  .card-body {
+    padding: 1rem;
+  }
+
+  .card-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+
+  ul {
+    padding: 0;
+    margin: 0;
+    li {
+      margin-bottom: 0.4rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+  }
+}
+
+/* Popup succès */
+.popup-success {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: #28a745;
+  color: white;
+  padding: 0.8rem 1.2rem;
+  border-radius: 8px;
+  font-weight: 500;
+  animation: fadeInOut 3s forwards;
+}
+
+@keyframes fadeInOut {
+  0% { opacity: 0; transform: translateY(20px); }
+  10% { opacity: 1; transform: translateY(0); }
+  90% { opacity: 1; }
+  100% { opacity: 0; transform: translateY(20px); }
+}
+
+/* Modale suppression */
 .modal-backdrop {
   position: fixed;
   inset: 0;
-  background-color: rgba(0, 0, 0, 0.45);
+  background: rgba(0,0,0,0.5);
   display: flex;
+  align-items: center;
   justify-content: center;
-  align-items: center;
-  z-index: 2000;
-}
 
-.modal-dialog {
-  max-width: 480px;
-  width: 90%;
-}
+  .modal-dialog {
+    max-width: 400px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  }
+} 
 
-.modal-content {
-  background: #fff;
-  padding: 18px;
-  border-radius: 8px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-}
-
-/* ================= Alert succès ================= */
-.alert-success {
-  position: fixed;
-  right: 16px;
-  bottom: 24px;
-  z-index: 2100;
-  animation: fadeOut 2.5s forwards;
-}
-
-@keyframes fadeOut {
-  0% { opacity: 1; transform: translateY(0); }
-  70% { opacity: 1; transform: translateY(0); }
-  100% { opacity: 0; transform: translateY(10px); }
-}
-
-/* ================= Boutons ================= */
-.btn, .btn-today {
-  border-radius: 0.5rem;
-  border: 1px solid #ccc;
-  box-shadow: 1px 2px 4px rgba(0,0,0,0.1);
-  transition: all 0.2s ease-in-out;
-  padding: 0.35rem 0.75rem;
-}
-
-
-
-
-/* ================= Titres ================= */
-h2 {
-  text-align: center;
-  margin-bottom: 2rem;
-}
-
-/* ================= Contrôles calendrier ================= */
-.controls {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  margin-bottom: 1rem;
-}
-
-.controls input[type="date"] {
-  border-radius: 0.5rem;
-  border: 1px solid #ccc;
-  padding: 0.35rem 0.5rem;
-  box-shadow: 1px 2px 4px rgba(0,0,0,0.1);
-}
-
-.controls input[type="date"].today {
-  background-color: #7f9df6;
-  color: #fff;
-}
-.popup-success {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 2200;
-  background-color: #eef9f1;
-  color: #0c2e14;
-  padding: 0.6rem 1.2rem;       
-  border-radius: 6px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  font-weight: 500;
-  font-size: 1rem;              
-  white-space: nowrap;
-  animation: fadeOut 2.5s forwards;
-}
-
-@keyframes fadeOut {
-  0% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-  70% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-  100% { opacity: 0; transform: translate(-50%, -50%) scale(1.05); }
-}
-.table-container {
-  max-height: 400px;
-  overflow-y: auto;
-}
-
-.popup-success {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background-color: #eef9f1;
-  color: #041207;
-  padding: 15px 25px;
-  border-radius: 10px;
-  font-weight: bold;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-  z-index: 1050;
-  text-align: center;
-  min-width: 220px;
-}
-/* Mini calendrier */
+/* Conteneur principal */
 .mini-calendar-wrapper {
-  display: block;
-  margin-bottom: 1rem;
-}
-
-.mini-calendar {
-  width: 260px;               
-  border: 1px solid #e0e0e0;
-  padding: 8px;
-  border-radius: 8px;
   background: #fff;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-  font-family: inherit;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  padding: 1rem;
+  font-family: "Segoe UI", Tahoma, sans-serif;
 }
 
+/* Calendrier */
+.mini-calendar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* En-tête (sélecteurs mois & année) */
 .mc-header {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 6px;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 0.8rem;
+  width: 100%;
 }
 
-.mc-title {
-  font-weight: 600;
-  font-size: 0.95rem;
-  text-align: center;
-  flex: 1;
-}
-
-.mc-nav {
-  background: transparent;
-  border: none;
-  font-size: 1.05rem;
-  width: 32px;
-  height: 32px;
+.mc-select {
+  padding: 0.3rem 0.6rem;
   border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 0.9rem;
   cursor: pointer;
+  transition: all 0.2s ease;
 }
-.mc-nav:hover { background: #f1f1f1; }
 
+.mc-select:hover {
+  border-color: #6f42c1;
+}
+
+/* Jours de la semaine */
 .mc-weekdays {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 4px;
-  margin-bottom: 6px;
-  font-size: 0.75rem;
-  color: #666;
   text-align: center;
+  font-weight: bold;
+  color: #6f42c1;
+  margin-bottom: 0.4rem;
 }
 
-.mc-wd { font-weight: 600; }
+.mc-wd {
+  padding: 0.3rem 0;
+  font-size: 0.85rem;
+}
 
+/* Grille des semaines */
 .mc-weeks {
-  display: grid;
+  display: flex;
+  flex-direction: column;
   gap: 4px;
+  width: 100%;
 }
 
 .mc-week {
@@ -215,353 +211,59 @@ h2 {
   gap: 4px;
 }
 
+/* Boutons des jours */
 .mc-day {
-  width: 32px;
-  height: 32px;
-  line-height: 32px;
-  font-size: 0.85rem;
+  aspect-ratio: 1/1; /* Carrés parfaits */
   border: none;
-  background: transparent;
-  border-radius: 6px;
-  text-align: center;
-  cursor: pointer;
-  transition: background 0.12s, transform 0.08s;
-}
-
-.mc-day:hover { background: #f6f6f6; transform: translateY(-1px); }
-
-.mc-day.empty { cursor: default; background: transparent; color: transparent; }
-
-.mc-day.today {
-  /* cercle autour d'aujourd'hui */
-  background-color: #cdbbfa;
-  color: #fff;
-  border-radius: 50%;
-  width: 34px;
-  height: 34px;
-  line-height: 34px;
-  margin: 0 auto;
-  box-shadow: 0 3px 8px rgba(167, 185, 239, 0.25);
-}
-
-.mc-day.selected {
-  outline: 2px solid #cdbbfa;
-  border-radius: 6px;
-  color: #cdbbfa;
-  font-weight: 600;
-}
-
-/* footer */
-.mc-footer {
-  margin-top: 8px;
-  text-align: center;
-}
-
-.mc-today {
-  background: #cdbbfa;
-  color: white;
-  border: none;
-  padding: 6px 8px;
-  border-radius: 6px;
-}
-.mc-select {
-  padding: 4px 6px;
-  font-size: 0.85rem;
-  border: 1px solid #ccc;
-  background: #aec0f2;         /* bleu de ta palette */
-  color: #f5f4fc;  
-  border-radius: 6px;
-  margin: 0 4px;
-  background: #b094f9;
-  cursor: pointer;
-}
-.mc-select:focus {
-  outline: none;
-  border-color: #cdbbfa;
-}
-.mc-select option {
-  background-color: #987ed4;  /* fond des options */
-  color: #ffffff;                /* texte */
-  
-}
-
-/* Date d’aujourd’hui dans le calendrier */
-.mc-day.today {
-  background-color: #b094f9;
-  color: #fff;
-  border-radius: 50%;
-  width: 34px;
-  height: 34px;
-  line-height: 34px;
-  margin: 0 auto;
-  box-shadow: 0 3px 8px rgba(180, 212, 77, 0.35);
-  transition: all 0.2s ease-in-out;   /* ajout animation fluide */
-}
-
-/* Effet hover sur la date d’aujourd’hui */
-.mc-day.today:hover {
-  background-color: #cdbbfa;   
-  transform: scale(1.08);      /* léger zoom */
-  box-shadow: 0 4px 10px rgba(180, 212, 77, 0.35);
-}
-
-/* Bouton "Aujourd’hui" en bas du calendrier */
-.mc-today {
-  background: #b094f9;
-  color: white;
-  border: none;
-  padding: 6px 10px;
-  border-radius: 6px;
-  transition: all 0.2s ease-in-out;
-}
-
-/* Effet hover sur le bouton "Aujourd’hui" */
-.mc-today:hover {
-  background: #cdbbfa;     
-  box-shadow: 0 3px 8px rgba(0,0,0,0.25);
-  cursor: pointer;
-}
-
-/* Conteneur carte */
-/* .mini-card {
-  width: 220px;
-  height: 140px;
-  background: #f5fdf5;
-  border-radius: 16px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 16px;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  cursor: pointer;
-} */
-
-/* .mini-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 6px 14px rgba(0,0,0,0.12);
-}
-
-Icône circulaire
-.mini-card .icon.blue {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 10px;
-  font-size: 22px;
-  color: #fff;
-}
-
-Couleurs disponibles
-.icon.blue { background: #eb2897; }
-.icon.green { background: #10b981; }
-.icon.pink { background: #ec4899; }
-
-Nombre principal
-.mini-card h4 {
-  font-size: 1.6rem;
-  font-weight: 700;
-  margin: 0;
-  color: #273551;
-  text-align: center;
-}
- */
-/* .widget-card span {
+  border-radius: 8px;
   font-size: 0.9rem;
-  font-weight: 500;
-  color: #f0253d  ; 
-  text-align: center;
+  background: #f9f9f9;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 
-valeur principale (h4)
-.widget-card h4 {
-  font-size: 1.3rem;
-  font-weight: 700;
-  margin: 0;
-  color: #112711; 
-}
-.mini-card:hover {
-  transform: translateY(-4px);
+.mc-day:hover:not(.empty):not(:disabled) {
+  background: #e9d8fd;
+  transform: scale(1.05);
 }
 
-texte
-.mini-card .content h4 {
-  margin: 0;
-  font-size: 1.2rem;
-  font-weight: 700;
-  color: #111827;
+/* Jours vides */
+.mc-day.empty {
+  background: transparent;
+  cursor: default;
 }
 
-.mini-card .content .title {
-  display: block;
-  font-size: 0.85rem;
-  color: #3f4e69;
-  margin-bottom: 2px;
+/* Aujourd'hui */
+.mc-day.today {
+  background: #6f42c1;
+  color: #fff;
   font-weight: bold;
 }
 
-couleurs
-.mini-card.blue  .icon { background: #3b82f6; }
-.mini-card.pink  .icon { background: #ec4899; }
-.mini-card.green .icon { background: #10b981; }
-
-variantes de placement
-.mini-card.left  { flex-direction: row; }
-.mini-card.right { flex-direction: row-reverse; }
-.mini-card.top   { flex-direction: column; text-align: center; }
-.mini-card.top .icon { margin-bottom: 6px; }
-  */
-
-  /* Conteneur carte */
-.mini-card {
-  background: #ffffff;
-  border-radius: 16px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  cursor: pointer;
-  height: 160px; /* même hauteur partout */
+/* Jour sélectionné */
+.mc-day.selected {
+  background: #ede4f7;
+  border: 2px solid #6f42c1;
+  font-weight: bold;
 }
 
-.mini-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 6px 14px rgba(0,0,0,0.12);
+/* Pied du calendrier */
+.mc-footer {
+  margin-top: 0.8rem;
 }
 
-/* Icône */
-.mini-card .icon {
-  width: 48px;
-  height: 48px;
-  border-radius: 40%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 10px;
-  font-size: 22px;
+.mc-today {
+  background-color: #6f42c1;
   color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 0.4rem 0.8rem;
+  transition: all 0.3s ease;
 }
 
-/* Couleurs */
-.icon.blue { background: #3b82f6; }
-.icon.green { background: #10b981; }
-.icon.pink { background: #ec4899; }
-
-/* Contenu en colonne bien alignée */
-.mini-card .content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-between;
-  flex-grow: 1;
+.mc-today:hover {
+  background-color: #5a32a3;
 }
-
-/* Titre */
-.mini-card .title {
-  font-size: 0.9rem;
-  font-weight: 500;
-  color: #374151;
-  margin-bottom: 6px;
-  text-align: center;
+.btn btn-sm btn-outline-secondary{
+  
 }
-
-/* Nombre */
-.mini-card h4 {
-  font-size: 1.6rem;
-  font-weight: 700;
-  margin: 0;
-  color: #111827;
-}
-
-/* Sous-titre (toujours présent, même vide) */
-.mini-card .subtitle {
-  font-size: 0.75rem;
-  color: #6b7280;
-  margin-top: 6px;
-  text-align: center;
-  min-height: 18px; /* réserve de place pour aligner */
-}
-.mini-card {
-  background: #ffffff;
-  border-radius: 16px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start; /* IMPORTANT pour uniformiser */
-  padding: 20px;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  cursor: pointer;
-  height: 180px; /* même hauteur partout */
-}
-
-.mini-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 6px 14px rgba(0,0,0,0.12);
-}
-
-/* Icône */
-.mini-card .icon {
-  width: 52px;
-  height: 52px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 12px;
-  font-size: 22px;
-  color: #fff;
-}
-
-.icon.blue { background: #f68c3b; }
-.icon.green { background: #1cda42; }
-.icon.pink { background: #de3232; }
-
-/* Contenu en colonne */
-.mini-card .content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  flex-grow: 1;
-  text-align: center;
-}
-
-.mini-card .title {
-  font-size: 0.9rem;
-  font-weight: 500;
-  color: #374151;
-  margin-bottom: 6px;
-  text-align: center;
-  min-height: 36px; /* réserve de place pour 2 lignes si nécessaire */
-}
-
-
-.mini-card h4 {
-  font-size: 1.6rem;
-  font-weight: 700;
-  margin: 0;
-  color: #111827;
-}
-
-.mini-card .subtitle {
-  font-size: 0.75rem;
-  color: #6b7280;
-  margin-top: 8px;
-  min-height: 18px; /* espace réservé même si vide */
-}
-.mini-card {
-  margin-bottom: 30px; /* espace vertical entre les cartes */
-}
-
-.col-md-6.col-xl-4 {
-  padding-left: 40px;
-  padding-right: 10px;
-}
-

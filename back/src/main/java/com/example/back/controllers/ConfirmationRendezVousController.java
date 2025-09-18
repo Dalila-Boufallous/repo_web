@@ -44,6 +44,7 @@ public class ConfirmationRendezVousController {
                     rdv.setIdActe(newRendezVous.getIdActe());
                     rdv.setIdPersonnel(newRendezVous.getIdPersonnel());
                     rdv.setIdFauteuil(newRendezVous.getIdFauteuil());
+                    rdv.setIdPatient(newRendezVous.getIdPatient()); // 🔹 Ajout du patient
                     rdv.setDateRdvConfirme(newRendezVous.getDateRdvConfirme());
                     rdv.setHeureRdvConfirme(newRendezVous.getHeureRdvConfirme());
                     rdv.setDateArriveePatient(newRendezVous.getDateArriveePatient());

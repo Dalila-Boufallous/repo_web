@@ -2,9 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
+import { Router } from '@angular/router';
 
-
- interface Utilisateur {
+interface Utilisateur {
   idUtilisateur: number;
   nom: string;
   prenom: string;
@@ -19,10 +19,10 @@ import { catchError } from 'rxjs/operators';
   dateNaissance?: string;
 }
 
-
 export interface ConfirmationRendezVous {
   idDimConfirmationRendezVous?: number;
   id: number;
+  idPatient: number; // ✅ Ajout du patient
   idActe: string;
   idPersonnel: string;
   idFauteuil: string;
@@ -52,6 +52,8 @@ export class ConfirmationRendezVousComponent implements OnInit {
   selectedId: number | null = null;
   deleteSuccess: boolean = false;
   saveSuccess: boolean = false;
+  todayRendezVous: ConfirmationRendezVous[] = [];
+  todayRendezVousCount: number = 0;
 
   // Ajout
   newRdv: Partial<ConfirmationRendezVous> = {};
@@ -59,27 +61,21 @@ export class ConfirmationRendezVousComponent implements OnInit {
 
   selectedDate: string = '';
   private apiUrl = 'http://localhost:8081/api/rendezvous';
-  actesList: string[] = [];       // liste de tous les actes existants
+  actesList: string[] = [];
   personnelsList: Utilisateur[] = [];
-  // liste de tous les personnels existants
- 
-  // -------------------------
-  //  carte "Rendez-vous de la semaine"
-  // -------------------------
+  searchRdv: string = '';
 
-  constructor(private http: HttpClient) {}
+
+  constructor(private http: HttpClient, private router: Router) {}
 
   ngOnInit(): void {
     this.getRendezVous();
     this.initCalendar();
-    this.calculateWeeklyRendezVous(); // initialise le compteur
-      // récupération des actes/personnels 
-    
-
+    this.calculateWeeklyRendezVous();
   }
 
   // -------------------------
-  // Fonctions pour récupérer et filtrer les rendez-vous
+  // Récupération des RDV
   // -------------------------
   getRendezVous(): void {
     this.loading = true;
@@ -100,22 +96,35 @@ export class ConfirmationRendezVousComponent implements OnInit {
       });
   }
 
-  applyDateFilter(): void {
-    if (!this.selectedDate) {
-      this.filteredRendezVousList = [...this.rendezVousList];
-      return;
-    }
-    this.filteredRendezVousList = this.rendezVousList.filter(rdv =>
-      rdv.dateRdvConfirme === this.selectedDate
-    );
+applyDateFilter(): void {
+  if (!this.selectedDate) {
+    this.filteredRendezVousList = [...this.rendezVousList];
+    return;
   }
+  this.filteredRendezVousList = this.rendezVousList.filter(rdv =>
+    rdv.dateRdvConfirme === this.selectedDate
+  );
+}
 
-  showTodayRendezVous(): void {
-    const today = new Date();
-    this.selectedDate = this.formatDate(today);
-    this.applyDateFilter();
-    this.calculateWeeklyRendezVous();
-  }
+
+ showTodayRendezVous(): void {
+  // 1) Construire la date d’aujourd’hui au format "yyyy-MM-dd"
+  const todayStr = this.formatDate(new Date());
+
+  // 2) Utiliser le même canal de filtrage que le reste de l’app
+  this.selectedDate = todayStr;
+  this.applyDateFilter(); // => remplit filteredRendezVousList
+
+  // 3) Mettre à jour le compteur "RDV du jour"
+  this.todayRendezVousCount = this.filteredRendezVousList.length;
+
+  // (optionnel) Recentrer le mini-calendrier sur le mois courant
+  this.calYear = new Date().getFullYear();
+  this.calMonth = new Date().getMonth();
+  this.buildCalendar();
+}
+
+
 
   private formatDate(date: Date): string {
     const yyyy = date.getFullYear();
@@ -148,7 +157,6 @@ export class ConfirmationRendezVousComponent implements OnInit {
           if (index > -1) this.rendezVousList[index] = updatedRdv;
           this.applyDateFilter();
           this.cancelEdit();
-
           this.saveSuccess = true;
           setTimeout(() => this.saveSuccess = false, 3000);
         },
@@ -171,7 +179,6 @@ export class ConfirmationRendezVousComponent implements OnInit {
 
   delete(id: number | null): void {
     if (!id) return;
-
     this.http.delete(`${this.apiUrl}/${id}`)
       .pipe(catchError(error => this.handleError(error)))
       .subscribe({
@@ -190,61 +197,54 @@ export class ConfirmationRendezVousComponent implements OnInit {
       });
   }
 
-  // Ajout rendez-vous
+  // -------------------------
+  // Ajout
+  // -------------------------
+  addRendezVous(): void {
+    this.errorMessage = '';
 
-addRendezVous(): void {
-  this.errorMessage = '';
+    if (!this.newRdv.id) {
+      this.errorMessage = 'Veuillez saisir un ID pour le rendez-vous.';
+      return;
+    }
+    if (this.rendezVousList.some(r => r.id === this.newRdv.id)) {
+      this.errorMessage = 'L’ID du rendez-vous existe déjà.';
+      return;
+    }
+    if (!this.newRdv.idPatient) {
+      this.errorMessage = 'Veuillez sélectionner un patient.';
+      return;
+    }
+    if (!this.newRdv.idActe) {
+      this.errorMessage = 'Veuillez sélectionner un acte.';
+      return;
+    }
+    if (!this.newRdv.idPersonnel) {
+      this.errorMessage = 'Veuillez sélectionner un personnel.';
+      return;
+    }
+    if (!this.newRdv.idFauteuil) {
+      this.errorMessage = 'Veuillez sélectionner un fauteuil.';
+      return;
+    }
 
-  // Validation de l'ID rendez-vous
-  if (!this.newRdv.id) {
-    this.errorMessage = 'Veuillez saisir un ID pour le rendez-vous.';
-    return;
+    const payload = { ...this.newRdv };
+    delete payload.idDimConfirmationRendezVous;
+
+    this.http.post<ConfirmationRendezVous>(this.apiUrl, payload)
+      .pipe(catchError(error => this.handleError(error)))
+      .subscribe({
+        next: addedRdv => {
+          this.rendezVousList.push(addedRdv);
+          this.applyDateFilter();
+          this.newRdv = {};
+          this.addSuccess = true;
+          setTimeout(() => this.addSuccess = false, 3000);
+          this.calculateWeeklyRendezVous();
+        },
+        error: () => this.errorMessage = 'Erreur lors de l’ajout'
+      });
   }
-  if (this.rendezVousList.some(r => r.id === this.newRdv.id)) {
-    this.errorMessage = 'L’ID du rendez-vous existe déjà, veuillez en choisir un nouveau.';
-    return;
-  }
-
-  // Validation de l'acte
-  if (!this.newRdv.idActe) {
-    this.errorMessage = 'Veuillez sélectionner un acte.';
-    return;
-  }
-  
-  // Validation du personnel
-  if (!this.newRdv.idPersonnel) {
-    this.errorMessage = 'Veuillez sélectionner un personnel.';
-    return;
-  }
-  
-
-  // Validation du fauteuil
-  if (!this.newRdv.idFauteuil) {
-    this.errorMessage = 'Veuillez sélectionner un fauteuil.';
-    return;
-  }
- 
-  // Si tout est correct, envoi au serveur
-  const payload = { ...this.newRdv };
-  delete payload.idDimConfirmationRendezVous;
-
-  this.http.post<ConfirmationRendezVous>(this.apiUrl, payload)
-    .pipe(catchError(error => this.handleError(error)))
-    .subscribe({
-      next: addedRdv => {
-        this.rendezVousList.push(addedRdv);
-        this.applyDateFilter();
-        this.newRdv = {};
-        this.addSuccess = true;
-        setTimeout(() => this.addSuccess = false, 3000);
-        this.errorMessage = '';
-        this.calculateWeeklyRendezVous();
-      },
-      error: () => this.errorMessage = 'Erreur lors de l’ajout'
-    });
-}
-
-
 
   private handleError(error: HttpErrorResponse) {
     let message = '';
@@ -269,7 +269,7 @@ addRendezVous(): void {
 
   initCalendar(): void {
     const now = new Date();
-    this.yearRange = Array.from({length: 71}, (_, i) => 1980 + i);
+    this.yearRange = Array.from({ length: 71 }, (_, i) => 1980 + i);
     if (this.selectedDate) {
       const parts = this.selectedDate.split('-').map(p => +p);
       if (parts.length === 3) {
@@ -324,40 +324,108 @@ addRendezVous(): void {
   }
 
   // -------------------------
-  // NOUVELLES FONCTIONS POUR LA SEMAINE
+  // RDV semaine
   // -------------------------
   weeklyRendezVousCount: number = 0;
 
-calculateWeeklyRendezVous(): void {
-  const today = new Date();
-  const day = today.getDay(); // 0 = dimanche, 1 = lundi, ...
-  const monday = new Date(today);
-  monday.setDate(today.getDate() - ((day + 6) % 7)); // lundi
-  const saturday = new Date(monday);
-  saturday.setDate(monday.getDate() + 5); // samedi
+  calculateWeeklyRendezVous(): void {
+    const today = new Date();
+    const day = today.getDay();
+    const monday = new Date(today);
+    monday.setDate(today.getDate() - ((day + 6) % 7));
+    const saturday = new Date(monday);
+    saturday.setDate(monday.getDate() + 5);
 
-  // Calcul uniquement à partir de la liste complète
-  this.weeklyRendezVousCount = this.rendezVousList.filter(rdv => {
-    const rdvDate = new Date(rdv.dateRdvConfirme);
-    return rdvDate >= monday && rdvDate <= saturday;
-  }).length;
+    this.weeklyRendezVousCount = this.rendezVousList.filter(rdv => {
+      const rdvDate = new Date(rdv.dateRdvConfirme);
+      return rdvDate >= monday && rdvDate <= saturday;
+    }).length;
+  }
+
+  showWeekRendezVous(): void {
+    const today = new Date();
+    const dayOfWeek = today.getDay();
+    const monday = new Date(today);
+    monday.setDate(today.getDate() - ((dayOfWeek + 6) % 7));
+    const saturday = new Date(monday);
+    saturday.setDate(monday.getDate() + 5);
+
+    this.filteredRendezVousList = this.rendezVousList.filter(rdv => {
+      const rdvDate = new Date(rdv.dateRdvConfirme);
+      return rdvDate >= monday && rdvDate <= saturday;
+    });
+
+    this.calculateWeeklyRendezVous();
+  }
+ get filteredRendezVous(): ConfirmationRendezVous[] {
+  const base = this.filteredRendezVousList; // ✅ au lieu de rendezVousList
+  const term = (this.searchRdv || '').toLowerCase().trim();
+  if (!term) return base;
+
+  return base.filter(rdv => {
+    return Object.entries(rdv).some(([key, value]) => {
+      if (value === null || value === undefined) return false;
+
+      let strValue = '';
+
+      if (key.toLowerCase().includes('date')) {
+        const d = new Date((value as string) + 'T00:00:00');
+        if (!isNaN(d.getTime())) {
+          strValue = d.toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' });
+        }
+      } else if (typeof value === 'number') {
+        strValue = value.toString();
+      } else {
+        strValue = value.toString();
+      }
+
+      return strValue.toLowerCase().includes(term);
+    });
+  });
 }
 
-showWeekRendezVous(): void {
-  // Optionnel : mettre à jour filteredRendezVousList si tu veux afficher les RDV de la semaine
+
+showToday(): void {
   const today = new Date();
-  const dayOfWeek = today.getDay();
-  const monday = new Date(today);
-  monday.setDate(today.getDate() - ((dayOfWeek + 6) % 7));
-  const saturday = new Date(monday);
-  saturday.setDate(monday.getDate() + 5);
+  this.selectedDate = this.formatDate(today); 
+  this.applyDateFilter();
+  this.todayRendezVousCount = this.filteredRendezVousList.length;
+}
 
-  this.filteredRendezVousList = this.rendezVousList.filter(rdv => {
-    const rdvDate = new Date(rdv.dateRdvConfirme);
-    return rdvDate >= monday && rdvDate <= saturday;
-  });
 
-  // Toujours recalculer le compteur semaine
+clearDateFilter(): void {
+  this.selectedDate = '';
+  this.applyDateFilter();
   this.calculateWeeklyRendezVous();
 }
+
+
+resetFilters(): void {
+  // 1) Réinitialiser les critères
+  this.selectedDate = '';
+  this.searchRdv = '';
+
+  // 2) Revenir à la liste complète
+  this.filteredRendezVousList = [...this.rendezVousList];
+
+  // 3) Remettre les “RDV du jour” (si tu les affiches séparément)
+  this.todayRendezVous = [];
+  this.todayRendezVousCount = 0;
+
+  // 4) Recalculer les indicateurs utiles (ex. compteur de la semaine)
+  this.calculateWeeklyRendezVous();
+
+  // 5) Recentrer le mini-calendrier sur le mois courant
+  const now = new Date();
+  this.calYear = now.getFullYear();
+  this.calMonth = now.getMonth();
+  this.buildCalendar();
+}
+
+
+goToPatient(id: number | null | undefined): void {
+  if (!id) return;
+  this.router.navigate(['bootstrap-table/patients'], { queryParams: { patientId: id } });
+}
+
 }

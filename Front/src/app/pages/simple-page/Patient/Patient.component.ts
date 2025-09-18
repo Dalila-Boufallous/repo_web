@@ -1,16 +1,19 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { FormsModule } from '@angular/forms';
-
+import { ActivatedRoute, Router } from '@angular/router';
 
 export interface Patient {
-  idDimPatient?: number;
-  idPersonne?: number;
-  nom?: string ;
+  idDimPatient?: number | null;
+  idPersonne?: number | null;
+  nom?: string;
   prenom?: string;
   genre?: string;
-  dateNaissance?: string;
-  dateCreation?: string;
+  age?: number | null;
+  dateNaissance?: string;    // format string (ISO ou yyyy-MM-dd)
+  dateCreation?: string;     // format string (ISO ou yyyy-MM-dd)
+  assistanteResp?: number | null;
+  praticienResp?: number | null;
+  region?: string;
   statutMarital?: string;
   couvertureSociale?: string;
 }
@@ -22,18 +25,31 @@ export interface Patient {
 })
 export class PatientComponent implements OnInit {
   patients: Patient[] = [];
+
+  // ➜ ID ciblé depuis /patients?patientId=XXX
+  selectedPatientId: number | null = null;
+
+  // Formulaire d’ajout
   newPatient: Patient = {
-  idPersonne: null,
-  nom: '',
-  prenom: '',
-  genre: '',
-  dateNaissance: '',
-  dateCreation: '',
-  statutMarital: '',
-  couvertureSociale: ''
-};
+    idPersonne: null,
+    nom: '',
+    prenom: '',
+    genre: '',
+    age: null,
+    dateNaissance: '',
+    dateCreation: '',
+    assistanteResp: null,
+    praticienResp: null,
+    region: '',
+    statutMarital: '',
+    couvertureSociale: ''
+  };
+
+  // Edition
   editedPatient: Patient = {};
   editingPatientId: number | null = null;
+
+  // Recherche texte
   searchPatient: string = '';
 
   // Messages
@@ -45,55 +61,67 @@ export class PatientComponent implements OnInit {
   showDeleteConfirm = false;
   selectedDeleteId: number | null = null;
 
+  // UI divers
+  searchWidth = 300; // largeur fixe en pixels
+
   private baseUrl = 'http://localhost:8081/api/patients';
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private route: ActivatedRoute,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
+    // 1) Écoute des query params (patientId)
+    this.route.queryParamMap.subscribe(params => {
+      const id = params.get('patientId');
+      this.selectedPatientId = id ? +id : null;
+    });
+
+    // 2) Chargement de la liste
     this.loadPatients();
   }
 
+  // ------- CRUD -------
   loadPatients(): void {
-    this.http.get<Patient[]>(this.baseUrl).subscribe(data => this.patients = data);
+    this.http.get<Patient[]>(this.baseUrl).subscribe(data => {
+      this.patients = Array.isArray(data) ? data : [];
+    });
   }
 
-  // Ajouter ou sauver patient
-  // Ajouter cette méthode dans PatientComponent
-saveEditedPatient(patient: Patient): void {
-  // Copier les valeurs éditées
-  const updatedPatient = { ...patient, ...this.editedPatient };
+  saveEditedPatient(patient: Patient): void {
+    const updatedPatient = { ...patient, ...this.editedPatient };
+    this.http.put<Patient>(`${this.baseUrl}/${patient.idDimPatient}`, updatedPatient)
+      .subscribe({
+        next: data => {
+          const index = this.patients.findIndex(p => p.idDimPatient === patient.idDimPatient);
+          if (index !== -1) this.patients[index] = data;
 
-  this.http.put<Patient>(`${this.baseUrl}/${patient.idDimPatient}`, updatedPatient)
-    .subscribe({
-      next: data => {
-        // Mettre à jour la liste localement
-        const index = this.patients.findIndex(p => p.idDimPatient === patient.idDimPatient);
-        if (index !== -1) this.patients[index] = data;
+          this.saveSuccess = true;
+          setTimeout(() => this.saveSuccess = false, 2000);
 
-        this.saveSuccess = true;
-        setTimeout(() => this.saveSuccess = false, 2000);
+          this.cancelEdit();
+        },
+        error: err => console.error('Erreur mise à jour patient', err)
+      });
+  }
 
-        this.cancelEdit();
-      },
-      error: err => console.error('Erreur mise à jour patient', err)
-    });
+ startEdit(patient: Patient): void {
+  
+  this.editingPatientId = (patient.idDimPatient != null) ? patient.idDimPatient : null;
+
+  this.editedPatient = { ...patient };
 }
 
-
-
-  // Commencer l’édition
-  startEdit(patient: Patient): void {
-    this.editingPatientId = patient.idDimPatient!;
-    this.editedPatient = { ...patient };
-  }
 
   cancelEdit(): void {
     this.editingPatientId = null;
     this.editedPatient = {};
   }
 
-  // Pop-up suppression
-  confirmDelete(id: number): void {
+  confirmDelete(id: number | null | undefined): void {
+    if (id == null) return;
     this.selectedDeleteId = id;
     this.showDeleteConfirm = true;
   }
@@ -105,50 +133,93 @@ saveEditedPatient(patient: Patient): void {
 
   deletePatient(): void {
     if (this.selectedDeleteId === null) return;
-    this.http.delete(`${this.baseUrl}/${this.selectedDeleteId}`).subscribe(() => {
-      this.loadPatients();
-      this.showDeleteConfirm = false;
-      this.deleteSuccess = true;
-      setTimeout(() => this.deleteSuccess = false, 2000);
-      this.selectedDeleteId = null;
+    this.http.delete(`${this.baseUrl}/${this.selectedDeleteId}`).subscribe({
+      next: () => {
+        this.loadPatients();
+        this.showDeleteConfirm = false;
+        this.deleteSuccess = true;
+        setTimeout(() => this.deleteSuccess = false, 2000);
+        this.selectedDeleteId = null;
+      },
+      error: err => console.error('Erreur suppression patient', err)
     });
   }
-  get filteredPatients() {
-  return this.patients.filter(p =>
-    p.nom.toLowerCase().includes((this.searchPatient || '').toLowerCase()) ||
-    p.prenom.toLowerCase().includes((this.searchPatient || '').toLowerCase())
-  );
-}
-// Ajouter un nouveau patient
-addPatient(): void {
-  // Crée une copie pour éviter les références directes
-  const patientToAdd: Patient = { ...this.newPatient };
 
-  this.http.post<Patient>(this.baseUrl, patientToAdd)
-    .subscribe({
-      next: data => {
-        // Actualiser la liste des patients
-        this.loadPatients();
+  addPatient(): void {
+    const patientToAdd: Patient = { ...this.newPatient };
 
-        // Message succès
-        this.addSuccess = true;
-        setTimeout(() => this.addSuccess = false, 2000);
+    this.http.post<Patient>(this.baseUrl, patientToAdd)
+      .subscribe({
+        next: () => {
+          this.loadPatients();
 
-        // Réinitialiser le formulaire
-        this.newPatient = {
-          idPersonne: null,
-          nom: '',
-          prenom: '',
-          genre: '',
-          dateNaissance: '',
-          dateCreation: '',
-          statutMarital: '',
-          couvertureSociale: ''
-        };
-      },
-      error: err => console.error('Erreur ajout patient', err)
+          this.addSuccess = true;
+          setTimeout(() => this.addSuccess = false, 2000);
+
+          // reset minimal
+          this.newPatient = {
+            idPersonne: null,
+            nom: '',
+            prenom: '',
+            genre: '',
+            age: null,
+            dateNaissance: '',
+            dateCreation: '',
+            assistanteResp: null,
+            praticienResp: null,
+            region: '',
+            statutMarital: '',
+            couvertureSociale: ''
+          };
+        },
+        error: err => console.error('Erreur ajout patient', err)
+      });
+  }
+
+  // ------- Filtrage / Recherche -------
+  /**
+   * Enlève le filtre de patient ciblé et nettoie l’URL
+   */
+  clearPatientFilter(): void {
+    this.selectedPatientId = null;
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { patientId: null },
+      queryParamsHandling: 'merge'
     });
-}
+  }
 
+  /**
+   * Liste affichée = (patients filtrés par ID ciblé) + recherche texte
+   */
+  get filteredPatients(): Patient[] {
+  // 1) Filtre UNIQUEMENT par idPersonne si un id est passé dans l’URL
+  let base = this.patients;
+  if (this.selectedPatientId != null) {
+    base = base.filter(p => p.idPersonne === this.selectedPatientId);
+  }
+
+  // 2) Recherche texte (inchangé)
+  const term = (this.searchPatient || '').toLowerCase().trim();
+  if (!term) return base;
+
+  return base.filter(patient => {
+    return Object.entries(patient).some(([_, value]) => {
+      if (value === null || value === undefined) return false;
+
+      let strValue = '';
+      if (value instanceof Date) {
+        strValue = value.toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' });
+      } else if (typeof value === 'string' && !isNaN(Date.parse(value))) {
+        const d = new Date(value);
+        strValue = isNaN(d.getTime()) ? value
+          : d.toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' });
+      } else {
+        strValue = value.toString();
+      }
+      return strValue.toLowerCase().includes(term);
+    });
+  });
+}
 
 }

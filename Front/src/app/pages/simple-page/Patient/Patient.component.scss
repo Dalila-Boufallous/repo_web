@@ -139,3 +139,62 @@
     width: 100%;
   }
 }
+.search-wrapper {
+  width: 300px !important;     /* largeur fixe */
+  min-width: 300px !important; /* empêche le rétrécissement */
+}
+
+.search-box {
+  width: 100% !important;      /* prend toute la largeur du wrapper */
+  min-width: 300px !important; /* empêche que flex ou Bootstrap rétrécisse */
+  box-sizing: border-box !important;
+}
+.cards-container {
+  display: flex;
+  flex-wrap: wrap;       /* les cartes passent à la ligne si nécessaire */
+  gap: 16px;             /* espace entre les cartes */
+  justify-content: flex-start; /* aligne à gauche */
+}
+
+
+cards-scroll-wrapper {
+  max-height: 70vh;    
+  overflow-y: auto;
+  overflow-x: auto;
+  padding: 10px;
+}
+
+.cards-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* colonnes flexibles */
+  gap: 16px;
+}
+
+.patient-card {
+  width: 100%;
+}
+/* Bouton violet */
+.btn-violet {
+  background-color: #e72ded !important; /* violet */
+  color: white;
+  padding: 6px 12px; /* plus petit */
+  font-size: 14px;
+  border-radius: 5px;
+  border: none;
+  transition: background 0.3s;
+}
+
+.btn-violet:hover {
+  background-color: #7a1edb;
+}
+
+/* Autre bouton - même taille que violet */
+.btn-small {
+  padding: 6px 12px;
+  font-size: 14px;
+}
+
+/* Flex container pour aligner les boutons sous le calendrier */
+.calendar-container .d-flex {
+  justify-content: center;
+}
