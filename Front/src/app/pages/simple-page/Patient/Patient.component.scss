@@ -198,3 +198,31 @@ cards-scroll-wrapper {
 .calendar-container .d-flex {
   justify-content: center;
 }
+
+/* Bouton Contact dans la carte patient */
+
+/* Bouton Contact compact et épuré */
+/* Bouton Contact stylé pour carte patient */
+.patient-card .btn-contact-compact {
+  background-color: #ffffff;   /* fond blanc */
+  color: #3166bb;             /* texte bleu Gmail */
+  border: 1px solid #072658;  /* contour léger */
+  border-radius: 6px;          /* coins arrondis */
+  padding: 0.25rem 0.5rem;     /* un peu plus grand */
+  font-size: 0.85rem;          /* texte plus lisible */
+  display: inline-flex;
+  align-items: center;         /* aligner icône et texte verticalement */
+  gap: 0.3rem;                 /* espacement icône / texte */
+  line-height: 1;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  margin-left: 4.1rem;
+}
+
+/* Effet hover */
+.patient-card .btn-contact-compact:hover {
+  background-color: #eaf1ff;  /* léger fond bleu au survol */
+  transform: translateY(-1px);
+  color: #3367D6;             /* texte plus foncé */
+  border-color: #3367D6;
+}

@@ -16,6 +16,7 @@ import { PatientComponent } from './Patient.component';
     FormsModule,
     HttpClientModule,
     PatientRoutingModule,
+    SharedModule,
   ]
 })
 export class PatientModule { }

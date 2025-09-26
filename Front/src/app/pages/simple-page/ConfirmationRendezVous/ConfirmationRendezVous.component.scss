@@ -151,6 +151,8 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   padding: 1rem;
   font-family: "Segoe UI", Tahoma, sans-serif;
+  display: flex;
+  align-items: flex-start;
 }
 
 /* Calendrier */
@@ -158,6 +160,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  width: 100%; 
 }
 
 /* En-tête (sélecteurs mois & année) */
@@ -182,34 +185,30 @@
   border-color: #6f42c1;
 }
 
-/* Jours de la semaine */
+/* Grille des semaines */
 .mc-weekdays {
   display: grid;
-  grid-template-columns: repeat(7, 1fr);
+  grid-template-columns: repeat(7, 1fr); /* 7 colonnes égales */
   text-align: center;
   font-weight: bold;
   color: #6f42c1;
   margin-bottom: 0.4rem;
+  gap: 4px; /* mettre le même gap que pour .mc-week */
 }
 
-.mc-wd {
-  padding: 0.3rem 0;
-  font-size: 0.85rem;
-}
-
-/* Grille des semaines */
 .mc-weeks {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 4px; /* même gap que pour les jours de la semaine */
   width: 100%;
 }
 
 .mc-week {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 4px;
+  gap: 4px; /* exactement le même que .mc-weekdays */
 }
+
 
 /* Boutons des jours */
 .mc-day {
@@ -220,6 +219,10 @@
   background: #f9f9f9;
   cursor: pointer;
   transition: all 0.2s ease;
+}
+.mc-weekdays, .mc-week {
+  width: 100%; /* S’assurer que la grille occupe toute la largeur */
+  box-sizing: border-box;
 }
 
 .mc-day:hover:not(.empty):not(:disabled) {
@@ -242,7 +245,7 @@
 
 /* Jour sélectionné */
 .mc-day.selected {
-  background: #ede4f7;
+  background: #c194f4;
   border: 2px solid #6f42c1;
   font-weight: bold;
 }
@@ -264,6 +267,40 @@
 .mc-today:hover {
   background-color: #5a32a3;
 }
-.btn btn-sm btn-outline-secondary{
-  
+.mc-weekdays, .mc-week {
+  justify-items: center;
+}
+
+
+
+/* Cibler le bouton Réinitialiser dans le footer du mini-calendrier */
+.mc-footer .btn-outline-secondary {
+  background-color: #a9a8a8ec;   /* Rouge de base */
+  color: #fff;                  /* Texte blanc */
+  border-radius: 8px;           /* Coins arrondis */
+  border: none;                 /* Supprimer le contour Bootstrap */
+  transition: all 0.3s ease;
+}
+
+.mc-footer .btn-outline-secondary:hover {
+  background-color: #6e6c6d;/* Vert au survol */
+  transform: translateY(-2px);  /* Légère animation */
+  color: #fff;                  /* S'assurer que le texte reste blanc */
+}
+
+/* Bouton Rappel uniquement */
+.calendar-reminder__button {
+  padding: 0.6rem 1.4rem;
+  font-size: medium;
+  border-radius: 5px;
+  border: none;
+  background-color: #5acc4b; /* vert */
+  color: #fff;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-left: 130px ;
+}
+
+.calendar-reminder__button:hover {
+  background-color: #2aa444; /* vert foncé au hover */
 }

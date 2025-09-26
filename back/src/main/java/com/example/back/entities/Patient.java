@@ -56,6 +56,14 @@ public class Patient {
     @Column(name = "Couverture_sociale", length = 50)
     private String couvertureSociale;
 
+    @Column(name = "email")   // adapte le nom de colonne si besoin
+    private String email;
+
+    // alias explicite (optionnel si @Data, mais OK)
+    public String getEmail() { 
+        return email; 
+    }
+
     // Constructeur sans-args requis par JPA
     public Patient() {}
 

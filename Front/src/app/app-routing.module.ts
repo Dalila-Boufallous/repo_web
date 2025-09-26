@@ -46,7 +46,17 @@ const routes: Routes = [
         path: 'simple-page',
         loadChildren: () => import('./pages/simple-page/simple-page.module')
           .then(m => m.SimplePageModule)
-      }
+      },
+      {
+  path: 'patients',
+  loadChildren: () => import('./pages/simple-page/Patient/Patient.module')
+    .then(m => m.PatientModule)
+  },
+  {
+  path: 'personnels',
+  loadChildren: () => import('./pages/simple-page/personnel/personnel.module')
+    .then(m => m.PersonnelModule)
+  }
     ]
   },
   {
@@ -60,16 +70,6 @@ const routes: Routes = [
       }
     ]
     
-  },
-  {
-  path: 'bootstrap-table/patients',
-  loadChildren: () => import('./pages/simple-page/Patient/Patient.module')
-    .then(m => m.PatientModule)
-  },
-  {
-  path: 'bootstrap-table/personnel',
-  loadChildren: () => import('./pages/simple-page/personnel/personnel.module')
-    .then(m => m.PersonnelModule)
   }
 ];
 

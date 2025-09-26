@@ -48,9 +48,9 @@
       [(ngModel)]="searchRdv"
     >
   </div>
-
+  
   <!-- Colonne gauche : Mini-calendrier -->
-  <div class="col-md-4">
+  <div class="d-flex align-items-start">
     <!-- Mini-calendrier -->
     <div class="mini-calendar-wrapper mb-3">
       <div class="mini-calendar">
@@ -81,15 +81,17 @@
         <div class="mc-footer">
           <button class="btn btn-sm mc-today" (click)="showTodayRendezVous()">Rendez-vous du jour</button>
         <button class="btn btn-sm btn-outline-secondary" type="button" (click)="resetFilters()">
-    Réinitialiser
-  </button>
-        </div>
-      
+            Réinitialiser
+        </button>
+        
+      </div>
       </div>
     </div>
+    <div class="align-self-start">
+    <button class="calendar-reminder__button" (click)="sendReminder()">Rappel automatique</button>
   </div>
-
-
+  </div>
+  
   <!-- Formulaire ajout -->
   <div class="card mb-4 shadow-sm rounded-3">
     <div class="card-header bg-light">
@@ -200,8 +202,10 @@
               <input type="date" [(ngModel)]="editedRendezVous.dateRdvConfirme" class="form-control mb-2">
               <input type="time" [(ngModel)]="editedRendezVous.heureRdvConfirme" class="form-control mb-2">
               <input type="number" [(ngModel)]="editedRendezVous.rdvDuree" class="form-control mb-2" placeholder="Durée (min)">
-              <button class="btn btn-success btn-sm me-2" (click)="saveRendezVous()">💾 Enregistrer</button>
-              <button class="btn btn-secondary btn-sm" (click)="cancelEdit()">❌ Annuler</button>
+              <button class="btn btn-success btn-sm me-2" (click)="saveRendezVous()">
+               <i class="icofont icofont-check-circled"></i> Enregistrer</button>
+              <button class="btn btn-secondary btn-sm" (click)="cancelEdit()">
+                <i class="icofont icofont-ban"></i>Annuler</button>
             </div>
 
             <!-- Actions -->
@@ -209,10 +213,16 @@
               <button *ngIf="editRendezVousId !== rdv.idDimConfirmationRendezVous"
                       class="btn btn-sm btn-primary"
                       (click)="editRendezVous(rdv)">
-                <i class="icofont-edit"></i> Modifier
+                <i class="icofont icofont-edit"></i> Modifier
               </button>
+               <button class="btn btn-sm btn-outline-primary"
+            (click)="sendEmailReminder(rdv.idDimConfirmationRendezVous)"
+            [disabled]="isSending(rdv)">
+      <span *ngIf="isSending(rdv)">Envoi…</span>
+      <span *ngIf="!isSending(rdv)"><i class="ti-email"></i> Rappel</span>
+    </button>
               <button class="btn btn-sm btn-danger" (click)="confirmDelete(rdv.idDimConfirmationRendezVous)">
-                <i class="icofont-trash"></i> Supprimer
+                <i class="icofont icofont-trash"></i> Supprimer
               </button>
             </div>
           </div>

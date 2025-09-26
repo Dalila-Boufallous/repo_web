@@ -1,3 +1,5 @@
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/icofont@1.0.1/icofont.min.css">
+
 <div class="container mt-4">
   <!-- Titre -->
   <h2 class="mb-4 text-center">Gestion des Patients</h2>
@@ -130,103 +132,121 @@
     </div>
   </div>
 
-  <!-- Liste Patients avec scroll vertical & horizontal -->
-  <div class="cards-scroll-wrapper">
-    <div class="cards-container">
-      <div class="patient-card" *ngFor="let patient of filteredPatients">
-        <div class="card shadow-sm rounded-3 h-100">
-          <div class="card-body">
-            <h5 class="card-title">
-              <span *ngIf="editingPatientId !== patient.idDimPatient">
-                <i class="icofont icofont-user-alt-3 blue"></i>
-                {{ patient.nom }} {{ patient.prenom }}
-              </span>
-              <div *ngIf="editingPatientId === patient.idDimPatient" class="row g-2">
-                <div class="col-6">
-                  <input [(ngModel)]="editedPatient.nom" class="form-control form-control-sm">
-                </div>
-                <div class="col-6">
-                  <input [(ngModel)]="editedPatient.prenom" class="form-control form-control-sm">
-                </div>
+ <!-- Liste Patients avec scroll vertical & horizontal -->
+<div class="cards-scroll-wrapper">
+  <div class="cards-container">
+    <div class="patient-card" *ngFor="let patient of filteredPatients">
+      <div class="card shadow-sm rounded-3 h-100 position-relative">
+
+        <!-- Bouton contact intégré dans la carte (haut droite) -->
+         
+
+        <div class="card-body">
+          <!-- Nom du patient -->
+          <h5 class="card-title">
+            <span *ngIf="editingPatientId !== patient.idDimPatient">
+              <i class="icofont icofont-user-alt-3 blue"></i>
+              {{ patient.nom }} {{ patient.prenom }}
+            </span>
+            <a 
+               class="btn-contact-compact" 
+               [href]="'mailto:' + patient.email + '?subject=Rendez-vous&body=Bonjour ' + patient.nom + ','" 
+               target="_blank"
+               title="Contacter le patient">
+            <i class="icofont icofont-email"></i> Contact
+          </a>
+            <div *ngIf="editingPatientId === patient.idDimPatient" class="row g-2">
+              <div class="col-6">
+                <input [(ngModel)]="editedPatient.nom" class="form-control form-control-sm">
               </div>
-            </h5>
-
-            <h6 class="card-subtitle mb-2 text-muted">ID: {{ patient.idDimPatient }}</h6>
-
-            <ul class="list-unstyled mt-3 mb-4 small">
-              <li>
-                <i class="icofont icofont-gender text-primary"></i> Genre:
-                <span *ngIf="editingPatientId !== patient.idDimPatient">{{ patient.genre }}</span>
-                <select *ngIf="editingPatientId === patient.idDimPatient" [(ngModel)]="editedPatient.genre" class="form-select form-select-sm">
-                  <option value="M">M</option>
-                  <option value="F">F</option>
-                </select>
-              </li>
-              <li>
-                <i class="icofont icofont-birthday-cake text-danger"></i> Âge:
-                <span *ngIf="editingPatientId !== patient.idDimPatient">{{ patient.age }}</span>
-                <input *ngIf="editingPatientId === patient.idDimPatient" type="number" [(ngModel)]="editedPatient.age" class="form-control form-control-sm">
-              </li>
-              <li>
-                <i class="icofont icofont-birthday-cake text-danger"></i> Date Naissance:
-                <span *ngIf="editingPatientId !== patient.idDimPatient">{{ patient.dateNaissance | date }}</span>
-                <input *ngIf="editingPatientId === patient.idDimPatient" type="date" [(ngModel)]="editedPatient.dateNaissance" class="form-control form-control-sm">
-              </li>
-              <li>
-                <i class="icofont icofont-calendar text-success"></i> Date Création:
-                <span *ngIf="editingPatientId !== patient.idDimPatient">{{ patient.dateCreation | date }}</span>
-                <input *ngIf="editingPatientId === patient.idDimPatient" type="date" [(ngModel)]="editedPatient.dateCreation" class="form-control form-control-sm">
-              </li>
-              <li>
-                <i class="icofont icofont-nurse text-info"></i> Assistante Responsable:
-                <span *ngIf="editingPatientId !== patient.idDimPatient">{{ patient.assistanteResp }}</span>
-                <input *ngIf="editingPatientId === patient.idDimPatient" type="number" [(ngModel)]="editedPatient.assistanteResp" class="form-control form-control-sm">
-              </li>
-              <li>
-                <i class="icofont icofont-doctor text-warning"></i> Praticien Responsable:
-                <span *ngIf="editingPatientId !== patient.idDimPatient">{{ patient.praticienResp }}</span>
-                <input *ngIf="editingPatientId === patient.idDimPatient" type="number" [(ngModel)]="editedPatient.praticienResp" class="form-control form-control-sm">
-              </li>
-              <li>
-                <i class="icofont icofont-location-pin text-secondary"></i> Région:
-                <span *ngIf="editingPatientId !== patient.idDimPatient">{{ patient.region }}</span>
-                <input *ngIf="editingPatientId === patient.idDimPatient" type="text" [(ngModel)]="editedPatient.region" class="form-control form-control-sm">
-              </li>
-              <li>
-                <i class="icofont icofont-users-alt-5 text-warning"></i> Statut marital:
-                <span *ngIf="editingPatientId !== patient.idDimPatient">{{ patient.statutMarital }}</span>
-                <select *ngIf="editingPatientId === patient.idDimPatient" [(ngModel)]="editedPatient.statutMarital" class="form-select form-select-sm">
-                  <option value="Célibataire">Célibataire</option>
-                  <option value="Marié">Marié</option>
-                  <option value="Divorcé">Divorcé</option>
-                </select>
-              </li>
-              <li>
-                <i class="icofont icofont-shield-alt text-info"></i> Couverture Sociale:
-                <span *ngIf="editingPatientId !== patient.idDimPatient">{{ patient.couvertureSociale }}</span>
-                <input *ngIf="editingPatientId === patient.idDimPatient" type="text" [(ngModel)]="editedPatient.couvertureSociale" class="form-control form-control-sm">
-              </li>
-            </ul>
-
-            <div class="d-flex justify-content-between">
-              <button *ngIf="editingPatientId !== patient.idDimPatient" class="btn btn-sm btn-primary" (click)="startEdit(patient)">
-                <i class="icofont-edit"></i> Modifier
-              </button>
-              <div *ngIf="editingPatientId === patient.idDimPatient" class="d-flex gap-2">
-                <button class="btn btn-sm btn-success" (click)="saveEditedPatient(patient)">
-                  <i class="icofont-check-circled"></i> Enregistrer
-                </button>
-                <button class="btn btn-sm btn-secondary" (click)="cancelEdit()">Annuler</button>
+              <div class="col-6">
+                <input [(ngModel)]="editedPatient.prenom" class="form-control form-control-sm">
               </div>
-              <button class="btn btn-sm btn-danger" (click)="confirmDelete(patient.idDimPatient)">
-                <i class="icofont-trash"></i> Supprimer
-              </button>
             </div>
+          </h5>
+
+          <!-- ID Patient -->
+          <h6 class="card-subtitle mb-2 text-muted">ID: {{ patient.idPersonne }}</h6>
+
+          <!-- Liste des infos -->
+          <ul class="list-unstyled mt-3 mb-4 small">
+            <li>
+              <i class="icofont icofont-gender text-primary"></i> Genre:
+              <span *ngIf="editingPatientId !== patient.idDimPatient">{{ patient.genre }}</span>
+              <select *ngIf="editingPatientId === patient.idDimPatient" [(ngModel)]="editedPatient.genre" class="form-select form-select-sm">
+                <option value="M">M</option>
+                <option value="F">F</option>
+              </select>
+            </li>
+            <li>
+              <i class="icofont icofont-birthday-cake text-danger"></i> Âge:
+              <span *ngIf="editingPatientId !== patient.idDimPatient">{{ patient.age }}</span>
+              <input *ngIf="editingPatientId === patient.idDimPatient" type="number" [(ngModel)]="editedPatient.age" class="form-control form-control-sm">
+            </li>
+            <li>
+              <i class="icofont icofont-birthday-cake text-danger"></i> Date Naissance:
+              <span *ngIf="editingPatientId !== patient.idDimPatient">{{ patient.dateNaissance | date }}</span>
+              <input *ngIf="editingPatientId === patient.idDimPatient" type="date" [(ngModel)]="editedPatient.dateNaissance" class="form-control form-control-sm">
+            </li>
+            <li>
+              <i class="icofont icofont-calendar text-success"></i> Date Création:
+              <span *ngIf="editingPatientId !== patient.idDimPatient">{{ patient.dateCreation | date }}</span>
+              <input *ngIf="editingPatientId === patient.idDimPatient" type="date" [(ngModel)]="editedPatient.dateCreation" class="form-control form-control-sm">
+            </li>
+            <li>
+              <i class="icofont icofont-nurse text-info"></i> Assistante Responsable:
+              <span *ngIf="editingPatientId !== patient.idDimPatient">{{ patient.assistanteResp }}</span>
+              <input *ngIf="editingPatientId === patient.idDimPatient" type="number" [(ngModel)]="editedPatient.assistanteResp" class="form-control form-control-sm">
+            </li>
+            <li>
+              <i class="icofont icofont-doctor text-warning"></i> Praticien Responsable:
+              <span *ngIf="editingPatientId !== patient.idDimPatient">{{ patient.praticienResp }}</span>
+              <input *ngIf="editingPatientId === patient.idDimPatient" type="number" [(ngModel)]="editedPatient.praticienResp" class="form-control form-control-sm">
+            </li>
+            <li>
+              <i class="icofont icofont-location-pin text-secondary"></i> Région:
+              <span *ngIf="editingPatientId !== patient.idDimPatient">{{ patient.region }}</span>
+              <input *ngIf="editingPatientId === patient.idDimPatient" type="text" [(ngModel)]="editedPatient.region" class="form-control form-control-sm">
+            </li>
+            <li>
+              <i class="icofont icofont-users-alt-5 text-warning"></i> Statut marital:
+              <span *ngIf="editingPatientId !== patient.idDimPatient">{{ patient.statutMarital }}</span>
+              <select *ngIf="editingPatientId === patient.idDimPatient" [(ngModel)]="editedPatient.statutMarital" class="form-select form-select-sm">
+                <option value="Célibataire">Célibataire</option>
+                <option value="Marié">Marié</option>
+                <option value="Divorcé">Divorcé</option>
+              </select>
+            </li>
+            <li>
+              <i class="icofont icofont-shield-alt text-info"></i> Couverture Sociale:
+              <span *ngIf="editingPatientId !== patient.idDimPatient">{{ patient.couvertureSociale }}</span>
+              <input *ngIf="editingPatientId === patient.idDimPatient" type="text" [(ngModel)]="editedPatient.couvertureSociale" class="form-control form-control-sm">
+            </li>
+          </ul>
+
+          <!-- Boutons Modifier / Supprimer -->
+          <div class="d-flex justify-content-between">
+            <button *ngIf="editingPatientId !== patient.idDimPatient" class="btn btn-sm btn-primary" (click)="startEdit(patient)">
+              <i class="icofont icofont-edit"></i> Modifier
+            </button>
+            <div *ngIf="editingPatientId === patient.idDimPatient" class="d-flex gap-2">
+              <button class="btn btn-sm btn-success" (click)="saveEditedPatient(patient)">
+                <i class="icofont icofont-check-circled"></i> Enregistrer
+              </button>
+              <button class="btn btn-sm btn-secondary" (click)="cancelEdit()">
+                <i class="icofont icofont-ban"></i>Annuler</button>
+            </div>
+            <button class="btn btn-sm btn-danger" (click)="confirmDelete(patient.idPersonne)">
+              <i class="icofont icofont-trash"></i> Supprimer
+            </button>
           </div>
+
         </div>
       </div>
     </div>
   </div>
+</div>
+
   
   <!-- Popups succès & suppression -->
   <div *ngIf="addSuccess" class="popup-success">✅ Patient ajouté</div>
@@ -238,7 +258,7 @@
       <div class="modal-content p-3">
         <h5>Êtes-vous sûr de supprimer ce patient ?</h5>
         <div class="mt-3 d-flex justify-content-end">
-          <button class="btn btn-danger me-2" (click)="deletePatient()">Oui</button>
+          <button class="btn btn-danger me-2" (click)="deletePatient(idDimPatient)">Oui</button>
           <button class="btn btn-secondary" (click)="cancelDelete()">Annuler</button>
         </div>
       </div>

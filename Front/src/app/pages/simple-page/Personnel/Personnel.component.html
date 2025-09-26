@@ -149,7 +149,7 @@
             <!-- Nom & Prénom -->
             <h5 class="card-title">
               <span *ngIf="editingId !== utilisateur.idDimUtilisateur">
-                <i class="icofont-user-alt-3"></i>
+                <i class="icofont icofont-user-alt-3"></i>
                 {{ utilisateur.nom }} {{ utilisateur.prenom }}
               </span>
 
@@ -172,7 +172,7 @@
             <!-- Infos principales -->
             <ul class="list-unstyled mt-3 mb-4 small">
               <li>
-                <i class="icofont-users-alt-2"></i>
+                <i class="icofont icofont-users-alt-2"></i>
                 ⚧ Genre :
                 <span *ngIf="editingId !== utilisateur.idDimUtilisateur">{{ utilisateur.genre }}</span>
                 <select *ngIf="editingId === utilisateur.idDimUtilisateur"
@@ -185,7 +185,7 @@
               </li>
 
               <li>
-                <i class="icofont-business-man"></i>
+                <i class="icofont icofont-business-man"></i>
                 🎂 Âge :
                 <span *ngIf="editingId !== utilisateur.idDimUtilisateur">{{ utilisateur.age }}</span>
                 <input *ngIf="editingId === utilisateur.idDimUtilisateur"
@@ -194,7 +194,7 @@
               </li>
 
               <li>
-                <i class="icofont-badge"></i>
+                <i class="icofont icofont-badge"></i>
                 🏷️ Type :
                 <span *ngIf="editingId !== utilisateur.idDimUtilisateur">{{ utilisateur.type }}</span>
                 <input *ngIf="editingId === utilisateur.idDimUtilisateur"
@@ -212,7 +212,7 @@
               </li>
 
               <li>
-                <i class="icofont-check-circled"></i>
+                <i class="icofont icofont-check-circled"></i>
                 ✅ Actif :
                 <span *ngIf="editingId !== utilisateur.idDimUtilisateur">
                   {{ utilisateur.persoActif === true ? 'Oui' : utilisateur.persoActif === false ? 'Non' : '' }}
@@ -226,7 +226,7 @@
               </li>
 
               <li>
-                <i class="icofont-building"></i>
+                <i class="icofont icofont-building"></i>
                 🏢 ID Entité : <span *ngIf="editingId !== utilisateur.idDimUtilisateur">{{ utilisateur.idEntiteJuridique }}</span>
                 <input *ngIf="editingId === utilisateur.idDimUtilisateur"
                        name="editEntite{{utilisateur.idDimUtilisateur}}"
@@ -234,7 +234,7 @@
               </li>
 
               <li>
-                <i class="icofont-calendar"></i>
+                <i class="icofont icofont-calendar"></i>
                 📅 Embauche :
                 <span *ngIf="editingId !== utilisateur.idDimUtilisateur">{{ utilisateur.dateEmbauche | date }}</span>
                 <input *ngIf="editingId === utilisateur.idDimUtilisateur"
@@ -243,7 +243,7 @@
               </li>
 
               <li>
-                <i class="icofont-calendar"></i>
+                <i class="icofont icofont-calendar"></i>
                 ⏳ Fin contrat :
                 <span *ngIf="editingId !== utilisateur.idDimUtilisateur">{{ utilisateur.dateFinContrat | date }}</span>
                 <input *ngIf="editingId === utilisateur.idDimUtilisateur"
@@ -252,7 +252,7 @@
               </li>
 
               <li>
-                <i class="icofont-birthday-cake"></i>
+                <i class="icofont icofont-birthday-cake"></i>
                 🎉 Naissance :
                 <span *ngIf="editingId !== utilisateur.idDimUtilisateur">{{ utilisateur.dateNaissance | date }}</span>
                 <input *ngIf="editingId === utilisateur.idDimUtilisateur"
@@ -267,23 +267,23 @@
               <button *ngIf="editingId !== utilisateur.idDimUtilisateur"
                       class="btn btn-sm btn-primary"
                       (click)="startEdit(utilisateur.idDimUtilisateur)">
-                <i class="icofont-edit"></i> Modifier
+                <i class="icofont icofont-edit"></i> Modifier
               </button>
 
               <!-- Boutons mode édition -->
               <div *ngIf="editingId === utilisateur.idDimUtilisateur" class="d-flex gap-2">
                 <button class="btn btn-sm btn-success" (click)="saveUtilisateurInline(utilisateur)">
-                  <i class="icofont-save"></i> Enregistrer
+                  <i class="icofont icofont-check-circled"></i> Enregistrer
                 </button>
                 <button class="btn btn-sm btn-secondary" (click)="cancelEdit()">
-                  <i class="icofont-ban"></i> Annuler
+                  <i class="icofont icofont-ban"></i> Annuler
                 </button>
               </div>
 
               <!-- Supprimer -->
               <button class="btn btn-sm btn-danger"
                       (click)="confirmDelete(utilisateur)">
-                <i class="icofont-trash"></i> Supprimer
+                <i class="icofont icofont-trash"></i> Supprimer
               </button>
             </div>
           </div>
