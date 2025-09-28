@@ -11,7 +11,7 @@ import java.util.Optional;
 
 @CrossOrigin(origins = "http://localhost:4200")
 @RestController
-@RequestMapping("/api/rendezvous-non-confirme") // nom URL standardisé en minuscules et tirets
+@RequestMapping("/api/rendezvous-non-confirme") 
 public class RendezVousNonConfirmeController {
 
     @Autowired
@@ -25,7 +25,7 @@ public class RendezVousNonConfirmeController {
 
     // Récupérer un rendez-vous par ID
     @GetMapping("/{id}")
-    public ResponseEntity<RendezVousNonConfirme> getById(@PathVariable Long id) {
+    public ResponseEntity<RendezVousNonConfirme> getById(@PathVariable Integer id) {
         Optional<RendezVousNonConfirme> rdv = repository.findById(id);
         return rdv.map(ResponseEntity::ok)
                   .orElse(ResponseEntity.notFound().build());
@@ -43,7 +43,7 @@ public class RendezVousNonConfirmeController {
 
     // Mettre à jour un rendez-vous
     @PutMapping("/{id}")
-    public ResponseEntity<RendezVousNonConfirme> update(@PathVariable Long id, @RequestBody RendezVousNonConfirme newRdv) {
+    public ResponseEntity<RendezVousNonConfirme> update(@PathVariable Integer id, @RequestBody RendezVousNonConfirme newRdv) {
         return repository.findById(id)
                 .map(rdv -> {
                     rdv.setIdDimPatient(newRdv.getIdDimPatient());
@@ -63,11 +63,17 @@ public class RendezVousNonConfirmeController {
 
     // Supprimer un rendez-vous
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(@PathVariable Integer id) {
         if (!repository.existsById(id)) {
             return ResponseEntity.notFound().build();
         }
         repository.deleteById(id);
         return ResponseEntity.noContent().build();
+    }
+    @GetMapping("/non-confirmes")
+    public List<RendezVousNonConfirme> getNonConfirmedAppointments() {
+        List<RendezVousNonConfirme> liste = repository.findNonConfirmedAppointments();
+        System.out.println("Liste des RDV non confirmés : " + liste);
+        return liste;
     }
 }

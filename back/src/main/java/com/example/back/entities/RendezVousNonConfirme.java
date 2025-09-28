@@ -17,7 +17,7 @@ public class RendezVousNonConfirme {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_fact_prise_rendez_vous")
-    private Long idFactPriseRendezVous;
+    private Integer idFactPriseRendezVous;
 
     @Column(name = "id", nullable = false)
     private Integer id;
@@ -45,8 +45,8 @@ public class RendezVousNonConfirme {
 
     // ----------------- Getters / Setters -----------------
 
-    public Long getIdFactPriseRendezVous() { return idFactPriseRendezVous; }
-    public void setIdFactPriseRendezVous(Long idFactPriseRendezVous) { this.idFactPriseRendezVous = idFactPriseRendezVous; }
+    public Integer getIdFactPriseRendezVous() { return idFactPriseRendezVous; }
+    public void setIdFactPriseRendezVous(Integer idFactPriseRendezVous) { this.idFactPriseRendezVous = idFactPriseRendezVous; }
 
     public Integer getId() { return id; }
     public void setId(Integer id) { this.id = id; }

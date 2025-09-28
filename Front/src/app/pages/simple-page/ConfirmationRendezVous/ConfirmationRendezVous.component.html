@@ -32,9 +32,10 @@
           <i class="icofont icofont-refresh"></i>
         </div>
         <div class="content">
-          <span class="title">Actualiser la liste</span>
-          <h4>&nbsp;</h4>
-        </div>
+          <span class="title">Rendez-vous cette semaine</span>
+           <h4>{{ weeklyRendezVousCount }}</h4>
+       </div>
+
       </div>
     </div>
   </div>
@@ -87,9 +88,12 @@
       </div>
       </div>
     </div>
-    <div class="align-self-start">
+    <div class="align-self-start" style="display:flex; flex-direction:column; gap:0;">
     <button class="calendar-reminder__button" (click)="sendReminder()">Rappel automatique</button>
+    <button class="btn-week" (click)="showWeekRendezVous()">Rendez-vous de la semaine</button>
+
   </div>
+
   </div>
   
   <!-- Formulaire ajout -->
@@ -218,9 +222,9 @@
                <button class="btn btn-sm btn-outline-primary"
             (click)="sendEmailReminder(rdv.idDimConfirmationRendezVous)"
             [disabled]="isSending(rdv)">
-      <span *ngIf="isSending(rdv)">Envoi…</span>
-      <span *ngIf="!isSending(rdv)"><i class="ti-email"></i> Rappel</span>
-    </button>
+           <span *ngIf="isSending(rdv)">Envoi…</span>
+           <span *ngIf="!isSending(rdv)"><i class="ti-email"></i> Rappel</span>
+        </button>
               <button class="btn btn-sm btn-danger" (click)="confirmDelete(rdv.idDimConfirmationRendezVous)">
                 <i class="icofont icofont-trash"></i> Supprimer
               </button>

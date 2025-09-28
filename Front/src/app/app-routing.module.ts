@@ -32,6 +32,7 @@ const routes: Routes = [
         loadChildren: () => import('./pages/simple-page/ConfirmationRendezVous/ConfirmationRendezVous.module')
           .then(m => m.ConfirmationRendezVousModule) 
       },
+      
       {
         path: 'map',
         loadChildren: () => import('./pages/map/google-map/google-map.module')
@@ -48,15 +49,20 @@ const routes: Routes = [
           .then(m => m.SimplePageModule)
       },
       {
-  path: 'patients',
-  loadChildren: () => import('./pages/simple-page/Patient/Patient.module')
-    .then(m => m.PatientModule)
+        path: 'patients',
+        loadChildren: () => import('./pages/simple-page/Patient/Patient.module')
+          .then(m => m.PatientModule)
   },
   {
-  path: 'personnels',
-  loadChildren: () => import('./pages/simple-page/personnel/personnel.module')
-    .then(m => m.PersonnelModule)
-  }
+        path: 'personnels',
+        loadChildren: () => import('./pages/simple-page/personnel/personnel.module')
+          .then(m => m.PersonnelModule)
+  },
+  {
+        path: 'rendezvousnonconfirmes',
+        loadChildren: () => import('./pages/simple-page/RendezVousNonConfirmes/RendezVousNonConfirmes.module')
+          .then(m => m.RendezVousNonConfirmesModule) 
+      }
     ]
   },
   {

@@ -289,18 +289,54 @@
 }
 
 /* Bouton Rappel uniquement */
-.calendar-reminder__button {
-  padding: 0.6rem 1.4rem;
-  font-size: medium;
+.calendar-reminder__button,
+.btn-week {
+  padding: 0.6rem 1.4rem; /* même padding */
+  font-size: 0.85rem;
   border-radius: 5px;
   border: none;
-  background-color: #5acc4b; /* vert */
+  background-color: #6dc162;
   color: #fff;
   cursor: pointer;
-  transition: background-color 0.3s ease;
-  margin-left: 130px ;
+  transition: all 0.3s ease;
+  width: auto; /* laisse la largeur automatique selon le padding */
+  margin-left: 130px; /* même position horizontale */
+  display: inline-block;
 }
 
-.calendar-reminder__button:hover {
-  background-color: #2aa444; /* vert foncé au hover */
+.btn-week {
+  margin-top: 10px; /* espace vertical entre les boutons */
+}
+
+.btn-week:hover {
+  background-color: #2fc032;
+  transform: translateY(-1px);
+}
+
+.btn-reminder {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
+  user-select: none;
+}
+
+/* État envoi */
+.btn-reminder.sending {
+  background-color: #f0ad4e;  /* orange */
+  color: #fff;
+  cursor: not-allowed;
+}
+
+/* État prêt */
+.btn-reminder.ready {
+  background-color: #5acc4b;  /* vert */
+  color: #fff;
+}
+
+.btn-reminder.ready:hover {
+  background-color: #2fc032;  /* vert foncé au hover */
 }

@@ -9,8 +9,8 @@ export interface Patient {
   prenom?: string;
   genre?: string;
   age?: number | null;
-  dateNaissance?: string;    // format string (ISO ou yyyy-MM-dd)
-  dateCreation?: string;     // format string (ISO ou yyyy-MM-dd)
+  dateNaissance?: string;    
+  dateCreation?: string;     
   assistanteResp?: number | null;
   praticienResp?: number | null;
   region?: string;
@@ -220,6 +220,18 @@ export class PatientComponent implements OnInit {
       return strValue.toLowerCase().includes(term);
     });
   });
+}
+getTodayPatientsCount(): number {
+  const today = new Date();
+  // On récupère seulement la date sans l'heure
+  const todayStr = today.toISOString().split('T')[0]; // yyyy-MM-dd
+
+  return this.patients.filter(p => {
+    if (!p.dateCreation) return false;
+    // On ne prend que la partie date
+    const creationDate = p.dateCreation.split('T')[0];
+    return creationDate === todayStr;
+  }).length;
 }
 
 }

@@ -11,7 +11,7 @@ import { HttpClientModule } from '@angular/common/http';
     CommonModule,
     SimplePageRoutingModule,
     SharedModule,
-     HttpClientModule
+    HttpClientModule
   ],
   declarations: [SimplePageComponent]
 })

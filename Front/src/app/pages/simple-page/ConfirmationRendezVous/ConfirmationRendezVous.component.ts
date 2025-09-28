@@ -93,6 +93,7 @@ export class ConfirmationRendezVousComponent implements OnInit {
           this.rendezVousList = Array.isArray(data) ? data : [];
           this.applyDateFilter();
           this.calculateWeeklyRendezVous();
+          this.updateTodayRendezVousCount();
           this.loading = false;
         },
         error: err => {
@@ -110,6 +111,7 @@ export class ConfirmationRendezVousComponent implements OnInit {
     this.filteredRendezVousList = this.rendezVousList.filter(rdv =>
       rdv.dateRdvConfirme === this.selectedDate
     );
+    this.calculateWeeklyRendezVous();
   }
 
   private normalizeDateString(dateStr?: string): string | null {
