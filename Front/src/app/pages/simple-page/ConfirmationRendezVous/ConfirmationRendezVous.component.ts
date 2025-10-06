@@ -33,6 +33,7 @@ export interface ConfirmationRendezVous {
   rdvDuree: number;
   heureSalleAttente: string;
   heureSortie: string;
+  reminderCount?: number;
 }
 
 interface EmailResponse {
@@ -457,4 +458,5 @@ export class ConfirmationRendezVousComponent implements OnInit {
         error: (err: HttpErrorResponse) => this.showHttpError(err)
       });
   }
+  
 }

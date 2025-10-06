@@ -313,30 +313,32 @@
   transform: translateY(-1px);
 }
 
-.btn-reminder {
-  display: inline-block;
-  padding: 0.5rem 1rem;
-  border-radius: 5px;
+/* Style général du bouton */
+button.btn.btn-sm.btn-outline-primary {
+  display: inline-flex;          /* pour centrer texte et icône */
+  align-items: center;
+  justify-content: center;
+  gap: 5px;                     /* espace entre icône et texte */
+  padding: 0.35rem 0.9rem;      /* ajuste la taille */
   font-size: 0.85rem;
+  
+  border-radius: 6px;
+  border: none;                  /* retire le outline Bootstrap */
   cursor: pointer;
   transition: all 0.2s ease;
-  text-align: center;
-  user-select: none;
+  background-color: #f8e66d;    /* vert par défaut */
+  color: #fff;
 }
 
-/* État envoi */
-.btn-reminder.sending {
-  background-color: #f0ad4e;  /* orange */
-  color: #fff;
+/* Hover seulement si le bouton n'est pas désactivé */
+button.btn.btn-sm.btn-outline-primary:hover:not(:disabled) {
+  background-color: #f4e270;    /* vert foncé au hover */
+  transform: translateY(-1px);
+}
+
+/* État désactivé pour "Envoi…" */
+button.btn.btn-sm.btn-outline-primary:disabled {
+  background-color: #f0ad4e;    /* orange pour montrer qu’il est en cours */
   cursor: not-allowed;
-}
-
-/* État prêt */
-.btn-reminder.ready {
-  background-color: #5acc4b;  /* vert */
-  color: #fff;
-}
-
-.btn-reminder.ready:hover {
-  background-color: #2fc032;  /* vert foncé au hover */
+  opacity: 0.85;
 }

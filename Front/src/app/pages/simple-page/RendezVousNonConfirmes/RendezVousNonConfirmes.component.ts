@@ -198,4 +198,21 @@ export class RendezVousNonConfirmesComponent implements OnInit {
     this.selectedDate = '';
     this.filteredRendezVous = [...this.rendezVousList];
   }
+  rappel = {
+  idRdv: null,
+  idPatient: null,
+  tentatives: 0,
+  motifRappel: '',
+  motifRetour: ''
+};
+
+incrementTentative() {
+  this.rappel.tentatives++;
+}
+
+envoyerRappel() {
+  console.log('Rappel envoyé :', this.rappel);
+  // Ici tu peux envoyer vers ton API, ou stocker dans la base
+}
+
 }
