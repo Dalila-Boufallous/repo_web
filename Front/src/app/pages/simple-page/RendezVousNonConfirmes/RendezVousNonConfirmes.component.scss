@@ -310,4 +310,46 @@ html body .page-wrapper > .mini-calendar-wrapper,
   background-color: #5a32a3 !important;
   border-color: #5a32a3 !important;
 }
+:host ::ng-deep .card.shadow-sm.p-3[style*="min-width: 280px"] {
+  width: 100%;
+  max-width: 220px; /* même largeur que le calendrier */
+  min-width: unset; /* ignore le min-width du style inline */
+  background-color: hwb(0 98% 2%);
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  padding: 15px !important;
+}
 
+/* Titre du formulaire */
+:host ::ng-deep .card.shadow-sm.p-3[style*="min-width: 280px"] h5 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+/* Champs de formulaire */
+:host ::ng-deep .card.shadow-sm.p-3[style*="min-width: 280px"] .form-control,
+:host ::ng-deep .card.shadow-sm.p-3[style*="min-width: 280px"] .form-select {
+  font-size: 0.9rem;
+  padding: 5px 8px;
+}
+
+/* Boutons */
+:host ::ng-deep .card.shadow-sm.p-3[style*="min-width: 280px"] .btn {
+  font-size: 0.85rem;
+  padding: 4px 10px;
+  border-radius: 6px;
+}
+
+/* Espacement des boutons */
+:host ::ng-deep .card.shadow-sm.p-3[style*="min-width: 280px"] .d-flex.justify-content-between {
+  gap: 6px;
+}
+
+/* Espacement entre calendrier et formulaire */
+:host ::ng-deep .d-flex.justify-content-start.align-items-start.mb-4 {
+  gap: 20px;
+  flex-wrap: wrap;
+}

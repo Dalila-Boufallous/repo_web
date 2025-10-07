@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { FormsModule } from '@angular/forms';
 
 export interface RendezVousNonConfirmes {
   idFactPriseRendezVous?: number;
@@ -37,7 +38,7 @@ export class RendezVousNonConfirmesComponent implements OnInit {
   todayRendezVousCount: number = 0;
 
   // API
-  private apiUrl = 'http://localhost:8081/api/rendezvous-non-confirme/non-confirmes'; 
+  private apiUrl = 'http://localhost:8081/api/rendezvous-non-confirme'; 
 
   // Popups
   addSuccess = false;
@@ -47,6 +48,10 @@ export class RendezVousNonConfirmesComponent implements OnInit {
   selectedId: number | null = null;
 
   searchRdv: string = '';
+
+  patientIdQuery: string = '';
+
+rdvIdQuery: string = '';
 
   constructor(private http: HttpClient) {}
 
@@ -75,13 +80,15 @@ export class RendezVousNonConfirmesComponent implements OnInit {
   }
 
   // ---------------- CRUD ----------------
-  getAll(): void {
-    this.http.get<RendezVousNonConfirmes[]>(this.apiUrl).subscribe(data => {
-      this.rendezVousList = data;
-      this.filteredRendezVous = [...data];
-      this.todayRendezVousCount = data.filter(r => r.datePrevisionnelle === this.formatDate(new Date())).length;
-    });
-  }
+ getAll(): void {
+  this.http.get<RendezVousNonConfirmes[]>(this.apiUrl).subscribe(data => {
+    this.rendezVousList = data;
+    this.filteredRendezVous = data.slice();
+    this.todayRendezVousCount = data.filter(r => r.datePrevisionnelle === this.formatDate(new Date())).length;
+    this.applyFilters(); // recalcul immédiat
+  });
+}
+
 
   create(): void {
     this.http.post<RendezVousNonConfirmes>(this.apiUrl, this.newRendezVous).subscribe(() => {
@@ -183,21 +190,24 @@ export class RendezVousNonConfirmesComponent implements OnInit {
   }
 
   selectCalendarDate(day: Date | null) {
-    if (!day) return;
-    this.selectedDate = this.formatDate(day);
-    this.filteredRendezVous = this.rendezVousList.filter(r => r.datePrevisionnelle === this.selectedDate);
-  }
+  if (!day) return;
+  this.selectedDate = this.formatDate(day);
+  this.applyFilters();
+}
 
-  showTodayRendezVous() {
-    const today = this.formatDate(new Date());
-    this.selectedDate = today;
-    this.filteredRendezVous = this.rendezVousList.filter(r => r.datePrevisionnelle === today);
-  }
+showTodayRendezVous() {
+  this.selectedDate = this.formatDate(new Date());
+  this.applyFilters();
+}
 
-  resetFilters() {
-    this.selectedDate = '';
-    this.filteredRendezVous = [...this.rendezVousList];
-  }
+resetFilters() {
+  this.selectedDate = '';
+  this.searchRdv = '';
+  this.patientIdQuery = '';
+  this.rdvIdQuery = '';
+  this.applyFilters();
+}
+
   rappel = {
   idRdv: null,
   idPatient: null,
@@ -212,7 +222,71 @@ incrementTentative() {
 
 envoyerRappel() {
   console.log('Rappel envoyé :', this.rappel);
-  // Ici tu peux envoyer vers ton API, ou stocker dans la base
+  
 }
+private normalize(s: any): string {
+  const str = (s === null || s === undefined) ? '' : String(s);
+  return str.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+}
+
+
+private parseIdTokens(q: string): string[] {
+  return (q || '')
+    .split(/[,\s]+/)
+    .map(t => t.trim())
+    .filter(t => t.length > 0);
+}
+
+applyFilters(): void {
+  // 1) Point de départ: filtre date si sélectionnée
+  let base = this.selectedDate
+    ? this.rendezVousList.filter(r => r.datePrevisionnelle === this.selectedDate)
+    : this.rendezVousList.slice();
+
+  // 2) Filtre par ID(s) patient en "gauche→droite" (préfixe)
+  const patientTokens = this.parseIdTokens(this.patientIdQuery);
+  if (patientTokens.length > 0) {
+    base = base.filter(r =>
+      patientTokens.some(q => String(r.idDimPatient).indexOf(q) === 0) // startsWith compatible
+    );
+  }
+
+  // 3) Filtre par ID(s) RDV en "gauche→droite" (préfixe)
+  const rdvTokens = this.parseIdTokens(this.rdvIdQuery);
+  if (rdvTokens.length > 0) {
+    base = base.filter(r => {
+      const rid = (r.idFactPriseRendezVous !== undefined && r.idFactPriseRendezVous !== null)
+        ? r.idFactPriseRendezVous
+        : r.id; // fallback si idFactPriseRendezVous absent
+      const ridStr = String(rid);
+      for (let i = 0; i < rdvTokens.length; i++) {
+        const q = rdvTokens[i];
+        if (ridStr.indexOf(q) === 0) return true; // préfixe
+      }
+      return false;
+    });
+  }
+
+  // 4) Filtre texte global (tous champs)
+  const term = this.normalize(this.searchRdv);
+  if (!term) {
+    this.filteredRendezVous = base;
+    return;
+  }
+
+  // version compatible sans Object.values
+  this.filteredRendezVous = base.filter(rdv => {
+    for (const k in rdv) {
+      if (!Object.prototype.hasOwnProperty.call(rdv, k)) continue;
+      const v = (rdv as any)[k];
+      if (this.normalize(v).indexOf(term) !== -1) return true;
+    }
+    return false;
+  });
+}
+
+
+
+
 
 }
