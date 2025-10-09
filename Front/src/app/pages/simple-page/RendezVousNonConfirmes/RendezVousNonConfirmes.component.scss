@@ -482,7 +482,7 @@ html body .page-wrapper > .mini-calendar-wrapper,
 }
 .card.selected {
   border-color: #ff0101;
-  box-shadow: 0 0 0 .2rem rgba(13,110,253,.25);
+  box-shadow: 0 0 0 .2rem rgba(253, 137, 13, 0.25);
 }
 
 
@@ -562,14 +562,469 @@ html body .page-wrapper > .mini-calendar-wrapper,
   background: #ced4da;
   display: inline-block;
 }
-.accent-dot.active { background: #0d6efd; box-shadow: 0 0 0 .2rem rgba(13,110,253,.2); }
+.accent-dot.active { background: #fd690d; box-shadow: 0 0 0 .2rem rgba(253, 141, 13, 0.2); }
 
 /* Flash visuel sur la carte du formulaire lors de la sélection */
 .flash-highlight {
   animation: flash 0.9s ease-out;
 }
 @keyframes flash {
-  0%   { box-shadow: 0 0 0 0 rgba(13,110,253,.0); }
-  30%  { box-shadow: 0 0 0 .35rem rgba(13,110,253,.35); }
-  100% { box-shadow: 0 0 0 0 rgba(13,110,253,.0); }
+  0%   { box-shadow: 0 0 0 0 rgba(253, 101, 13, 0); }
+  30%  { box-shadow: 0 0 0 .35rem rgba(253, 97, 13, 0.35); }
+  100% { box-shadow: 0 0 0 0 rgba(230, 95, 12, 0); }
+}
+
+
+.card.selectable .card-title .badge.bg-secondary,
+.card.selectable .card-title .badge.badge-secondary {
+  background-color: #e9ecef !important; /* gris clair */
+  color: #24211c !important;
+  border: 1px solid #d6d9dd;
+  border-radius: 9999px;
+  padding: .2rem .55rem;
+  font-weight: 700;
+  letter-spacing: .2px;
+}
+
+/* Quand la carte est sélectionnée : bleu */
+.card.selectable.selected .card-title .badge.bg-secondary,
+.card.selectable.selected .card-title .badge.badge-secondary {
+  background-color: #fd7d0d !important;
+  color: #fff !important;
+  border-color: #d7820b;
+  box-shadow: 0 4px 10px rgba(253, 89, 13, 0.25);
+}
+
+/* Feedback léger au survol */
+.card.selectable:hover .card-title .badge.bg-secondary,
+.card.selectable:hover .card-title .badge.badge-secondary {
+  filter: brightness(0.98);
+}
+
+/* Grille générale : sidebar + contenu */
+.layout-grid {
+  display: grid;
+  grid-template-columns: 360px 1fr;
+  gap: 24px;
+}
+.sidebar {
+  position: sticky;
+  top: 16px;
+  height: fit-content;
+}
+@media (max-width: 992px) {
+  .layout-grid { grid-template-columns: 1fr; }
+  .sidebar { position: static; }
+}
+
+/* Boutons de jours plus cohérents */
+.mc-day {
+  aspect-ratio: 1/1;
+  border: 0;
+  border-radius: 8px;
+  font-size: .85rem;
+  background: #f9f9f9;
+  transition: .2s ease;
+}
+.mc-day.today { background: #6f42c1; color: #fff; font-weight: 600; }
+.mc-day.selected { background: #c194f4; border: 2px solid #6f42c1; font-weight: 600; }
+.mc-day:hover:not(.empty):not(:disabled) { background: #e9d8fd; transform: scale(1.03); }
+
+/* Cartes RDV — lisibilité et état sélectionné (compatible avec ton CSS existant) */
+.rdv-card { position: relative; border: 1px solid rgba(0,0,0,.08); }
+.rdv-card.selected { border-color: #fdcd0d; background: linear-gradient(0deg, rgba(229,195,26,.06), rgba(237,128,12,.06)); }
+
+/* Badge patient (gris → bleu si sélection) — déjà en place, on renforce la lisibilité */
+.rdv-card .badge.bg-secondary { background-color: #e9ecef!important; color: #df7015!important; border: 1px solid #d6d9dd; }
+
+/* Petits espacements uniformes */
+.card .form-label { font-weight: 600; }
+.card .card-header { border-bottom: 0; }
+
+
+/* ===== Bandeau du haut : Calendrier + Rappel ===== */
+.top-tools{
+  display:grid;
+  grid-template-columns: 1fr 420px; /* calendrier large + rappel à droite */
+  gap:20px;
+  margin-bottom:18px;
+}
+@media (max-width: 992px){
+  .top-tools{ grid-template-columns:1fr; }
+}
+
+/* ===== Carte calendrier ===== */
+.cal-card .card-body{ padding:14px; }
+
+.mc-weekdays{
+  display:grid;
+  grid-template-columns:repeat(7,1fr);
+  gap:6px;
+  margin-bottom:6px;
+}
+.mc-wd{
+  text-align:center;
+  font-weight:600;
+  font-size:.85rem;
+  color:#6f42c1;
+}
+
+.mc-weeks{ display:flex; flex-direction:column; gap:6px; }
+.mc-week{ display:grid; grid-template-columns:repeat(7,1fr); gap:6px; }
+
+.mc-day{
+  aspect-ratio:1/1;
+  border:0;
+  border-radius:10px;
+  background:#f6f7fb;
+  font-weight:600;
+  font-size:.95rem;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  transition:.2s ease;
+  box-shadow: inset 0 0 0 1px #e9ecf3;
+}
+.mc-day.empty{ visibility:hidden; }
+.mc-day:hover:not(:disabled){ background:#ece6fb; transform:translateY(-1px); }
+.mc-day.today{ background:#6f42c1; color:#fff; box-shadow:none; }
+.mc-day.selected{
+  background:#c194f4;
+  color:#231942;
+  box-shadow: 0 0 0 2px #6f42c1 inset;
+}
+
+/* ===== Carte rappel ===== */
+.rappel-card .card-body{ padding:14px; }
+.rappel-card .form-label{ font-weight:600; font-size:.9rem; }
+
+/* ===== Filtres ===== */
+.filters{
+  display:grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap:12px;
+}
+@media (max-width: 992px){
+  .filters{ grid-template-columns: 1fr; }
+}
+
+/* ===== Cartes RDV sélectionnables ===== */
+.card.selectable{
+  cursor:pointer;
+  transition: transform .06s ease, box-shadow .15s ease, border-color .15s ease, background-color .15s ease;
+  border:1px solid rgba(0,0,0,.08);
+  position:relative;
+}
+.card.selectable:hover{
+  transform: translateY(-2px);
+  box-shadow: 0 .65rem 1.25rem rgba(0,0,0,.08);
+}
+.card.selectable.selected{
+  border-color:#fdcd0d;
+  background: linear-gradient(0deg, rgba(229,195,26,0.06), rgba(237,128,12,0.06));
+  box-shadow: 0 0 0 .18rem rgba(253,129,13,.35), 0 .5rem 1rem rgba(249,161,8,.3);
+}
+.card.selectable.selected::before{
+  content:"";
+  position:absolute; left:0; top:0; bottom:0;
+  width:6px; background: linear-gradient(180deg,#fdb90d,#ed9805);
+  border-top-left-radius:.5rem; border-bottom-left-radius:.5rem;
+}
+
+/* Ruban "Sélectionné" & tick */
+.ribbon{
+  position:absolute; top:10px; right:-12px;
+  background:#fd590d; color:#fff; padding:4px 14px;
+  font-size:.75rem; font-weight:600; transform:rotate(10deg);
+  border-radius:.25rem; box-shadow:0 .25rem .75rem rgba(242,214,4,.35);
+}
+.tick-overlay{
+  position:absolute; right:12px; bottom:12px;
+  width:44px; height:44px; border-radius:50%;
+  background:#fd690d; display:grid; place-items:center;
+  box-shadow:0 .5rem 1.25rem rgba(253,169,13,.4);
+}
+.tick{ color:#fff; font-size:1.25rem; line-height:1; }
+
+/* Point d’accent dans le titre */
+.accent-dot{
+  width:10px; height:10px; border-radius:50%; background:#ced4da; display:inline-block;
+}
+.accent-dot.active{ background:#fd5d0d; box-shadow:0 0 0 .2rem rgba(253, 157, 13, 0.2); }
+
+/* Badge patient (gris -> bleu quand sélectionné) */
+.rdv-card .badge.bg-secondary,
+.rdv-card .badge.badge-secondary{
+  background:#e9ecef !important;
+  color:#cc7436 !important;
+  border:1px solid #d6d9dd;
+  border-radius:9999px;
+  padding:.2rem .55rem;
+  font-weight:700;
+  letter-spacing:.2px;
+}
+.rdv-card.selected .badge.bg-secondary,
+.rdv-card.selected .badge.badge-secondary{
+  background:#f35d1c !important;
+  color:#fff !important;
+  border-color:#ef7808;
+  box-shadow:0 4px 10px rgba(253, 153, 13, 0.25);
+}
+
+/* ======= MODE COMPACT ======= */
+:root {
+  --compact-space: 10px;
+  --compact-radius: 10px;
+  --compact-text: .9rem;
+  --compact-text-sm: .82rem;
+}
+
+/* Barre du haut : deux colonnes plus étroites */
+.top-tools{
+  grid-template-columns: 340px 360px; /* calendrier, rappel */
+  gap: var(--compact-space);
+}
+@media (max-width: 992px){
+  .top-tools{ grid-template-columns: 1fr; }
+}
+
+/* ===== Calendrier compact ===== */
+.cal-card{
+  max-width: 340px;
+}
+.cal-card .card-header{
+  padding: 8px 12px;
+}
+.cal-card .card-header h5{
+  font-size: var(--compact-text);
+  margin: 0;
+}
+.cal-card .card-header .form-select{
+  padding: 2px 8px;
+  font-size: var(--compact-text-sm);
+  height: 30px;
+}
+.cal-card .card-body{
+  padding: 10px 12px;
+}
+
+/* semaine + jours plus denses */
+.mc-weekdays{ gap: 4px; margin-bottom: 4px; }
+.mc-wd{ font-size: .75rem; }
+.mc-weeks{ gap: 4px; }
+.mc-week{ gap: 4px; }
+
+.mc-day{
+  border-radius: 8px;
+  font-size: .85rem;
+  box-shadow: inset 0 0 0 1px #e9ecf3;
+  min-height: 36px;      /* évite trop petit, tout en restant compact */
+  aspect-ratio: auto;    /* on n’impose plus le carré parfait */
+  padding: 0;
+}
+.mc-day.today{ font-size: .85rem; }
+.mc-day.selected{ box-shadow: 0 0 0 2px #6f42c1 inset; }
+
+/* boutons du footer */
+.cal-card .card-body .btn{
+  padding: 4px 8px;
+  font-size: .8rem;
+}
+
+/* ===== Rappel compact ===== */
+.rappel-card{
+  max-width: 360px;
+}
+.rappel-card .card-header{
+  padding: 8px 12px;
+}
+.rappel-card .card-header h5{
+  font-size: var(--compact-text);
+  margin: 0;
+}
+.rappel-card .badge{ font-size: .75rem; }
+.rappel-card .card-body{
+  padding: 10px 12px;
+}
+.rappel-card .form-label{
+  font-size: .8rem;
+  margin-bottom: 4px;
+}
+.rappel-card .form-control,
+.rappel-card .form-select{
+  padding: 6px 10px;
+  font-size: var(--compact-text-sm);
+  height: 34px;
+}
+.rappel-card .input-group .btn{
+  padding: 0 10px;
+  font-size: .8rem;
+}
+.rappel-card .btn{
+  padding: 6px 10px;
+  font-size: .85rem;
+}
+
+/* ===== Filtres compacts ===== */
+.filters{
+  gap: 8px;
+}
+.filters .form-control{
+  padding: 8px 10px;
+  font-size: .9rem;
+  height: 36px;
+}
+
+/* ===== Cartes RDV : marges/polices compactes ===== */
+.rdv-card{
+  padding: 12px !important;
+}
+.rdv-card .card-title{
+  font-size: .98rem;
+  margin-bottom: .35rem;
+}
+.rdv-card p{
+  margin-bottom: .35rem;
+  font-size: .9rem;
+}
+.rdv-card .btn{
+  padding: 4px 8px;
+  font-size: .8rem;
+}
+
+/* Ruban & tick un peu plus petits */
+.ribbon{ top: 8px; right: -10px; padding: 3px 10px; font-size: .7rem; }
+.tick-overlay{ width: 36px; height: 36px; right: 10px; bottom: 10px; }
+.tick{ font-size: 1rem; }
+
+/* Badge patient : compact */
+.rdv-card .badge.rounded-pill{
+  padding: .15rem .5rem;
+  font-size: .75rem;
+}
+
+/* Option : réduire la hauteur des inputs date/heure dans l’édition inline */
+form[ngform] .form-control[type="date"],
+form[ngform] .form-control[type="time"]{
+  height: 34px;
+  font-size: .9rem;
+  padding: 4px 8px;
+}
+
+/* Colonne cartes : plus de cartes visibles à l’écran */
+@media (min-width: 1200px){
+  .row > .col-md-4{ max-width: 31%; flex: 0 0 31%; }
+}
+
+/* ===== Séparer calendrier (gauche) et rappel (droite) ===== */
+
+/* 1) Donne un vrai "gap" entre les deux colonnes du haut */
+:host ::ng-deep .d-flex.justify-content-start.align-items-start.mb-4{
+  display: flex;
+  align-items: flex-start;
+  column-gap: 32px;   /* espace horizontal entre calendrier et rappel */
+  row-gap: 16px;      /* espace vertical si ça passe en 2 lignes */
+  flex-wrap: wrap;    /* empêche les chevauchements en petit écran */
+}
+
+/* 2) Neutralise les vieilles règles qui collent/décalent trop */
+.mini-calendar-wrapper{
+  float: none !important;
+  margin-right: 0 !important;
+  margin-left: 0 !important;
+}
+
+/* 3) Espace côté formulaire (au cas où le gap est écrasé ailleurs) */
+#rappelCard{
+  margin-left: 24px;       /* petit coussin à droite du calendrier */
+  max-width: 380px;        /* limite sa largeur pour rester compact */
+}
+@media (max-width: 992px){
+  #rappelCard{
+    margin-left: 0;        /* empile proprement sur mobile/tablette */
+    margin-top: 12px;
+  }
+}
+
+/* 4) Optionnel : réduis un peu le padding interne pour paraître moins massif */
+#rappelCard.card{
+  padding: 12px !important;
+}
+.mini-card {
+  display: flex;
+  align-items: center;
+  background: #fff;
+  border-radius: 12px;
+  padding: 16px 20px;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.mini-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+}
+
+.mini-card .icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 16px;
+}
+
+.mini-card .icon i {
+  font-size: 24px;
+  color: white;
+}
+
+.icon.blue {
+  background-color: #4a90e2;
+}
+
+.icon.pink {
+  background-color: #e91e63;
+}
+
+.icon.green {
+  background-color: #4caf50;
+}
+
+.mini-card .content {
+  display: flex;
+  flex-direction: column;
+}
+
+.mini-card .title {
+  font-size: 14px;
+  color: #666;
+}
+
+.mini-card h4 {
+  margin: 0;
+  font-size: 22px;
+  font-weight: bold;
+  color: #222;
+}
+.icon.alert {
+  background-color: #ff4d4f; /* rouge/orange d’alerte */
+  color: white;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  height: 50px;
+  font-size: 24px;
+}
+.mini-card {
+  margin-bottom: 30px;
+}
+
+
+.add-rdv-card {
+  max-width: 960px;   /* largeur confortable */
+  margin-inline: auto;
 }

@@ -54,13 +54,15 @@ export class RendezVousNonConfirmesComponent implements OnInit {
   saveSuccess = false;
   deleteSuccess = false;
   rappelSuccess = false;
-  showDeleteConfirm = false;
-  selectedId: number | null = null;
+  showDeleteConfirm: boolean = false;
+selectedId: number | null = null;
 
   // Recherches
   searchRdv: string = '';
   patientIdQuery: string = '';
   rdvIdQuery: string = '';
+
+  
 
   // Formulaire rappel
   rappel: {
@@ -87,6 +89,7 @@ export class RendezVousNonConfirmesComponent implements OnInit {
     for (let y = currentYear - 5; y <= currentYear + 5; y++) this.yearRange.push(y);
     this.getAll();
     this.buildCalendar();
+    this.calculerStats();
   }
 
   // ==================== FORMULAIRE RDV ====================
@@ -115,70 +118,126 @@ export class RendezVousNonConfirmesComponent implements OnInit {
     });
   }
 
-  create(): void {
-    this.http.post<RendezVousNonConfirmes>(this.baseUrl, this.newRendezVous).subscribe(() => {
+
+private toHHmmss(t: string | null | undefined): string | null {
+  if (!t) return null;                 // "14:05" -> "14:05:00"
+  if (/^\d{2}:\d{2}$/.test(t)) return t + ':00';
+  if (/^\d{2}:\d{2}:\d{2}$/.test(t)) return t;
+  return null;
+}
+
+
+
+
+create(): void {
+  // Construire un payload propre (évite les valeurs undefined)
+  const payload: any = {
+    id: this.newRendezVous && typeof this.newRendezVous.id === 'number' ? this.newRendezVous.id : 0,
+    idDimPatient: this.newRendezVous && typeof this.newRendezVous.idDimPatient === 'number' ? this.newRendezVous.idDimPatient : 0,
+    idDimActe: (this.newRendezVous && typeof this.newRendezVous.idDimActe === 'number') ? this.newRendezVous.idDimActe : 0,
+    idDimConfirmationRendezVous: (this.newRendezVous && typeof this.newRendezVous.idDimConfirmationRendezVous === 'number') ? this.newRendezVous.idDimConfirmationRendezVous : 0,
+    idDimDevis: (this.newRendezVous && typeof this.newRendezVous.idDimDevis === 'number') ? this.newRendezVous.idDimDevis : 0,
+    datePrevisionnelle: this.newRendezVous && this.newRendezVous.datePrevisionnelle ? this.newRendezVous.datePrevisionnelle : '',
+    heurePrevisionnelle: this.newRendezVous && this.newRendezVous.heurePrevisionnelle ? this.newRendezVous.heurePrevisionnelle : '',
+    commentaires: this.newRendezVous && this.newRendezVous.commentaires ? this.newRendezVous.commentaires : ''
+  };
+
+  this.http.post(this.baseUrl, payload).subscribe(
+    (res) => {
       this.getAll();
       this.newRendezVous = this.initForm();
       this.addSuccess = true;
-      setTimeout(() => this.addSuccess = false, 3000);
-    });
-  }
+      setTimeout(() => { this.addSuccess = false; }, 3000);
+    },
+    (err: any) => {
+      // >>> ICI la version sans "?."
+      var msg =
+        (err && err.error && typeof err.error === 'object' && err.error.message) ? err.error.message :
+        (err && err.error && typeof err.error === 'string') ? err.error :
+        (err && err.message) ? err.message :
+        'voir logs serveur';
+      alert('Échec création RDV : ' + msg);
+      console.error('Échec création RDV :', err);
+    }
+  );
+}
+
+
+
 
   edit(rdv: RendezVousNonConfirmes): void {
     this.editingRendezVous = { ...rdv };
     this.editingRendezVousId = rdv.idFactPriseRendezVous || null;
   }
 
-  update(): void {
-    if (!this.editingRendezVous) return;
+ update(): void {
+  if (!this.editingRendezVous) { return; }
 
-    var idForUpdate = (this.editingRendezVous.idFactPriseRendezVous !== undefined && this.editingRendezVous.idFactPriseRendezVous !== null)
-      ? this.editingRendezVous.idFactPriseRendezVous
-      : this.editingRendezVous.id;
-
-    this.http.put<RendezVousNonConfirmes>(this.baseUrl + '/' + idForUpdate, this.editingRendezVous)
-      .subscribe({
-        next: () => {
-          this.getAll();
-          this.editingRendezVous = null;
-          this.editingRendezVousId = null;
-          this.saveSuccess = true;
-          setTimeout(() => this.saveSuccess = false, 3000);
-        },
-        error: (err) => {
-          console.error('Update failed', err);
-        }
-      });
+  // 1) ID à utiliser pour le PUT
+  var idForUpdate: number;
+  if (this.editingRendezVous.idFactPriseRendezVous !== undefined && this.editingRendezVous.idFactPriseRendezVous !== null) {
+    idForUpdate = this.editingRendezVous.idFactPriseRendezVous;
+  } else {
+    idForUpdate = this.editingRendezVous.id; // fallback si besoin
   }
 
-  cancelEdit(): void {
-    this.editingRendezVous = null;
-    this.editingRendezVousId = null;
+  // 2) Normaliser heure -> HH:mm:ss si tu en as besoin côté backend
+  var heure = this.editingRendezVous.heurePrevisionnelle || '';
+  if (heure && heure.length === 5) { // "HH:mm"
+    heure = heure + ':00';
   }
 
-  delete(id: number | undefined): void {
-    if (!id) return;
-    this.http.delete(this.baseUrl + '/' + id).subscribe(() => {
+  // 3) Payload (éviter undefined)
+  var payload: any = {
+    idFactPriseRendezVous: idForUpdate,
+    id: (typeof this.editingRendezVous.id === 'number') ? this.editingRendezVous.id : idForUpdate,
+    idDimPatient: (typeof this.editingRendezVous.idDimPatient === 'number') ? this.editingRendezVous.idDimPatient : 0,
+    idDimActe: (typeof this.editingRendezVous.idDimActe === 'number') ? this.editingRendezVous.idDimActe : 0,
+    idDimConfirmationRendezVous: (typeof this.editingRendezVous.idDimConfirmationRendezVous === 'number') ? this.editingRendezVous.idDimConfirmationRendezVous : 0,
+    idDimDevis: (typeof this.editingRendezVous.idDimDevis === 'number') ? this.editingRendezVous.idDimDevis : 0,
+    datePrevisionnelle: this.editingRendezVous.datePrevisionnelle || '',
+    heurePrevisionnelle: heure,
+    commentaires: this.editingRendezVous.commentaires || ''
+  };
+
+  this.http.put(this.baseUrl + '/' + idForUpdate, payload).subscribe(
+    (res) => {
       this.getAll();
-      this.deleteSuccess = true;
-      setTimeout(() => this.deleteSuccess = false, 3000);
-    });
-  }
+      this.editingRendezVous = null;
+      this.editingRendezVousId = null;
+      this.saveSuccess = true;
+      var self = this;
+      setTimeout(function(){ self.saveSuccess = false; }, 3000);
+    },
+    (err: any) => {
+      var msg =
+        (err && err.error && typeof err.error === 'object' && err.error.message) ? err.error.message :
+        (err && err.error && typeof err.error === 'string') ? err.error :
+        (err && err.message) ? err.message :
+        'Voir logs serveur';
+      alert('Échec modification RDV : ' + msg);
+      console.error('Update failed', err);
+    }
+  );
+}
 
-  confirmDelete(id: number | undefined) {
-    this.selectedId = id || null;
-    this.showDeleteConfirm = true;
-  }
 
-  cancelDelete() {
-    this.showDeleteConfirm = false;
-    this.selectedId = null;
-  }
 
-  deleteRendezVous() {
-    if (this.selectedId) this.delete(this.selectedId);
-    this.cancelDelete();
-  }
+
+ // Ferme la confirmation
+cancelDelete(): void {
+  this.showDeleteConfirm = false;
+  this.selectedId = null;
+}
+
+// Supprime après confirmation
+deleteRendezVous(): void {
+  if (this.selectedId == null) { return; }
+  this.delete(this.selectedId);
+  this.cancelDelete();
+}
+
+
 
   // ==================== CALENDRIER ====================
   buildCalendar() {
@@ -321,6 +380,7 @@ export class RendezVousNonConfirmesComponent implements OnInit {
   }
 
   applyFilters(): void {
+    this.calculerStats();
     // 1) Date
     let base = this.selectedDate
       ? this.rendezVousList.filter(r => r.datePrevisionnelle === this.selectedDate)
@@ -387,9 +447,53 @@ export class RendezVousNonConfirmesComponent implements OnInit {
     this.selectedCardId = null;
   }
 
-  private getRdvId(r: RendezVousNonConfirmes): number {
-    return (r && r.idFactPriseRendezVous != null) ? r.idFactPriseRendezVous : r.id;
+getRdvId(r: RendezVousNonConfirmes): number {
+  if (!r) { return 0; }
+  return (r.idFactPriseRendezVous !== undefined && r.idFactPriseRendezVous !== null)
+    ? r.idFactPriseRendezVous
+    : r.id;
+}
+
+// Ouvre la confirmation (depuis le template)
+confirmDelete(idOrRdv: number | RendezVousNonConfirmes, $event?: Event): void {
+  if ($event) { $event.stopPropagation(); }
+  let id: number;
+  if (typeof idOrRdv === 'number') {
+    id = idOrRdv;
+  } else {
+    id = this.getRdvId(idOrRdv);
   }
+  if (!id) { return; }
+
+  // Version simple: prompt natif
+  const ok = window.confirm('Supprimer ce rendez-vous ?');
+  if (ok) {
+    this.delete(id);
+  }
+}
+
+// Appel API réel
+private delete(id: number): void {
+  if (!id) { return; }
+  this.http.delete(`${this.baseUrl}/${id}`).subscribe({
+    next: () => {
+      this.getAll();
+      this.deleteSuccess = true;
+      setTimeout(() => this.deleteSuccess = false, 2500);
+    },
+    error: (err) => {
+      console.error('Delete failed', err);
+     const msg =
+  (err && err.error && typeof err.error === 'object' && err.error.message) ? err.error.message :
+  (err && typeof err.error === 'string') ? err.error :
+  (err && err.message) ? err.message :
+  'Voir logs serveur';
+
+alert('Échec suppression RDV : ' + msg);
+
+    }
+  });
+}
 
   // carte cliquable
   onCardClick(r: RendezVousNonConfirmes): void {
@@ -410,4 +514,30 @@ export class RendezVousNonConfirmesComponent implements OnInit {
   isSelected(r: RendezVousNonConfirmes): boolean {
     return this.selectedCardId !== null && this.selectedCardId === this.getRdvId(r);
   }
+  totalRendezVous: number = 0;
+upcomingRendezVous: number = 0;
+
+
+calculerStats() {
+  if (!this.filteredRendezVous) return;
+
+  // Total des rendez-vous
+  this.totalRendezVous = this.filteredRendezVous.length;
+
+  // Rendez-vous de la semaine
+  const today = new Date();
+  const nextWeek = new Date();
+  nextWeek.setDate(today.getDate() + 7);
+
+  this.upcomingRendezVous = this.filteredRendezVous.filter(rdv => {
+    const rdvDate = new Date(rdv.datePrevisionnelle);
+    return rdvDate >= today && rdvDate <= nextWeek;
+  }).length;
+}
+
+
+
+
+
+a
 }

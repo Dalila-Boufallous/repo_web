@@ -15,4 +15,7 @@ public interface RepoRendezVousNonConfirme extends JpaRepository<RendezVousNonCo
     @Query("SELECT f FROM RendezVousNonConfirme f " +
            "WHERE f.idDimConfirmationRendezVous = 0")
     List<RendezVousNonConfirme> findNonConfirmedAppointments();
+
+     List<RendezVousNonConfirme> findByIdDimConfirmationRendezVous(Integer idDimConfirmationRendezVous);
+
 }
