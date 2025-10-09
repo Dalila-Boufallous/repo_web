@@ -43,49 +43,16 @@
     </div>
   </div>
    <div class="row g-2 mb-3">
-  <!-- Recherche globale (tous champs) -->
-  <div class="col-md-4">
-    <input
-      type="text"
-      class="form-control"
-      placeholder="🔎 Rechercher (tous champs)…"
-      [(ngModel)]="searchRdv"
-      (input)="applyFilters()"
-      [ngModelOptions]="{standalone: true}" />
-  </div>
-
-  <!-- Filtre par ID patient (préfixe) -->
-  <div class="col-md-4">
-    <input
-      type="text"
-      inputmode="numeric"
-      pattern="[0-9, ]*"
-      class="form-control"
-      placeholder="👤 ID(s) patient (ex: 12 ou 12, 34)"
-      [(ngModel)]="patientIdQuery"
-      (input)="applyFilters()"
-      [ngModelOptions]="{standalone: true}" />
-  </div>
-
-  <!-- Filtre par ID rendez-vous (préfixe) -->
-  <div class="col-md-4">
-    <input
-      type="text"
-      inputmode="numeric"
-      pattern="[0-9, ]*"
-      class="form-control"
-      placeholder="📅 ID(s) RDV (ex: 10 ou 10, 101)"
-      [(ngModel)]="rdvIdQuery"
-      (input)="applyFilters()"
-      [ngModelOptions]="{standalone: true}" />
-  </div>
-</div>
-
-
-
+  <div class="search-container">
+  
   <!-- 🧾 Formulaire de rappel -->
-  <div class="card shadow-sm p-3" style="min-width: 280px;">
-    <h5 class="mb-3">🔔 Rappel</h5>
+<div class="card shadow-sm p-3" style="min-width: 250px;" #rappelCard id="rappelCard">
+  <h5 class="mb-3 d-flex align-items-center gap-2">
+    🔔 Rappel
+    <span *ngIf="selectedCardId !== null" class="badge bg-primary ms-auto">
+      RDV #{{ selectedCardId }}
+    </span>
+  </h5>
     <form #rappelForm="ngForm" (ngSubmit)="envoyerRappel()">
 
       <div class="mb-2">
@@ -173,17 +140,74 @@
       </form>
     </div>
   </div>
+  <!-- Recherche globale -->
+  <input
+    type="text"
+    class="form-control search-bar"
+    placeholder="🔎 Rechercher (tous champs)…"
+    [(ngModel)]="searchRdv"
+    (input)="applyFilters()"
+    [ngModelOptions]="{standalone: true}" />
+
+  <!-- Filtre par ID patient -->
+  <input
+    type="text"
+    inputmode="numeric"
+    pattern="[0-9, ]*"
+    class="form-control search-bar"
+    placeholder="👤 ID(s) patient (ex: 12 ou 12, 34)"
+    [(ngModel)]="patientIdQuery"
+    (input)="applyFilters()"
+    [ngModelOptions]="{standalone: true}" />
+
+  <!-- Filtre par ID rendez-vous -->
+  <input
+    type="text"
+    inputmode="numeric"
+    pattern="[0-9, ]*"
+    class="form-control search-bar"
+    placeholder="📅 ID(s) RDV (ex: 10 ou 10, 101)"
+    [(ngModel)]="rdvIdQuery"
+    (input)="applyFilters()"
+    [ngModelOptions]="{standalone: true}" />
+</div>
 
   <!-- Liste RDV sous forme de cartes -->
  <div class="row">
-  <div class="col-md-4 mb-3" *ngFor="let rdv of filteredRendezVous">
-    <div class="card shadow-sm p-3 h-100">
+ <div class="col-md-4 mb-3" *ngFor="let rdv of filteredRendezVous">
+  <div
+    class="card shadow-sm p-3 h-100 selectable"
+    (click)="onCardClick(rdv)"
+    [class.selected]="isSelected(rdv)"
+    role="button"
+    [attr.aria-pressed]="isSelected(rdv)"
+    [attr.aria-selected]="isSelected(rdv)"
+    tabindex="0"
+    (keyup.enter)="onCardClick(rdv)"
+    (keyup.space)="onCardClick(rdv)"
+  >
+    <!-- Ruban "Sélectionné" -->
+    <div class="ribbon" *ngIf="isSelected(rdv)">Sélectionné</div>
 
-      <h5 class="card-title">Rendez-vous #{{ rdv.idFactPriseRendezVous }} - Patient #{{ rdv.idDimPatient }}</h5>
+    <!-- Tick overlay -->
+    <div class="tick-overlay" *ngIf="isSelected(rdv)">
+      <span class="tick">&#10003;</span>
+    </div>
 
-      <!-- FORMULAIRE EDITION INLINE -->
-      <form *ngIf="editingRendezVousId === rdv.idFactPriseRendezVous"
-            (ngSubmit)="update()" #editForm="ngForm">
+    <h5 class="card-title d-flex align-items-center gap-2">
+      <span class="accent-dot" [class.active]="isSelected(rdv)"></span>
+      Rendez-vous #{{ rdv.idFactPriseRendezVous || rdv.id }}
+      <span class="badge rounded-pill ms-auto"
+            [class.bg-primary]="isSelected(rdv)"
+            [class.bg-secondary]="!isSelected(rdv)">
+        Patient #{{ rdv.idDimPatient }}
+      </span>
+    </h5>
+
+
+    <!-- FORMULAIRE EDITION INLINE inchangé -->
+    <form *ngIf="editingRendezVousId === rdv.idFactPriseRendezVous"
+          (ngSubmit)="update()" #editForm="ngForm" (click)="$event.stopPropagation()">
 
         <div class="mb-2">
           <label>Date :</label>
@@ -207,22 +231,26 @@
         </div>
 
         <div class="d-flex justify-content-between mt-2">
-          <button type="submit" class="btn btn-success btn-sm">Enregistrer</button>
+         <button type="submit" class="btn btn-success btn-sm"
+        [disabled]="!rappel.idRdv || !rappel.idPatient">
+  Enregistrer
+</button>
           <button type="button" class="btn btn-secondary btn-sm" (click)="cancelEdit()">Annuler</button>
         </div>
       </form>
 
-      <!-- MODE AFFICHAGE -->
-      <div *ngIf="editingRendezVousId !== rdv.idFactPriseRendezVous">
-        <p><b>Date :</b> {{ rdv.datePrevisionnelle }}</p>
-        <p><b>Heure :</b> {{ rdv.heurePrevisionnelle }}</p>
-        <p><b>Commentaires :</b> {{ rdv.commentaires || '-' }}</p>
+     <div *ngIf="editingRendezVousId !== rdv.idFactPriseRendezVous">
+      <p><b>Date :</b> {{ rdv.datePrevisionnelle }}</p>
+      <p><b>Heure :</b> {{ rdv.heurePrevisionnelle }}</p>
+      <p><b>Commentaires :</b> {{ rdv.commentaires || '-' }}</p>
 
-        <div class="d-flex justify-content-between mt-2">
-          <button class="btn btn-warning btn-sm" (click)="edit(rdv)">Modifier</button>
-          <button class="btn btn-danger btn-sm" (click)="confirmDelete(rdv.idFactPriseRendezVous)">Supprimer</button>
-        </div>
+      <div class="d-flex justify-content-between mt-2">
+        <button class="btn btn-warning btn-sm"
+                (click)="edit(rdv); $event.stopPropagation()">Modifier</button>
+        <button class="btn btn-danger btn-sm"
+                (click)="confirmDelete(rdv.idFactPriseRendezVous); $event.stopPropagation()">Supprimer</button>
       </div>
+    </div>
 
     </div>
   </div>

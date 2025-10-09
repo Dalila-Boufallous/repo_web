@@ -1,9 +1,12 @@
-package com.example.back.repository;
+package com.example.back.repositories;
 
-import com.example.back.entity.RappelPatient;
+import com.example.back.entities.RappelPatient;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 
-@Repository
+import java.util.List;
+
 public interface RepoRappelPatient extends JpaRepository<RappelPatient, Integer> {
+
+   
+    List<RappelPatient> findByIdRdvOrderByIdRappelPatientDesc(Integer idRdv);
 }

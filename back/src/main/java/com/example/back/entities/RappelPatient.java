@@ -1,4 +1,4 @@
-package com.example.back.entity;
+package com.example.back.entities;
 
 import jakarta.persistence.*;
 
@@ -20,13 +20,18 @@ public class RappelPatient {
     @Column(name = "motif", length = 100)
     private String motif;
 
-    // --- Constructeurs ---
-    public RappelPatient() {}
+    @Column(name = "nombre_tentatives", nullable = false)
+    private Integer nombreTentatives;
 
-    public RappelPatient(Integer idPatient, Integer idRdv, String motif) {
+    // --- Constructeurs ---
+    public RappelPatient() {
+    }
+
+    public RappelPatient(Integer idPatient, Integer idRdv, String motif, Integer nombreTentatives) {
         this.idPatient = idPatient;
         this.idRdv = idRdv;
         this.motif = motif;
+        this.nombreTentatives = nombreTentatives;
     }
 
     // --- Getters & Setters ---
@@ -60,5 +65,24 @@ public class RappelPatient {
 
     public void setMotif(String motif) {
         this.motif = motif;
+    }
+
+    public Integer getNombreTentatives() {
+        return nombreTentatives;
+    }
+
+    public void setNombreTentatives(Integer nombreTentatives) {
+        this.nombreTentatives = nombreTentatives;
+    }
+
+    // --- Hooks JPA ---
+    @PrePersist
+    public void prePersist() {
+        if (this.nombreTentatives == null) {
+            this.nombreTentatives = 0;
+        }
+        if (this.motif != null && this.motif.length() > 100) {
+            this.motif = this.motif.substring(0, 100);
+        }
     }
 }

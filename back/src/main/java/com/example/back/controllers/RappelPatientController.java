@@ -1,41 +1,68 @@
-package com.example.back.controller;
+package com.example.back.controllers;
 
-import com.example.back.entity.RappelPatient;
-import com.example.back.repository.RepoRappelPatient;
+import com.example.back.entities.RappelPatient;
+import com.example.back.repositories.RepoRappelPatient;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/rappels_patients")
-@CrossOrigin(origins = "http://localhost:4200") 
 public class RappelPatientController {
 
     @Autowired
-    private RepoRappelPatient RepoRappelPatient;
+    private RepoRappelPatient repo;
 
-    // 🔹 Obtenir tous les rappels
+    // Tous les rappels
     @GetMapping
-    public List<RappelPatient> getAllRappels() {
-        return RepoRappelPatient.findAll();
+    public List<RappelPatient> getAll() {
+        return repo.findAll();
     }
 
-    // 🔹 Obtenir un rappel par ID
+    // Un rappel par id (PK idRappelPatient)
     @GetMapping("/{id}")
-    public RappelPatient getRappelById(@PathVariable Integer id) {
-        return RepoRappelPatient.findById(id).orElse(null);
+    public ResponseEntity<RappelPatient> getOne(@PathVariable Integer id) {
+        return repo.findById(id)
+                   .map(ResponseEntity::ok)
+                   .orElse(ResponseEntity.notFound().build());
     }
 
-    // 🔹 Ajouter ou modifier un rappel
+    // Historique d'un RDV
+    @GetMapping("/by-rdv/{idRdv}")
+    public List<RappelPatient> getByRdv(@PathVariable Integer idRdv) {
+        return repo.findByIdRdvOrderByIdRappelPatientDesc(idRdv);
+    }
+
+    // Création
     @PostMapping
-    public RappelPatient createRappel(@RequestBody RappelPatient rappelPatient) {
-        return RepoRappelPatient.save(rappelPatient);
+    public ResponseEntity<RappelPatient> create(@RequestBody RappelPatient in) {
+        // on s'assure que JPA génère la PK
+        in.setIdRappelPatient(null);
+        RappelPatient saved = repo.save(in);
+        return ResponseEntity.status(HttpStatus.CREATED).body(saved);
     }
 
-    // 🔹 Supprimer un rappel
+    // Modification (PUT)
+    @PutMapping("/{id}")
+    public ResponseEntity<RappelPatient> update(@PathVariable Integer id,
+                                                @RequestBody RappelPatient in) {
+        return repo.findById(id).map(db -> {
+            // on ne modifie pas la PK
+            db.setIdPatient(in.getIdPatient());
+            db.setIdRdv(in.getIdRdv());
+            db.setMotif(in.getMotif());
+            RappelPatient saved = repo.save(db);
+            return ResponseEntity.ok(saved);
+        }).orElse(ResponseEntity.notFound().build());
+    }
+
+    // Suppression
     @DeleteMapping("/{id}")
-    public void deleteRappel(@PathVariable Integer id) {
-        RepoRappelPatient.deleteById(id);
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable Integer id) {
+        repo.deleteById(id);
     }
 }
