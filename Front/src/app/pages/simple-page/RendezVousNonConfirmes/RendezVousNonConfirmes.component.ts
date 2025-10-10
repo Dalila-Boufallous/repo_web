@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, QueryList, ViewChildren, ElementRef, AfterViewInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
-export interface RendezVousNonConfirmes {
+
+export interface RendezVousNonConfirmes  {
   idFactPriseRendezVous?: number;
   id: number;
   idDimPatient: number;
@@ -55,7 +56,7 @@ export class RendezVousNonConfirmesComponent implements OnInit {
   deleteSuccess = false;
   rappelSuccess = false;
   showDeleteConfirm: boolean = false;
-selectedId: number | null = null;
+  selectedId: number | null = null;
 
   // Recherches
   searchRdv: string = '';
@@ -81,6 +82,7 @@ selectedId: number | null = null;
 
   selectedRdvId: number | null = null;
   selectedCardId: number | null = null;
+  weekNonConfirmed: RendezVousNonConfirmes[] = []; 
 
   constructor(private http: HttpClient) {}
 
@@ -536,8 +538,30 @@ calculerStats() {
 }
 
 
+// Affiche uniquement les RDV non confirmés de la semaine
+showWeekNonConfirmed() {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0); // ignorer l'heure
+
+  const weekEnd = new Date(today);
+  weekEnd.setDate(today.getDate() + 7);
+  weekEnd.setHours(23, 59, 59, 999);
+
+  this.filteredRendezVous = this.rendezVousList.filter(rdv => {
+    if (!rdv.datePrevisionnelle) return false;
+
+    const parts = rdv.datePrevisionnelle.split('-'); // YYYY-MM-DD
+    const rdvDate = new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
+
+    return rdvDate >= today && rdvDate <= weekEnd;
+  });
+
+  this.upcomingRendezVous = this.filteredRendezVous.length;
+}
 
 
 
-a
+
+
+
 }

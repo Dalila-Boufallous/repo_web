@@ -1028,3 +1028,88 @@ form[ngform] .form-control[type="time"]{
   max-width: 960px;   /* largeur confortable */
   margin-inline: auto;
 }
+.rdv-card form,
+.rdv-card div {
+  max-height: 200px;
+  overflow-y: auto;
+}
+.rdv-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1rem; /* espace entre cartes */
+}
+
+.rdv-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+}
+.rdv-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px; /* espace entre cartes */
+  margin-top: 10px;
+}
+.rdv-list .rdv-card {
+  flex: 0 0 calc(33.333% - 16px); /* 3 colonnes avec gap */
+  min-width: 250px; /* minimum pour mobile */
+}
+@media (max-width: 992px) {
+  .rdv-list .rdv-card {
+    flex: 0 0 100%;
+  }
+}
+.btn-rdv {
+    display: inline-block;
+    width: 180px;                /* largeur fixe pour contrôler le wrapping */
+    padding: 10px;               /* espace intérieur confortable */
+    font-size: 13px;             /* texte lisible */
+    line-height: 1.2;            /* permet 2 lignes sans être trop serré */
+    text-align: center;          /* centrer le texte */
+    border-radius: 12px;         /* coins bien arrondis */
+    background-color: #d7fad4;   /* fond clair */
+    border: 2px solid #999999;   /* bordure plus foncée */
+    color: #333333;              /* texte foncé */
+    white-space: normal;          /* permet le texte sur 2 lignes */
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* légère ombre */
+    transition: all 0.2s ease;
+    word-wrap: break-word;        /* couper le texte si nécessaire */
+    /* Ajout d'espacement */
+    margin-top: 20px;   /* espace au-dessus */
+    margin-bottom: 20px; /* espace en dessous */
+    margin-left: 15px;  /* espace à gauche */
+    margin-right: 15px; /* espace à droite */
+}
+
+.btn-rdv:hover {
+    background-color: #98f17f;   /* léger effet au survol */
+    border-color: #666666;       /* bordure plus foncée au hover */
+}
+
+.add-rdv-card {
+    background-color: #ffffff;   /* fond clair */
+    border: 1px solid #ccc;      /* bordure subtile */
+    border-radius: 12px;         /* coins arrondis */
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1); /* légère ombre */
+    padding: 15px;               /* espace intérieur */
+    margin-top: 20px;
+    margin-bottom: 20px;
+
+    /* Alignement et largeur */
+    width: 99%;                 /* prend toute la largeur du container parent */
+    max-width: 99%;             /* empêche de dépasser */
+    margin-left: auto;           /* aligne à droite si le container est plus large */
+    margin-right: 0;
+    box-sizing: border-box;      /* inclut padding dans la largeur */
+}
+
+/* Pour les inputs et selects à l'intérieur */
+.add-rdv-card .form-control,
+.add-rdv-card .form-select {
+    border-radius: 6px;
+    border: 1px solid #bbb;
+    padding: 6px 10px;
+}
+

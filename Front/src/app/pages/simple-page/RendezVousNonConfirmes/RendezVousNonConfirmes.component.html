@@ -122,6 +122,12 @@
       </div>
     </div>
   </div>
+<!-- Bouton rdv de la semaine -->
+ <div style="display:inline-block;">
+<button (click)="showWeekNonConfirmed()" class="btn-rdv" >
+  Afficher les rendez-vous de la semaine
+</button>
+</div>
 
   <!-- ===== Filtres ===== -->
   <div class="filters mb-3">
@@ -224,10 +230,11 @@
 
 
   <!-- ===== Liste des RDV ===== -->
-  <div class="row">
-    <div class="col-md-4 mb-3" *ngFor="let rdv of filteredRendezVous">
+<div class="container">
+  <div class="row row-cols-1 row-cols-md-3 g-4">
+    <div class="col" *ngFor="let rdv of filteredRendezVous">
       <div
-        class="card shadow-sm p-3 h-100 selectable rdv-card"
+        class="card shadow-sm p-3 h-100 d-flex flex-column selectable rdv-card"
         (click)="onCardClick(rdv)"
         [class.selected]="isSelected(rdv)"
         role="button"
@@ -237,11 +244,13 @@
         (keyup.enter)="onCardClick(rdv)"
         (keyup.space)="onCardClick(rdv)"
       >
+        <!-- Sélection -->
         <div class="ribbon" *ngIf="isSelected(rdv)">Sélectionné</div>
         <div class="tick-overlay" *ngIf="isSelected(rdv)">
           <span class="tick">&#10003;</span>
         </div>
 
+        <!-- Titre -->
         <h5 class="card-title d-flex align-items-center gap-2">
           <span class="accent-dot" [class.active]="isSelected(rdv)"></span>
           Rendez-vous #{{ rdv.idFactPriseRendezVous || rdv.id }}
@@ -252,58 +261,51 @@
           </span>
         </h5>
 
-        <!-- Formulaire d'édition inline -->
-        <form *ngIf="editingRendezVousId === rdv.idFactPriseRendezVous"
-              (ngSubmit)="update()" #editForm="ngForm" (click)="$event.stopPropagation()">
-          <div class="mb-2">
-            <label>Date :</label>
-            <input type="date" class="form-control"
-                   [(ngModel)]="editingRendezVous!.datePrevisionnelle"
-                   name="editDate{{rdv.idFactPriseRendezVous}}" required>
-          </div>
+        <!-- Contenu -->
+        <div class="flex-grow-1">
+          <!-- Formulaire édition -->
+          <form *ngIf="editingRendezVousId === rdv.idFactPriseRendezVous"
+                (ngSubmit)="update()" #editForm="ngForm" (click)="$event.stopPropagation()">
+            <div class="mb-2">
+              <label>Date :</label>
+              <input type="date" class="form-control"
+                     [(ngModel)]="editingRendezVous!.datePrevisionnelle"
+                     name="editDate{{rdv.idFactPriseRendezVous}}" required>
+            </div>
+            <div class="mb-2">
+              <label>Heure :</label>
+              <input type="time" class="form-control"
+                     [(ngModel)]="editingRendezVous!.heurePrevisionnelle"
+                     name="editHeure{{rdv.idFactPriseRendezVous}}" required>
+            </div>
+            <div class="mb-2">
+              <label>Commentaires :</label>
+              <input type="text" class="form-control"
+                     [(ngModel)]="editingRendezVous!.commentaires"
+                     name="editCommentaires{{rdv.idFactPriseRendezVous}}">
+            </div>
+            <div class="d-flex justify-content-between mt-2">
+              <button type="submit" class="btn btn-success btn-sm"
+                      [disabled]="!editForm.form.valid">Enregistrer</button>
+              <button type="button" class="btn btn-secondary btn-sm"
+                      (click)="cancelEdit()">Annuler</button>
+            </div>
+          </form>
 
-          <div class="mb-2">
-            <label>Heure :</label>
-            <input type="time" class="form-control"
-                   [(ngModel)]="editingRendezVous!.heurePrevisionnelle"
-                   name="editHeure{{rdv.idFactPriseRendezVous}}" required>
-          </div>
+          <!-- Mode affichage -->
+          <div *ngIf="editingRendezVousId !== rdv.idFactPriseRendezVous">
+            <p><b>Date :</b> {{ rdv.datePrevisionnelle }}</p>
+            <p><b>Heure :</b> {{ rdv.heurePrevisionnelle }}</p>
+            <p><b>Commentaires :</b> {{ rdv.commentaires || '-' }}</p>
 
-          <div class="mb-2">
-            <label>Commentaires :</label>
-            <input type="text" class="form-control"
-                   [(ngModel)]="editingRendezVous!.commentaires"
-                   name="editCommentaires{{rdv.idFactPriseRendezVous}}">
-          </div>
-
-          <div class="d-flex justify-content-between mt-2">
-            <button type="submit" class="btn btn-success btn-sm"
-        [disabled]="!editForm.form.valid">
-  Enregistrer
-</button>
-
-            <button type="button" class="btn btn-secondary btn-sm" (click)="cancelEdit()">Annuler</button>
-          </div>
-        </form>
-
-        <!-- Mode affichage -->
-        <div *ngIf="editingRendezVousId !== rdv.idFactPriseRendezVous">
-          <p><b>Date :</b> {{ rdv.datePrevisionnelle }}</p>
-          <p><b>Heure :</b> {{ rdv.heurePrevisionnelle }}</p>
-          <p><b>Commentaires :</b> {{ rdv.commentaires || '-' }}</p>
-
-          <div class="d-flex justify-content-between mt-2">
-            <button class="btn btn-warning btn-sm"
-                    (click)="edit(rdv); $event.stopPropagation()">Modifier</button>
-         <button class="btn btn-danger btn-sm"
-        (click)="confirmDelete(getRdvId(rdv), $event)">
-  Supprimer
-</button>
-
-
+            <div class="d-flex justify-content-between mt-2">
+              <button class="btn btn-warning btn-sm"
+                      (click)="edit(rdv); $event.stopPropagation()">Modifier</button>
+              <button class="btn btn-danger btn-sm"
+                      (click)="confirmDelete(getRdvId(rdv), $event)">Supprimer</button>
+            </div>
           </div>
         </div>
-
       </div>
     </div>
   </div>
