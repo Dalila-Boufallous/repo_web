@@ -1,6 +1,7 @@
 package com.example.back.entities;
 
 import jakarta.persistence.*;
+import com.example.back.services.EmailService;
 
 @Entity
 @Table(name = "rappel_patient")
@@ -85,4 +86,5 @@ public class RappelPatient {
             this.motif = this.motif.substring(0, 100);
         }
     }
+   
 }

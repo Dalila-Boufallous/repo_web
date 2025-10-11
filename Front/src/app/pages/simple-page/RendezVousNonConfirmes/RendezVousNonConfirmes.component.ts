@@ -308,65 +308,77 @@ deleteRendezVous(): void {
     this.rappel.tentatives++;
   }
 
-  envoyerRappel() {
-    // Vérifs basiques
-    if (!this.rappel) {
-      alert('Formulaire de rappel introuvable.');
-      return;
-    }
-    if (this.rappel.idRdv == null || this.rappel.idPatient == null) {
-      alert('Sélectionnez d’abord un rendez-vous (idRdv et idPatient sont requis).');
-      return;
-    }
-
-    // Normalisations
-    var tentatives = (this.rappel.tentatives == null) ? 0 : this.rappel.tentatives;
-    var motifRappel = this.rappel.motifRappel ? String(this.rappel.motifRappel) : '';
-    var motifRetour = this.rappel.motifRetour ? String(this.rappel.motifRetour) : '';
-
-    // Construire le champ "motif"
-    var motif = motifRappel;
-    if (motifRappel === 'telephone' && motifRetour.length > 0) {
-      motif = 'telephone:' + motifRetour;
-    }
-
-    // Payload
-    var payload: any = {
-      idPatient: Number(this.rappel.idPatient),
-      idRdv: Number(this.rappel.idRdv),
-      motif: motif,
-      nombreTentatives: tentatives // enlever si la colonne n’existe pas côté DB
-    };
-
-    this.http.post(this.rappelUrl, payload).subscribe(
-      (res: any) => {
-        var retourId = null;
-        if (res) {
-          if (typeof res.idRappelPatient !== 'undefined' && res.idRappelPatient !== null) {
-            retourId = res.idRappelPatient;
-          } else if (typeof res.id !== 'undefined' && res.id !== null) {
-            retourId = res.id;
-          }
-        }
-        alert('Rappel enregistré avec succès' + (retourId !== null ? ' (id=' + retourId + ')' : '') + '.');
-        this.rappel.tentatives = tentatives;
-      },
-      (err: any) => {
-        console.error('Erreur création rappel', err);
-        var messageErreur = 'Échec enregistrement rappel';
-        if (err && err.error) {
-          try {
-            if (typeof err.error === 'string' && err.error.length > 0) {
-              messageErreur = messageErreur + ' : ' + err.error;
-            } else if (err.error.message) {
-              messageErreur = messageErreur + ' : ' + err.error.message;
-            }
-          } catch (_e) { }
-        }
-        alert(messageErreur);
-      }
-    );
+ envoyerRappel() {
+  // Vérifs basiques
+  if (!this.rappel) {
+    alert('Formulaire de rappel introuvable.');
+    return;
   }
+  if (this.rappel.idRdv == null || this.rappel.idPatient == null) {
+    alert('Sélectionnez d’abord un rendez-vous (idRdv et idPatient sont requis).');
+    return;
+  }
+
+  // Normalisations
+  const tentatives = this.rappel.tentatives || 0;
+  const motifRappel = this.rappel.motifRappel || '';
+  const motifRetour = this.rappel.motifRetour || '';
+
+  // Construire le champ "motif"
+  let motif = motifRappel;
+  if (motifRappel === 'telephone' && motifRetour.length > 0) {
+    motif = 'telephone:' + motifRetour;
+  }
+
+  // --- Envoi par mail si motif = 'mail' ---
+  if (motifRappel === 'mail' && (this.rappel as any).email) {
+    this.http.post(`http://localhost:8081/api/mail/send`, {
+      to: (this.rappel as any).email,
+      subject: 'Rappel RDV #' + this.rappel.idRdv,
+      body: 'Bonjour, ceci est un rappel pour votre rendez-vous (Patient #' + this.rappel.idPatient + ').'
+    }).subscribe({
+      next: function() { console.log('Mail envoyé au patient'); },
+      error: function(err) { console.error('Erreur envoi mail', err); }
+    });
+  }
+
+  // --- Sauvegarde du rappel ---
+  const payload: any = {
+    idPatient: Number(this.rappel.idPatient),
+    idRdv: Number(this.rappel.idRdv),
+    motif: motif,
+    nombreTentatives: tentatives
+  };
+
+  this.http.post(this.rappelUrl, payload).subscribe({
+    next: (res: any) => {
+      let retourId: any = null;
+      if (res) {
+        if (res.idRappelPatient !== undefined && res.idRappelPatient !== null) {
+          retourId = res.idRappelPatient;
+        } else if (res.id !== undefined && res.id !== null) {
+          retourId = res.id;
+        }
+      }
+      alert('Rappel enregistré avec succès' + (retourId !== null ? ' (id=' + retourId + ')' : '') + '.');
+      this.rappel.tentatives = tentatives;
+    },
+    error: (err: any) => {
+      console.error('Erreur création rappel', err);
+      let messageErreur = 'Échec enregistrement rappel';
+      if (err && err.error) {
+        if (typeof err.error === 'string' && err.error.length > 0) {
+          messageErreur += ' : ' + err.error;
+        } else if (err.error.message) {
+          messageErreur += ' : ' + err.error.message;
+        }
+      }
+      alert(messageErreur);
+    }
+  });
+}
+
+
 
   // ==================== Filtres ====================
   private normalize(s: any): string {

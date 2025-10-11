@@ -2,10 +2,14 @@ package com.example.back.controllers;
 
 import com.example.back.entities.RappelPatient;
 import com.example.back.repositories.RepoRappelPatient;
+
+import com.example.back.services.EmailService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 
 import java.util.List;
 
@@ -70,4 +74,23 @@ public class RappelPatientController {
     public List<RappelPatient> getRappelsByPatient(@PathVariable Integer patientId) {
     return repo.findByIdPatient(patientId);
    }
+   @Autowired
+   private EmailService emailService; 
+
+   @PostMapping("/mail")
+   public ResponseEntity<String> sendRappelParMail(@RequestBody RappelPatient rappel) {
+     try {
+        String to = rappel.getEmailPatient(); // Assure-toi d'avoir le mail dans l'entité
+        String subject = "Rappel de rendez-vous";
+        String body = "Bonjour,\n\nVous avez un rappel concernant votre rendez-vous :\nMotif : " 
+                      + rappel.getMotifRappel() + "\n\nCordialement,\nVotre clinique";
+
+        emailService.sendEmail(to, subject, body);
+        return ResponseEntity.ok("Mail envoyé avec succès !");
+    } catch (Exception e) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                             .body("Erreur lors de l'envoi du mail : " + e.getMessage());
+    }
+}
+
 }
