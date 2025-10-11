@@ -34,6 +34,8 @@ export class PersonnelComponent implements OnInit {
 
   showDeleteConfirm = false;
   selectedDeleteId: number | null = null;
+  selectedType: string = ''; // vide = tous les types
+
 
   private baseUrl = 'http://localhost:8081/api/utilisateurs';
 
@@ -125,16 +127,41 @@ export class PersonnelComponent implements OnInit {
   searchTerm: string = '';
 
 get filteredUtilisateurs() {
-  if (!this.searchTerm) return this.utilisateurs;
-  const term = this.searchTerm.toLowerCase();
-  return this.utilisateurs.filter(u =>
-    (u.nom && u.nom.toLowerCase().includes(term)) ||
-    (u.prenom && u.prenom.toLowerCase().includes(term)) ||
-    (u.idDimUtilisateur && u.idDimUtilisateur.toString().includes(term)) ||
-    (u.genre && u.genre.toLowerCase().includes(term)) ||
-    (u.type && u.type.toLowerCase().includes(term)) ||
-    (u.categorie && u.categorie.toLowerCase().includes(term))
-  );
+  const selectedType = this.selectedType ? this.selectedType.trim().toLowerCase() : '';
+  const term = this.searchTerm ? this.searchTerm.trim().toLowerCase() : '';
+
+  return this.utilisateurs.filter(u => {
+    // Filtrage texte
+    const matchesText = !term ||
+      (u.nom && u.nom.toLowerCase().includes(term)) ||
+      (u.prenom && u.prenom.toLowerCase().includes(term)) ||
+      (u.idDimUtilisateur && u.idDimUtilisateur.toString().includes(term)) ||
+      (u.genre && u.genre.toLowerCase().includes(term)) ||
+      (u.type && u.type.toLowerCase().includes(term)) ||
+      (u.categorie && u.categorie.toLowerCase().includes(term));
+
+    // Filtrage type
+    const matchesType = !selectedType || (u.type && u.type.trim().toLowerCase() === selectedType);
+
+    return matchesText && matchesType;
+  });
 }
+get totalMedecins(): number {
+  if (!this.utilisateurs) return 0;
+  return this.utilisateurs.filter(u =>
+    (u.categorie || '').trim().toLowerCase() === 'med'
+  ).length;
+}
+
+// Getter total Praticiens
+get totalPraticiens(): number {
+  if (!this.utilisateurs) return 0;
+  return this.utilisateurs.filter(u =>
+    (u.type || '').trim().toLowerCase() === 'praticien'
+  ).length;
+}
+
+
+
 
 }

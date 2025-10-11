@@ -1,7 +1,7 @@
 <div class="container mt-4">
   <!-- Titre -->
   <h2 class="mb-4 text-center">Gestion du Personnel</h2>
-
+<div class="row g-4 mb-4">
   <div class="col-md-4">
     <div class="mini-card shadow-sm">
       <div class="icon blue">
@@ -13,6 +13,33 @@
       </div>
     </div>
   </div>
+  <!-- Carte total Médecins -->
+<div class="col-md-4">
+  <div class="mini-card shadow-sm">
+    <div class="icon green">
+      <i class="icofont icofont-doctor-alt"></i>
+    </div>
+    <div class="content">
+      <span class="title">Total Médecins</span>
+      <h4>{{ totalMedecins }}</h4>
+    </div>
+  </div>
+</div>
+
+<!-- Carte total Praticiens -->
+<div class="col-md-4">
+  <div class="mini-card shadow-sm">
+    <div class="icon pink">
+      <i class="icofont icofont-stethoscope-alt"></i>
+    </div>
+    <div class="content">
+      <span class="title">Total Praticiens</span>
+      <h4>{{ totalPraticiens }}</h4>
+    </div>
+  </div>
+</div>
+</div>
+  
 
   <!-- Champ de recherche en haut à gauche -->
   <div class="mb-3" style="text-align: left;">
@@ -21,8 +48,17 @@
            placeholder="🔍 Rechercher un personnel..."
            [(ngModel)]="searchTerm">
   </div>
+  <h6 class="mb-1 fw-semibold">Filtrer par type personnel :</h6>
+  
+  <select [(ngModel)]="selectedType" class="form-select mb-2">
+  <option value="">Tous les types </option>
+  <option value="praticien">Praticien</option>
+  <option value="MED">MED</option>
+  <option value="hotline">Hotline</option>
+  <option value="autre">Autre</option>
+ </select>
 
-  <!-- Formulaire AJOUT amélioré -->
+  <!-- Formulaire AJOUT  -->
   <div class="card mb-4 shadow-sm rounded-3">
     <div class="card-header bg-light">
       <h5 class="mb-0">➕ Ajouter un utilisateur</h5>
@@ -32,7 +68,7 @@
       <form #addForm="ngForm" (ngSubmit)="saveNewUtilisateur(addForm)" novalidate>
         <div class="row g-3">
 
-          <!-- Champs du formulaire inchangés -->
+          <!-- Champs du formulaire  -->
           <div class="col-md-3">
             <label class="form-label">ID Utilisateur *</label>
             <input type="number" class="form-control" name="idUtilisateur"
@@ -141,7 +177,7 @@
   </div>
 
   <!-- Liste du personnel en cartes avec scroll -->
-  <div class="cards-scroll-wrapper" style="max-height: 500px; overflow: auto; padding-right: 10px; padding-bottom: 10px;">
+  <div class="cards-scroll-wrapper" style="max-height: none; overflow: visible; padding-right:10px; padding-bottom:10px;">
     <div class="row g-4">
       <div class="col-md-4" *ngFor="let utilisateur of filteredUtilisateurs">
         <div class="card shadow-sm rounded-3 h-100">

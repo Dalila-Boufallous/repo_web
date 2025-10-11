@@ -192,3 +192,33 @@
   align-items: center;
   gap: 10px;
 }
+
+/* Conteneur du select */
+.form-select.mb-2 {
+  width: 200px;                  /* Largeur fixe */
+  padding: 0.35rem 0.75rem;      /* Espacement intérieur */
+  border-radius: 8px;            /* Coins arrondis */
+  border: 1px solid #6f42c1;     /* Bordure violette */
+  background-color: #f9f9f9;     /* Fond clair */
+  color: #333;                   /* Couleur du texte */
+  font-weight: 500;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+  appearance: none;              /* Retire la flèche native pour customisation */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 5'%3E%3Cpath fill='none' stroke='%236f42c1' d='M2 0L0 2h4zm0 5L0 3h4z'/%3E%3C/svg%3E"); 
+  background-repeat: no-repeat;
+  background-position: right 0.5rem center;
+  background-size: 0.65rem auto;
+}
+
+/* Hover et focus */
+.form-select.mb-2:hover {
+  border-color: #5a32a3;
+  background-color: #f1e6ff;
+}
+
+.form-select.mb-2:focus {
+  outline: none;
+  border-color: #6f42c1;
+  box-shadow: 0 0 0 0.2rem rgba(111,66,193,.25);
+}
