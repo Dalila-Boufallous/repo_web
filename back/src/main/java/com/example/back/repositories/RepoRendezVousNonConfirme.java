@@ -1,6 +1,9 @@
 package com.example.back.repositories;
 
 import com.example.back.entities.RendezVousNonConfirme;
+
+import com.example.back.entities.RappelPatient;
+
 import com.example.back.entities.ConfirmationRendezVous;
 
 import org.springframework.data.jpa.repository.Query;
@@ -17,5 +20,5 @@ public interface RepoRendezVousNonConfirme extends JpaRepository<RendezVousNonCo
     List<RendezVousNonConfirme> findNonConfirmedAppointments();
 
      List<RendezVousNonConfirme> findByIdDimConfirmationRendezVous(Integer idDimConfirmationRendezVous);
-
+     
 }

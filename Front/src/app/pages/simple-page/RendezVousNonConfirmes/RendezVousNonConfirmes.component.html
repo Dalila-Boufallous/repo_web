@@ -127,7 +127,11 @@
 <button (click)="showWeekNonConfirmed()" class="btn-rdv" >
   Afficher les rendez-vous de la semaine
 </button>
+  <button (click)="resetWeekRendezVous()" class="btn-rdv-reset">
+    Réinitialiser
+  </button>
 </div>
+
 
   <!-- ===== Filtres ===== -->
   <div class="filters mb-3">
@@ -304,9 +308,36 @@
               <button class="btn btn-danger btn-sm"
                       (click)="confirmDelete(getRdvId(rdv), $event)">Supprimer</button>
             </div>
+            <!-- 🕓 Nouveau bouton Historique -->
+            <div class="mt-2 text-center">
+            <button class="btn btn-info btn-sm"
+            (click)="openHistoriquePopup(rdv.idDimPatient); $event.stopPropagation()">
+             📞 Historique dernier rappel
+            </button>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </div>
+ 
+<!-- Modal Historique -->
+<div *ngIf="showRappelModal" class="modal-backdrop" (click)="closeRappelModal()">
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2><i class="icofont-clock-time"></i> Historique du patient #{{ selectedRappel?.idPatient }}</h2>
+      <span class="close-btn" (click)="closeRappelModal()">&times;</span>
+    </div>
+    <div class="modal-body">
+      <p><strong>Motif :</strong> {{ selectedRappel?.motifRappel || 'Non spécifié' }}</p>
+      <p><strong>Motif retour :</strong> {{ selectedRappel?.motifRetour || '-' }}</p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" (click)="closeRappelModal()">Fermer</button>
+    </div>
+  </div>
 </div>
+
+
+</div>
+

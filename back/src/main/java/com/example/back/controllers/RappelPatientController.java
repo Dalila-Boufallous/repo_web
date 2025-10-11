@@ -23,7 +23,7 @@ public class RappelPatientController {
     }
 
     // Un rappel par id (PK idRappelPatient)
-    @GetMapping("/{id}")
+    @GetMapping("/id/{id}")
     public ResponseEntity<RappelPatient> getOne(@PathVariable Integer id) {
         return repo.findById(id)
                    .map(ResponseEntity::ok)
@@ -65,4 +65,9 @@ public class RappelPatientController {
     public void delete(@PathVariable Integer id) {
         repo.deleteById(id);
     }
+    // Récupérer tous les rappels d’un patient
+    @GetMapping("/patient/{patientId}")
+    public List<RappelPatient> getRappelsByPatient(@PathVariable Integer patientId) {
+    return repo.findByIdPatient(patientId);
+   }
 }

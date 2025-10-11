@@ -497,20 +497,35 @@ alert('Échec suppression RDV : ' + msg);
   });
 }
 
-  // carte cliquable
   onCardClick(r: RendezVousNonConfirmes): void {
-    if (!r) { return; }
-    var rdvId = this.getRdvId(r);
-    this.selectedCardId = rdvId;
+  if (!r) return;
 
-    // Remplir le formulaire de rappel
-    this.rappel.idRdv = rdvId;
-    this.rappel.idPatient = r.idDimPatient;
+  const rdvId = this.getRdvId(r);
 
-    if (!this.rappel.motifRappel) {
-      this.rappel.motifRappel = 'telephone';
-    }
+  // ✅ Si la carte cliquée est déjà sélectionnée → la désélectionner
+  if (this.selectedCardId === rdvId) {
+    this.selectedCardId = null;
+    this.rappel = {
+      idRdv: null,
+      idPatient: null,
+      motifRappel: 'telephone',
+      motifRetour: '',   // ← ajouté ici
+      tentatives: 0
+    };
+    return;
   }
+
+  // ✅ Sinon → sélectionner la carte et remplir le formulaire
+  this.selectedCardId = rdvId;
+  this.rappel.idRdv = rdvId;
+  this.rappel.idPatient = r.idDimPatient;
+
+  if (!this.rappel.motifRappel) {
+    this.rappel.motifRappel = 'telephone';
+  }
+}
+
+
 
   // savoir si une carte est sélectionnée
   isSelected(r: RendezVousNonConfirmes): boolean {
@@ -521,21 +536,22 @@ upcomingRendezVous: number = 0;
 
 
 calculerStats() {
-  if (!this.filteredRendezVous) return;
+  if (!this.rendezVousList) return;
 
-  // Total des rendez-vous
-  this.totalRendezVous = this.filteredRendezVous.length;
+  // ✅ Total des rendez-vous fixes (tous les RDV)
+  this.totalRendezVous = this.rendezVousList.length;
 
-  // Rendez-vous de la semaine
+  // Rendez-vous de la semaine (calculé uniquement à partir de la liste complète)
   const today = new Date();
   const nextWeek = new Date();
   nextWeek.setDate(today.getDate() + 7);
 
-  this.upcomingRendezVous = this.filteredRendezVous.filter(rdv => {
+  this.upcomingRendezVous = this.rendezVousList.filter(rdv => {
     const rdvDate = new Date(rdv.datePrevisionnelle);
     return rdvDate >= today && rdvDate <= nextWeek;
   }).length;
 }
+
 
 
 // Affiche uniquement les RDV non confirmés de la semaine
@@ -560,8 +576,30 @@ showWeekNonConfirmed() {
 }
 
 
+selectedWeek: any = null;
+resetWeekRendezVous() {
+  this.selectedWeek = null;  // ou la variable que tu utilises pour filtrer la semaine
+  this.applyFilters();       // rafraîchit la liste des rendez-vous
+}
+selectedRappel: any = null;
+showRappelModal: boolean = false;
 
+openHistoriquePopup(patientId: number) {
+  this.http.get<any[]>(`http://localhost:8081/api/rappels_patients/patient/${patientId}`)
+    .subscribe({
+      next: (rappels) => {
+        if (!rappels || rappels.length === 0) return;
+        this.selectedRappel = rappels[rappels.length - 1];
+        this.showRappelModal = true; // ← active le modal
+      },
+      error: (err) => console.error(err)
+    });
+}
 
+closeRappelModal() {
+  this.showRappelModal = false; // ← cache le modal
+  this.selectedRappel = null;
+}
 
 
 }

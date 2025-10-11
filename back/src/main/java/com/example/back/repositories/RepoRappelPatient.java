@@ -9,4 +9,5 @@ public interface RepoRappelPatient extends JpaRepository<RappelPatient, Integer>
 
    
     List<RappelPatient> findByIdRdvOrderByIdRappelPatientDesc(Integer idRdv);
+    List<RappelPatient> findByIdPatient(Integer patientId);
 }
