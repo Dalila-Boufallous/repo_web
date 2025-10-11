@@ -361,30 +361,23 @@ export class ConfirmationRendezVousComponent implements OnInit {
 
     this.calculateWeeklyRendezVous();
   }
+   
 
-  get filteredRendezVous(): ConfirmationRendezVous[] {
-    const base = this.filteredRendezVousList;
-    const term = (this.searchRdv || '').toLowerCase().trim();
-    if (!term) return base;
+ get filteredRendezVous(): ConfirmationRendezVous[] {
+  return this.filteredRendezVousList.filter(rdv => {
+    const matchRdv = this.searchIdRdv
+      ? String(rdv.id).includes(this.searchIdRdv) ||
+        (rdv.idDimConfirmationRendezVous != null && String(rdv.idDimConfirmationRendezVous).includes(this.searchIdRdv))
+      : true;
 
-    return base.filter(rdv => {
-      return Object.entries(rdv).some(([key, value]: [string, any]) => {
-        if (value === null || value === undefined) return false;
-        let strValue = '';
-        if (key.toLowerCase().indexOf('date') >= 0) {
-          const d = new Date(String(value) + 'T00:00:00');
-          if (!isNaN(d.getTime())) {
-            strValue = d.toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' });
-          }
-        } else if (typeof value === 'number') {
-          strValue = String(value);
-        } else {
-          strValue = String(value);
-        }
-        return strValue.toLowerCase().includes(term);
-      });
-    });
-  }
+    const matchPatient = this.searchIdPatient
+      ? String(rdv.idPatient).includes(this.searchIdPatient)
+      : true;
+
+    return matchRdv && matchPatient;
+  });
+}
+
 
   showToday(): void {
     const today = new Date();
@@ -458,5 +451,39 @@ export class ConfirmationRendezVousComponent implements OnInit {
         error: (err: HttpErrorResponse) => this.showHttpError(err)
       });
   }
+  searchIdPatient: string = '';
+  searchIdRdv: string = '';
+
+// ---- Recherche par ID Patient ----
+searchByIdPatient(idPatient: string | null): void {
+  if (!idPatient) {
+    this.filteredRendezVousList = [...this.rendezVousList];
+    return;
+  }
+
+  const idNumber = Number(idPatient);
+
+  this.filteredRendezVousList = this.rendezVousList.filter(rdv => 
+    rdv.idPatient === idNumber
+  );
+
+  this.calculateWeeklyRendezVous();
+}
+
+  // ---- Recherche par ID Rendez-vous ----
+searchByIdRdv(idRdv: number): void {
+  if (!idRdv) {
+    this.filteredRendezVousList = [...this.rendezVousList];
+    return;
+  }
+
+  this.filteredRendezVousList = this.rendezVousList.filter(rdv => {
+    const rdvKey = rdv.idDimConfirmationRendezVous != null ? rdv.idDimConfirmationRendezVous : rdv.id;
+    return rdvKey === idRdv;
+  });
+
+  this.calculateWeeklyRendezVous();
+}
+
   
 }

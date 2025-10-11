@@ -40,8 +40,10 @@
     </div>
   </div>
 
+ <!-- Conteneur flex pour les recherches -->
+<div class="d-flex justify-content-center mb-3 gap-2 flex-wrap">
   <!-- Barre de recherche RDV -->
-  <div class="mb-3" style="max-width: 400px; margin: 0 auto;">
+  <div style="flex: 1 1 200px; max-width: 400px;">
     <input
       type="text"
       class="form-control"
@@ -49,7 +51,25 @@
       [(ngModel)]="searchRdv"
     >
   </div>
-  
+
+  <!-- Barre de recherche par ID Patient -->
+  <div style="flex: 1 1 200px; max-width: 400px;">
+    <input
+      type="number"
+      class="form-control"
+      placeholder="🧑‍⚕️ Rechercher par ID Patient..."
+      (input)="searchByIdPatient($event.target.valueAsNumber)"
+    >
+  </div>
+</div>
+
+<!-- Bouton pour réinitialiser -->
+<div class="text-center mb-4">
+  <button class="btn btn-outline-secondary btn-sm" (click)="resetFilters()">
+    🔄 Réinitialiser les filtres
+  </button>
+</div>
+
   <!-- Colonne gauche : Mini-calendrier -->
   <div class="d-flex align-items-start">
     <!-- Mini-calendrier -->
@@ -164,76 +184,66 @@
       </form>
     </div>
   </div>
-
-  <!-- Liste RDV sous forme de cartes -->
+<!-- Liste des rdvs -->
   <div class="cards-scroll-wrapper">
-    <div class="cards-container">
-      <div class="patient-card" *ngFor="let rdv of filteredRendezVous">
-        <div class="card shadow-sm rounded-3 h-100">
-          <div class="card-body">
-            <!-- Titre -->
-            <h5 class="card-title">
-              <span *ngIf="editRendezVousId !== rdv.idDimConfirmationRendezVous">
-                <i class="icofont icofont-calendar blue"></i>
-                RDV #{{ rdv.id }} - Patient <button class="btn btn-link p-0"
-        (click)="goToPatient(rdv.idPatient)"
-        [disabled]="!rdv.idPatient">
-  #{{ rdv.idPatient }}
-</button>
-              </span>
-            </h5>
-
-            <h6 class="card-subtitle mb-2 text-muted">ID Dim: {{ rdv.idDimConfirmationRendezVous }}</h6>
-
-            <!-- Détails -->
-            <ul class="list-unstyled mt-3 mb-4 small" *ngIf="editRendezVousId !== rdv.idDimConfirmationRendezVous">
-              <li><i class="icofont icofont-hospital text-info"></i> Acte: {{ rdv.idActe }}</li>
-              <li><i class="icofont icofont-doctor text-warning"></i> Personnel: {{ rdv.idPersonnel }}</li>
-              <li><i class="icofont icofont-chair text-secondary"></i> Fauteuil: {{ rdv.idFauteuil }}</li>
-              <li><i class="icofont icofont-calendar text-success"></i> Date RDV: {{ rdv.dateRdvConfirme }}</li>
-              <li><i class="icofont icofont-clock-time text-primary"></i> Heure RDV: {{ rdv.heureRdvConfirme }}</li>
-              <li><i class="icofont icofont-clock-time text-danger"></i> Durée: {{ rdv.rdvDuree }} min</li>
-              <li><i class="icofont icofont-patient-bed text-info"></i> Arrivée: {{ rdv.dateArriveePatient }} {{ rdv.heureArriveePatient }}</li>
-              <li><i class="icofont icofont-waiter-alt text-warning"></i> Salle attente: {{ rdv.heureSalleAttente }}</li>
-              <li><i class="icofont icofont-sign-out text-danger"></i> Sortie: {{ rdv.heureSortie }}</li>
-            </ul>
-
-            <!-- Edition inline -->
-            <div *ngIf="editRendezVousId === rdv.idDimConfirmationRendezVous" class="edit-rdv-form">
-              <input type="text" [(ngModel)]="editedRendezVous.idActe" class="form-control mb-2" placeholder="Acte">
-              <input type="text" [(ngModel)]="editedRendezVous.idPersonnel" class="form-control mb-2" placeholder="Personnel">
-              <input type="text" [(ngModel)]="editedRendezVous.idFauteuil" class="form-control mb-2" placeholder="Fauteuil">
-              <input type="date" [(ngModel)]="editedRendezVous.dateRdvConfirme" class="form-control mb-2">
-              <input type="time" [(ngModel)]="editedRendezVous.heureRdvConfirme" class="form-control mb-2">
-              <input type="number" [(ngModel)]="editedRendezVous.rdvDuree" class="form-control mb-2" placeholder="Durée (min)">
-              <button class="btn btn-success btn-sm me-2" (click)="saveRendezVous()">
-               <i class="icofont icofont-check-circled"></i> Enregistrer</button>
-              <button class="btn btn-secondary btn-sm" (click)="cancelEdit()">
-                <i class="icofont icofont-ban"></i>Annuler</button>
-            </div>
-
-            <!-- Actions -->
-            <div class="d-flex justify-content-between mt-2">
-              <button *ngIf="editRendezVousId !== rdv.idDimConfirmationRendezVous"
-                      class="btn btn-sm btn-primary"
-                      (click)="editRendezVous(rdv)">
-                <i class="icofont icofont-edit"></i> Modifier
+  <div class="cards-container">
+    <div class="patient-card" *ngFor="let rdv of filteredRendezVous">
+      <div class="card shadow-sm rounded-3 h-100">
+        <div class="card-body">
+          <h5 class="card-title">
+            <span *ngIf="editRendezVousId !== rdv.idDimConfirmationRendezVous">
+              <i class="icofont icofont-calendar blue"></i>
+              RDV #{{ rdv.id }} - Patient
+              <button class="btn btn-link p-0"
+                      (click)="goToPatient(rdv.idPatient)"
+                      [disabled]="!rdv.idPatient">
+                #{{ rdv.idPatient }}
               </button>
-               <button class="btn btn-sm btn-outline-primary"
-            (click)="sendEmailReminder(rdv.idDimConfirmationRendezVous)"
-            [disabled]="isSending(rdv)">
-           <span *ngIf="isSending(rdv)">Envoi…</span>
-           <span *ngIf="!isSending(rdv)"><i class="ti-email"></i> Rappel</span>
-        </button>
-              <button class="btn btn-sm btn-danger" (click)="confirmDelete(rdv.idDimConfirmationRendezVous)">
-                <i class="icofont icofont-trash"></i> Supprimer
-              </button>
-            </div>
+            </span>
+          </h5>
+
+          <h6 class="card-subtitle mb-2 text-muted">
+            ID Dim: {{ rdv.idDimConfirmationRendezVous }}
+          </h6>
+
+          <ul class="list-unstyled mt-3 mb-4 small" *ngIf="editRendezVousId !== rdv.idDimConfirmationRendezVous">
+            <li><i class="icofont icofont-hospital text-info"></i> Acte: {{ rdv.idActe }}</li>
+            <li><i class="icofont icofont-doctor text-warning"></i> Personnel: {{ rdv.idPersonnel }}</li>
+            <li><i class="icofont icofont-chair text-secondary"></i> Fauteuil: {{ rdv.idFauteuil }}</li>
+            <li><i class="icofont icofont-calendar text-success"></i> Date RDV: {{ rdv.dateRdvConfirme }}</li>
+            <li><i class="icofont icofont-clock-time text-primary"></i> Heure RDV: {{ rdv.heureRdvConfirme }}</li>
+            <li><i class="icofont icofont-clock-time text-danger"></i> Durée: {{ rdv.rdvDuree }} min</li>
+            <li><i class="icofont icofont-patient-bed text-info"></i> Arrivée: {{ rdv.dateArriveePatient }} {{ rdv.heureArriveePatient }}</li>
+            <li><i class="icofont icofont-waiter-alt text-warning"></i> Salle attente: {{ rdv.heureSalleAttente }}</li>
+            <li><i class="icofont icofont-sign-out text-danger"></i> Sortie: {{ rdv.heureSortie }}</li>
+          </ul>
+
+          <!-- Actions -->
+          <div class="d-flex justify-content-between mt-2">
+            <button *ngIf="editRendezVousId !== rdv.idDimConfirmationRendezVous"
+                    class="btn btn-sm btn-primary"
+                    (click)="editRendezVous(rdv)">
+              <i class="icofont icofont-edit"></i> Modifier
+            </button>
+
+            <button class="btn btn-sm btn-outline-primary btn-rappel"
+                    (click)="sendEmailReminder(rdv.idDimConfirmationRendezVous)"
+                    [disabled]="isSending(rdv)">
+              <span *ngIf="isSending(rdv)">Envoi…</span>
+              <span *ngIf="!isSending(rdv)"><i class="ti-email"></i> Rappel Par Mail</span>
+            </button>
+
+            <button class="btn btn-sm btn-danger"
+                    (click)="confirmDelete(rdv.idDimConfirmationRendezVous)">
+              <i class="icofont icofont-trash"></i> Supprimer
+            </button>
           </div>
         </div>
       </div>
     </div>
   </div>
+</div>
+
 
   <!-- Popups -->
   <div *ngIf="addSuccess" class="popup-success">✅ Rendez-vous ajouté</div>

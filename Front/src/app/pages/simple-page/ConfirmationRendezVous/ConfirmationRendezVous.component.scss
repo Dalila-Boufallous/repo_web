@@ -51,20 +51,6 @@
 }
 
 /* Wrapper scrollable */
-.cards-scroll-wrapper {
-  overflow-x: auto;
-  overflow-y: auto;
-  padding: 1rem 0;
-
-  /* Masquer la scrollbar (optionnel, dépend du navigateur) */
-  &::-webkit-scrollbar {
-    height: 8px;
-  }
-  &::-webkit-scrollbar-thumb {
-    background: #ccc;
-    border-radius: 4px;
-  }
-}
 
 /* Conteneur des cartes */
 .cards-container {
@@ -341,4 +327,52 @@ button.btn.btn-sm.btn-outline-primary:disabled {
   background-color: #f0ad4e;    /* orange pour montrer qu’il est en cours */
   cursor: not-allowed;
   opacity: 0.85;
+}
+
+/* Conteneur des cartes patient/rdv */
+.cards-container {
+  display: flex;
+  flex-wrap: wrap;      /* Permet aux cartes de passer à la ligne suivante si nécessaire */
+  gap: 1rem;            /* Espace entre les cartes */
+  justify-content: center; /* Centre les cartes dans le conteneur */
+}
+
+/* Style des cartes patient/rdv */
+.patient-card {
+  flex: 1 1 300px;      /* La carte prend au moins 300px et peut grandir */
+  max-width: 300px;     /* Limite la largeur pour uniformité */
+}
+
+.cards-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.patient-card {
+  flex: 0 1 calc(25% - 1rem); /* 4 cartes par ligne avec gap */
+  max-width: calc(25% - 1rem);
+  box-sizing: border-box;      /* pour inclure padding et border dans la largeur */
+}
+
+.d-flex.justify-content-between.mt-2 {
+  flex-wrap: wrap; /* permet le retour à la ligne */
+  
+}
+
+.btn-rappel {
+  width: max-content;      /* largeur du contenu seulement */
+  margin: 0.9rem auto 0;   /* centré sous les deux autres */
+  order: 1;                /* met le bouton après les deux autres dans l'affichage */
+}
+
+.btn-rappel {
+  background-color: #6dd567 !important; /* couleur de fond violette */
+  color: #fff !important;               /* texte blanc */
+  border: none;              /* supprime la bordure */
+}
+
+.btn-rappel:hover {
+  background-color: #5a32a3; /* couleur au survol */
 }
