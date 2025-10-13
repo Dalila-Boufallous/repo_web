@@ -1,0 +1,104 @@
+.logo-lg{ width: 600px; height: auto; }
+
+:root{
+  --brand-600:#6c5ce7;        /* violet propre */
+  --brand-700:#5849d0;
+  --brand-rgb:108,92,231;
+  --text-strong:#1f2937;
+}
+
+/* ===== Header “glass” propre ===== */
+.header-modern{
+  backdrop-filter: saturate(140%) blur(10px);
+  background: linear-gradient(180deg, rgba(255,255,255,.85), rgba(255,255,255,.75));
+  border-bottom: 1px solid rgba(15,23,42,.06);
+  box-shadow: 0 6px 24px rgba(17,24,39,.06);
+}
+.header-modern .navbar-logo img{
+  height: 44px;
+  width: auto;
+}
+
+/* ===== NAV LARGER: grossit les boutons de navigation ===== */
+.pcoded-navbar.nav-lg .pcoded-item .pcoded-left-item > li > a{
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 52px;                 /* bouton + haut */
+  padding: 0 16px;              /* + large */
+  font-size: 15px;              /* texte + grand */
+  line-height: 1;
+  border-radius: 12px;
+  color: #374151;
+  transition: background-color .18s ease, color .18s ease, transform .12s ease;
+}
+
+/* Icône + grande */
+.pcoded-navbar.nav-lg .pcoded-left-item > li > a .pcoded-micon i{
+  font-size: 1.2rem;
+}
+
+/* Label un peu plus fort */
+.pcoded-navbar.nav-lg .pcoded-left-item > li > a .pcoded-mtext{
+  font-weight: 600;
+  letter-spacing: .2px;
+}
+
+/* Hover + Active (routerLinkActive ajoute .active sur <li>) */
+.pcoded-navbar.nav-lg .pcoded-left-item > li > a:hover{
+  background: rgba(var(--brand-rgb), .10);
+  color: var(--brand-700);
+}
+.pcoded-navbar.nav-lg .pcoded-left-item > li.active > a{
+  background: rgba(var(--brand-rgb), .16);
+  color: var(--brand-700);
+  box-shadow: inset 0 0 0 1px rgba(var(--brand-rgb), .22);
+}
+
+/* Badges plus lisibles */
+.pcoded-navbar.nav-lg .pcoded-left-item > li > a .pcoded-badge{
+  border-radius: 999px;
+  padding: 2px 8px;
+  font-size: 11px;
+}
+
+/* ===== Sous-menus plus confort ===== */
+.pcoded-navbar.nav-lg .pcoded-submenu li > a{
+  height: 44px;
+  padding: 0 16px 0 40px;
+  border-radius: 10px;
+  font-size: 14px;
+}
+.pcoded-navbar.nav-lg .pcoded-submenu li > a:hover{
+  background: rgba(0,0,0,.04);
+}
+
+/* ===== Scrollbar discrète dans la sidebar ===== */
+.pcoded-navbar .ps__rail-y{
+  width: 8px !important;
+}
+.pcoded-navbar .ps__thumb-y{
+  background: rgba(0,0,0,.15) !important;
+  border-radius: 8px;
+}
+
+/* ===== Cartes / chat un peu plus “glass” ===== */
+.card.card_main.showChat_inner{
+  border-radius: 16px;
+  box-shadow: 0 12px 30px rgba(17,24,39,.10);
+  border: 1px solid rgba(15,23,42,.06);
+}
+
+/* ===== Effets de clic discrets ===== */
+.pcoded-navbar.nav-lg .pcoded-left-item > li > a:active{
+  transform: translateY(1px);
+}
+
+/* ===== Optionnel: logo plus large (si tu veux) ===== */
+.logo-lg{
+  width: 220px;
+  height: auto;
+}
+@media (min-width: 1200px){
+  .logo-lg{ width: 260px; }
+}

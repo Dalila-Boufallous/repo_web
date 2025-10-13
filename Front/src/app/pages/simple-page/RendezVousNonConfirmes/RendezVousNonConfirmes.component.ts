@@ -149,6 +149,7 @@ create(): void {
       this.getAll();
       this.newRendezVous = this.initForm();
       this.addSuccess = true;
+      this.showAutoHidePopup('Rendez-vous ajouté avec succès.', 2500);
       setTimeout(() => { this.addSuccess = false; }, 3000);
     },
     (err: any) => {
@@ -208,6 +209,7 @@ create(): void {
       this.editingRendezVous = null;
       this.editingRendezVousId = null;
       this.saveSuccess = true;
+      this.showAutoHidePopup('Modification enregistrée.', 2500);
       var self = this;
       setTimeout(function(){ self.saveSuccess = false; }, 3000);
     },
@@ -223,6 +225,21 @@ create(): void {
   );
 }
 
+// ==================== Annulation d'édition ====================
+cancelEdit(): void {
+  // Si aucun RDV en édition → rien à faire
+  if (!this.editingRendezVousId) return;
+
+  // Réinitialiser le RDV en édition et l’ID
+  this.editingRendezVous = null;
+  this.editingRendezVousId = null;
+
+  // Recharger la liste depuis le serveur pour être sûr d’avoir les données originales
+  this.getAll();
+
+  // (optionnel) message visuel ou console
+  console.log('Édition annulée : les modifications ont été ignorées');
+}
 
 
 
@@ -478,12 +495,11 @@ confirmDelete(idOrRdv: number | RendezVousNonConfirmes, $event?: Event): void {
     id = this.getRdvId(idOrRdv);
   }
   if (!id) { return; }
-
-  // Version simple: prompt natif
-  const ok = window.confirm('Supprimer ce rendez-vous ?');
-  if (ok) {
-    this.delete(id);
-  }
+  this.showPopup(
+    'Voulez-vous vraiment supprimer ce rendez-vous ?',
+    'warning',       // type warning → deux boutons (Annuler/Confirmer)
+    () => this.delete(id)  // action à exécuter si l'utilisateur confirme
+  );
 }
 
 // Appel API réel
@@ -493,6 +509,7 @@ private delete(id: number): void {
     next: () => {
       this.getAll();
       this.deleteSuccess = true;
+      this.showPopup('Rendez-vous supprimé avec succès.', 'danger');
       setTimeout(() => this.deleteSuccess = false, 2500);
     },
     error: (err) => {
@@ -611,6 +628,39 @@ openHistoriquePopup(patientId: number) {
 closeRappelModal() {
   this.showRappelModal = false; // ← cache le modal
   this.selectedRappel = null;
+}
+// ===== POPUP SIMPLE  =====
+popupVisible = false;
+popupMessage = '';
+popupType: 'success' | 'warning' | 'danger' = 'success';
+popupConfirmAction: (() => void) | null = null;
+
+// Affiche le popup. Si type === 'warning' et confirmAction fourni, on affichera deux boutons (Annuler/Confirmer)
+showPopup(message: string, type: 'success' | 'warning' | 'danger' = 'success', confirmAction?: () => void): void {
+  this.popupMessage = message;
+  this.popupType = type;
+  this.popupConfirmAction = confirmAction || null;
+  this.popupVisible = true;
+}
+
+// Fermer le popup. Si confirm === true, exécute confirmAction (utile pour la suppression)
+closePopup(confirm: boolean = false): void {
+  if (confirm && this.popupConfirmAction) {
+    // stocker l'action et la nettoyer pour éviter double exécution
+    const action = this.popupConfirmAction;
+    this.popupConfirmAction = null;
+    action();
+  } else {
+    // nettoyer callback si on annule
+    this.popupConfirmAction = null;
+  }
+  this.popupVisible = false;
+}
+
+// Optionnel : auto-hide pour les success (utilisable si tu veux)
+showAutoHidePopup(message: string, delayMs: number = 2500) {
+  this.showPopup(message, 'success');
+  setTimeout(() => { this.popupVisible = false; }, delayMs);
 }
 
 

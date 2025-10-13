@@ -309,7 +309,7 @@
               <button class="btn btn-danger btn-sm"
                       (click)="confirmDelete(getRdvId(rdv), $event)">Supprimer</button>
             </div>
-            <!-- 🕓 Nouveau bouton Historique -->
+            <!-- 🕓 Nouveau bouton Historique --> 
             <div class="mt-2 text-center">
             <button class="btn btn-info btn-sm"
             (click)="openHistoriquePopup(rdv.idDimPatient); $event.stopPropagation()">
@@ -335,6 +335,25 @@
     </div>
     <div class="modal-footer">
       <button class="btn" (click)="closeRappelModal()">Fermer</button>
+    </div>
+  </div>
+</div>
+<!-- ==================== POPUP ==================== -->
+<div class="popup-backdrop" *ngIf="popupVisible">
+  <div class="popup-card" [ngClass]="{
+    'popup-success': popupType === 'success',
+    'popup-warning': popupType === 'warning',
+    'popup-danger': popupType === 'danger'
+  }">
+    <p>{{ popupMessage }}</p>
+
+    <div class="popup-buttons" *ngIf="popupType === 'warning'">
+      <button class="btn btn-secondary" (click)="closePopup(false)">Annuler</button>
+      <button class="btn btn-danger" (click)="closePopup(true)">Confirmer</button>
+    </div>
+
+    <div class="popup-buttons" *ngIf="popupType !== 'warning'">
+      <button class="btn btn-primary" (click)="closePopup()">OK</button>
     </div>
   </div>
 </div>

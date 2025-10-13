@@ -42,7 +42,7 @@ const MENUITEMS = [
         icon: 'ti-home'
       },
       {
-        state: 'basic',
+        state: 'rendezvousnonconfirmes',
         short_label: 'B',
         name: 'Rendez_vous',
         type: 'link',

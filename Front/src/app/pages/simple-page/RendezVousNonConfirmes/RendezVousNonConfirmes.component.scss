@@ -75,7 +75,6 @@
 }
 
 /* Boutons des jours */
-/* Boutons des jours */
 .mc-day {
   aspect-ratio: 1/1;           /* Carré parfait */
   border: none;
@@ -1065,12 +1064,14 @@ form[ngform] .form-control[type="time"]{
     width: 180px;                /* largeur fixe pour contrôler le wrapping */
     padding: 10px;               /* espace intérieur confortable */
     font-size: 13px;             /* texte lisible */
+    font-weight : bold ;
+
     line-height: 1.2;            /* permet 2 lignes sans être trop serré */
     text-align: center;          /* centrer le texte */
     border-radius: 12px;         /* coins bien arrondis */
-    background-color: #d7fad4;   /* fond clair */
-    border: 2px solid #999999;   /* bordure plus foncée */
-    color: #333333;              /* texte foncé */
+    background-color: #924af7;   /* fond clair */
+    border: 0.5px solid #6f6f6f;   /* bordure plus foncée */
+    color: white;              /* texte foncé */
     white-space: normal;          /* permet le texte sur 2 lignes */
     cursor: pointer;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* légère ombre */
@@ -1084,8 +1085,8 @@ form[ngform] .form-control[type="time"]{
 }
 
 .btn-rdv:hover {
-    background-color: #98f17f;   /* léger effet au survol */
-    border-color: #666666;       /* bordure plus foncée au hover */
+    background-color: #6c37b7;   /* léger effet au survol */
+    border-color: #575656;       /* bordure plus foncée au hover */
 }
 
 .add-rdv-card {
@@ -1130,12 +1131,13 @@ form[ngform] .form-control[type="time"]{
     height: 60px;                 /* hauteur fixe identique pour tous les boutons */
     padding: 10px 12px;
     font-size: 13px;
+    font-weight: bold;
     line-height: 1.2;
     text-align: center;
     border-radius: 12px;
-    background-color: #a3a9a2;
+    background-color: #fffeff;
     border: 2px solid #999999;
-    color: #333333;
+    color: #924af7 ;
     cursor: pointer;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     white-space: normal;
@@ -1144,7 +1146,7 @@ form[ngform] .form-control[type="time"]{
 }
 
 .btn-rdv-reset:hover {
-    background-color: #888d87;
+    background-color: #acadac;
     border-color: #666666;
 }
 
@@ -1257,8 +1259,8 @@ form[ngform] .form-control[type="time"]{
 }
 /* Style bouton Historique Rappel */
 .btn-info {
-  background: linear-gradient(90deg, #7227db, #6230ec); /* dégradé bleu */
-  color: white;
+  background: linear-gradient(90deg, #e2dee7, #e2dee7); /* dégradé bleu */
+  color: rgb(78, 76, 76);
   border: none;
   border-radius: 8px;
   padding: 6px 14px;
@@ -1282,4 +1284,40 @@ form[ngform] .form-control[type="time"]{
 /* Icône légèrement plus grande */
 .btn-historique i {
   font-size: 16px;
+}
+
+.popup-backdrop {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.popup-card {
+  background: white;
+  border-radius: 12px;
+  padding: 20px 30px;
+  text-align: center;
+  width: 350px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+.popup-buttons {
+  margin-top: 15px;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.popup-success { border-top: 5px solid #8e28a7; }
+.popup-warning { border-top: 5px solid #dc3545 }
+.popup-danger  { border-top: 5px solid #8e28a7; }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
 }
