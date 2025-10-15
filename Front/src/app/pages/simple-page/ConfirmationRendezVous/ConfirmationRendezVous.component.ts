@@ -23,7 +23,7 @@ export interface ConfirmationRendezVous {
   idDimConfirmationRendezVous?: number;
   id: number;
   idPatient: number;
-  idActe: string;
+  idActe: number | string;
   idPersonnel: string;
   idFauteuil: string;
   dateRdvConfirme: string;
@@ -34,6 +34,7 @@ export interface ConfirmationRendezVous {
   heureSalleAttente: string;
   heureSortie: string;
   reminderCount?: number;
+  nomPatient?: string; 
 }
 
 interface EmailResponse {
@@ -72,6 +73,11 @@ export class ConfirmationRendezVousComponent implements OnInit {
   actesList: string[] = [];
   personnelsList: Utilisateur[] = [];
   searchRdv = '';
+  actes: any[] = [];
+  patients: any[] = [];
+  startDate: string = '';
+  endDate: string = '';
+
 
   private sendingMap: Record<number, boolean> = {};
 
@@ -81,6 +87,8 @@ export class ConfirmationRendezVousComponent implements OnInit {
     this.getRendezVous();
     this.initCalendar();
     this.calculateWeeklyRendezVous();
+    this.loadActes();
+    this.loadPatients();
   }
 
   // ---- Récupération RDV ----
@@ -157,24 +165,30 @@ export class ConfirmationRendezVousComponent implements OnInit {
     this.editRendezVousId = null;
     this.editedRendezVous = {};
   }
+  getActeIdByLibelle(libelle: string): number | null {
+  const acte = this.actes.find(a => a.acteLibelle === libelle);
+  return acte ? acte.idActe : null;
+}
 
-  saveRendezVous(): void {
-    if (this.editRendezVousId === null) return;
 
-    this.http.put<ConfirmationRendezVous>(this.apiUrl + '/' + this.editRendezVousId, this.editedRendezVous)
-      .pipe(catchError(error => this.handleError(error)))
-      .subscribe({
-        next: updatedRdv => {
-          const index = this.rendezVousList.findIndex(r => r.idDimConfirmationRendezVous === updatedRdv.idDimConfirmationRendezVous);
-          if (index > -1) this.rendezVousList[index] = updatedRdv;
-          this.applyDateFilter();
-          this.cancelEdit();
-          this.saveSuccess = true;
-          setTimeout(() => this.saveSuccess = false, 3000);
-        },
-        error: error => this.errorMessage = error
-      });
-  }
+  saveRendezVous(rdv: ConfirmationRendezVous): void { 
+  if (!rdv.idDimConfirmationRendezVous) return;
+
+  this.http.put<ConfirmationRendezVous>(this.apiUrl + '/' + rdv.idDimConfirmationRendezVous, rdv)
+    .pipe(catchError(error => this.handleError(error)))
+    .subscribe({
+      next: updatedRdv => {
+        const index = this.rendezVousList.findIndex(r => r.idDimConfirmationRendezVous === updatedRdv.idDimConfirmationRendezVous);
+        if (index > -1) this.rendezVousList[index] = updatedRdv;
+        this.applyDateFilter();
+        this.cancelEdit();
+        this.saveSuccess = true;
+        setTimeout(() => this.saveSuccess = false, 3000);
+      },
+      error: error => this.errorMessage = error
+    });
+}
+
 
   // ---- Suppression ----
   confirmDelete(id: number): void {
@@ -484,6 +498,58 @@ searchByIdRdv(idRdv: number): void {
 
   this.calculateWeeklyRendezVous();
 }
+actesMap: Map<number, string> = new Map();
 
-  
+loadActes() {
+  this.http.get<any[]>('http://localhost:8081/api/actes')
+    .subscribe(data => {
+      this.actes = data;
+      data.forEach(a => this.actesMap.set(a.idActe, a.acteLibelle));
+    });
+}
+
+getActeLibelle(idActe: number): string { return this.actesMap.get(idActe) || 'Acte inconnu'; }
+patientsMap: Map<number, string> = new Map();
+
+loadPatients() {
+  this.http.get<any[]>('http://localhost:8081/api/patients') 
+    .subscribe(data => {
+      data.forEach(p => this.patientsMap.set(p.idPersonne, `${p.nom} ${p.prenom}`));
+      console.log('Patients map:', this.patientsMap);
+    });
+    
+}
+getPatientNom(idPatient: number): string {
+  return this.patientsMap.get(idPatient) || 'Patient inconnu';
+}
+
+applyDateRangeFilter(): void {
+  if (!this.startDate && !this.endDate) {
+    this.filteredRendezVousList = [...this.rendezVousList];
+    return;
+  }
+
+  const start = this.startDate ? new Date(this.startDate) : null;
+  const end = this.endDate ? new Date(this.endDate) : null;
+
+  this.filteredRendezVousList = this.rendezVousList.filter(rdv => {
+    const rdvDate = new Date(rdv.dateRdvConfirme);
+    if (start && end) {
+      return rdvDate >= start && rdvDate <= end;
+    } else if (start) {
+      return rdvDate >= start;
+    } else if (end) {
+      return rdvDate <= end;
+    }
+    return true;
+  });
+
+  this.calculateWeeklyRendezVous();
+}
+clearDateRange(): void {
+  this.startDate = '';
+  this.endDate = '';
+  this.applyDateRangeFilter();
+}
+
 }

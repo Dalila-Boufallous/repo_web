@@ -84,6 +84,10 @@ export class RendezVousNonConfirmesComponent implements OnInit {
   selectedCardId: number | null = null;
   weekNonConfirmed: RendezVousNonConfirmes[] = []; 
 
+
+  sendingEmailId: number | null = null;
+
+
   constructor(private http: HttpClient) {}
 
   ngOnInit(): void {
@@ -662,6 +666,46 @@ showAutoHidePopup(message: string, delayMs: number = 2500) {
   this.showPopup(message, 'success');
   setTimeout(() => { this.popupVisible = false; }, delayMs);
 }
+
+
+private rdvCore(rdv: RendezVousNonConfirmes){
+  return {
+    id: this.getRdvId(rdv),
+    idPatient: rdv.idDimPatient,
+    date: rdv.datePrevisionnelle || '',
+    heure: rdv.heurePrevisionnelle || '',
+    commentaires: rdv.commentaires || ''
+  };
+}
+
+
+
+sendingConfirmIds: Set<number> = new Set<number>();
+
+
+sendConfirmationEmail(rdv: RendezVousNonConfirmes): void {
+  const id = rdv.idFactPriseRendezVous != null ? rdv.idFactPriseRendezVous : rdv.id;
+  if (!id) {
+    alert('ID rendez-vous introuvable.');
+    return;
+  }
+
+  this.http.post('http://localhost:8081/api/rendezvous-non-confirme/' + id + '/email-confirmation', {})
+    .subscribe({
+      next: (res: any) => {
+        const destinataire = (res && res.to) ? ('à ' + res.to) : '';
+        this.showAutoHidePopup('Email de confirmation envoyé ' + destinataire + '.', 2500);
+      },
+      error: (err) => {
+        const msg =
+          (err && err.error && typeof err.error === 'string') ? err.error :
+          (err && err.error && err.error.message) ? err.error.message :
+          (err && err.message) ? err.message : 'Erreur inconnue';
+        alert('Échec envoi email : ' + msg);
+      }
+    });
+}
+
 
 
 }

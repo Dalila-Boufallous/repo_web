@@ -308,6 +308,12 @@
                       (click)="edit(rdv); $event.stopPropagation()">Modifier</button>
               <button class="btn btn-danger btn-sm"
                       (click)="confirmDelete(getRdvId(rdv), $event)">Supprimer</button>
+    <button class="btn btn-sm btn-primary"
+        (click)="sendConfirmationEmail(rdv); $event.stopPropagation()">
+  Envoyer email de confirmation
+</button>
+
+
             </div>
             <!-- 🕓 Nouveau bouton Historique --> 
             <div class="mt-2 text-center">

@@ -376,3 +376,46 @@ button.btn.btn-sm.btn-outline-primary:disabled {
 .btn-rappel:hover {
   background-color: #5a32a3; /* couleur au survol */
 }
+.date-range-filter {
+  background-color: #f8f9fa;
+  padding: 10px 15px;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  margin-bottom: 15px;
+  flex-wrap: wrap;
+  margin-left: 30px;
+}
+
+.date-range-filter .date-input {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.85rem;
+}
+
+.date-range-filter input[type="date"] {
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid #ced4da;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.date-range-filter input[type="date"]:focus {
+  border-color: #6c63ff;
+}
+
+.date-range-filter button {
+  margin-top: auto; /* centre le bouton avec les inputs */
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.date-range-filter button:hover {
+  background-color: #6c63ff;
+  color: #fff;
+  border-color: #6c63ff;
+}
+

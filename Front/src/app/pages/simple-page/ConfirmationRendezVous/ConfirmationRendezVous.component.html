@@ -108,6 +108,21 @@
       </div>
       </div>
     </div>
+    <div class="date-range-filter d-flex align-items-center gap-2">
+  <div class="date-input">
+    <label>Du :</label>
+    <input type="date" [(ngModel)]="startDate" (change)="applyDateRangeFilter()" />
+  </div>
+
+  <div class="date-input">
+    <label>Au :</label>
+    <input type="date" [(ngModel)]="endDate" (change)="applyDateRangeFilter()" />
+  </div>
+
+  <button class="btn btn-outline-secondary btn-sm" (click)="clearDateRange()">Réinitialiser</button>
+</div>
+
+
     <div class="align-self-start" style="display:flex; flex-direction:column; gap:0;">
     <button class="calendar-reminder__button" (click)="sendReminder()">Rappel automatique</button>
     <button class="btn-week" (click)="showWeekRendezVous()">Rendez-vous de la semaine</button>
@@ -207,7 +222,9 @@
           </h6>
 
           <ul class="list-unstyled mt-3 mb-4 small" *ngIf="editRendezVousId !== rdv.idDimConfirmationRendezVous">
-            <li><i class="icofont icofont-hospital text-info"></i> Acte: {{ rdv.idActe }}</li>
+            <li hidden>{{ rdv.idActe }}</li>
+            <li><i class="icofont icofont-hospital text-info"></i> Acte: {{ getActeLibelle(rdv.idActe) }}</li> 
+            <li><i class="icofont icofont-user text-primary"></i>Patient: {{ getPatientNom(rdv.idPatient) }}</li>
             <li><i class="icofont icofont-doctor text-warning"></i> Personnel: {{ rdv.idPersonnel }}</li>
             <li><i class="icofont icofont-chair text-secondary"></i> Fauteuil: {{ rdv.idFauteuil }}</li>
             <li><i class="icofont icofont-calendar text-success"></i> Date RDV: {{ rdv.dateRdvConfirme }}</li>
@@ -217,6 +234,60 @@
             <li><i class="icofont icofont-waiter-alt text-warning"></i> Salle attente: {{ rdv.heureSalleAttente }}</li>
             <li><i class="icofont icofont-sign-out text-danger"></i> Sortie: {{ rdv.heureSortie }}</li>
           </ul>
+          <!-- Formulaire inline édition -->
+      <form *ngIf="editRendezVousId === rdv.idDimConfirmationRendezVous" (ngSubmit)="saveRendezVous(rdv)" class="mt-2">
+        <div class="row g-2">
+          <div class="col-6">
+            <label>Acte</label>
+            <input type="text" [(ngModel)]="rdv.idActe" name="idActe" class="form-control">
+          </div>
+          <div class="col-6">
+            <label>Patient</label>
+            <input type="number" [(ngModel)]="rdv.idPatient" name="idPatient" class="form-control">
+          </div>
+          <div class="col-6">
+            <label>Personnel</label>
+            <input type="text" [(ngModel)]="rdv.idPersonnel" name="idPersonnel" class="form-control">
+          </div>
+          <div class="col-6">
+            <label>Fauteuil</label>
+            <input type="text" [(ngModel)]="rdv.idFauteuil" name="idFauteuil" class="form-control">
+          </div>
+          <div class="col-6">
+            <label>Date RDV</label>
+            <input type="date" [(ngModel)]="rdv.dateRdvConfirme" name="dateRdvConfirme" class="form-control">
+          </div>
+          <div class="col-6">
+            <label>Heure RDV</label>
+            <input type="time" [(ngModel)]="rdv.heureRdvConfirme" name="heureRdvConfirme" class="form-control">
+          </div>
+          <div class="col-6">
+            <label>Durée (min)</label>
+            <input type="number" [(ngModel)]="rdv.rdvDuree" name="rdvDuree" class="form-control">
+          </div>
+          <div class="col-6">
+            <label>Date arrivée</label>
+            <input type="date" [(ngModel)]="rdv.dateArriveePatient" name="dateArriveePatient" class="form-control">
+          </div>
+          <div class="col-6">
+            <label>Heure arrivée</label>
+            <input type="time" [(ngModel)]="rdv.heureArriveePatient" name="heureArriveePatient" class="form-control">
+          </div>
+          <div class="col-6">
+            <label>Salle attente</label>
+            <input type="time" [(ngModel)]="rdv.heureSalleAttente" name="heureSalleAttente" class="form-control">
+          </div>
+          <div class="col-6">
+            <label>Heure sortie</label>
+            <input type="time" [(ngModel)]="rdv.heureSortie" name="heureSortie" class="form-control">
+          </div>
+        </div>
+
+        <div class="mt-2 d-flex gap-2">
+          <button type="submit" class="btn btn-success btn-sm" >💾 Enregistrer</button>
+          <button type="button" class="btn btn-secondary btn-sm" (click)="cancelEdit()">❌ Annuler</button>
+        </div>
+      </form>
 
           <!-- Actions -->
           <div class="d-flex justify-content-between mt-2">
