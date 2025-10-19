@@ -142,30 +142,27 @@
   <div class="row g-3">
     <div class="col-md-4">
       <label>Patient *</label>
-          <select [(ngModel)]="newRdv.idPatient" name="idPatient" class="form-select" required>
-            <option [ngValue]="null">-- Sélectionner un patient --</option>
-            <option *ngFor="let p of patients" [ngValue]="p.idPersonne">
-              {{ p.nom }} {{ p.prenom }}
-            </option>
-          </select>
+          
+          <input class="form-control" list="patientsList" [(ngModel)]="newRdv.idPatientNom" name="idPatientNom" required>
+          <datalist id="patientsList">
+            <option *ngFor="let p of patients" [value]="p.nom + ' ' + p.prenom"></option>
+          </datalist>
     </div>
 
     <div class="col-md-4">
       <label>Acte *</label>
-          <select [(ngModel)]="newRdv.idActe" name="idActe" class="form-select" required>
-            <option [ngValue]="null">-- Sélectionner un acte --</option>
-            <option *ngFor="let a of actes" [ngValue]="a.idActe">{{ a.acteLibelle }}</option>
-          </select>
+          <input class="form-control" list="actesList" [(ngModel)]="newRdv.idActeLibelle" name="idActeLibelle" required>
+          <datalist id="actesList">
+            <option *ngFor="let a of actes" [value]="a.acteLibelle"></option>
+          </datalist>
     </div>
 
     <div class="col-md-4">
       <label>Personnel *</label>
-          <select [(ngModel)]="newRdv.idPersonnel" name="idPersonnel" class="form-select" required>
-            <option [ngValue]="null">-- Sélectionner un personnel --</option>
-            <option *ngFor="let perso of personnelsList" [ngValue]="perso.idUtilisateur">
-              {{ perso.nom }} {{ perso.prenom }}
-            </option>
-          </select>
+           <input class="form-control" list="personnelsList" [(ngModel)]="newRdv.idPersonnelNom" name="idPersonnelNom" required>
+          <datalist id="personnelsList">
+            <option *ngFor="let perso of personnelsList" [value]="perso.nom + ' ' + perso.prenom"></option>
+          </datalist>
     </div>
   </div>
 
