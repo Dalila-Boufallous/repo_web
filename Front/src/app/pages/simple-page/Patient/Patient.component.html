@@ -140,7 +140,6 @@
 
         <!-- Bouton contact intégré dans la carte (haut droite) -->
          
-
         <div class="card-body">
           <!-- Nom du patient -->
           <h5 class="card-title">
@@ -166,7 +165,9 @@
           </h5>
 
           <!-- ID Patient -->
-          <h6 class="card-subtitle mb-2 text-muted">ID: {{ patient.idPersonne }}</h6>
+          <h6 class="card-subtitle mb-2 text-muted" *ngIf="false">
+           ID: {{ patient.idPersonne }}
+            </h6>
 
           <!-- Liste des infos -->
           <ul class="list-unstyled mt-3 mb-4 small">

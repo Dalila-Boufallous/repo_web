@@ -70,7 +70,7 @@
 
           <!-- Champs du formulaire  -->
           <div class="col-md-3">
-            <label class="form-label">ID Utilisateur *</label>
+            <label class="form-label d-none">ID Utilisateur *</label>
             <input type="number" class="form-control" name="idUtilisateur"
                    [(ngModel)]="newUtilisateur.idUtilisateur" required #idUser="ngModel">
             <div class="form-text text-danger" *ngIf="idUser.invalid && idUser.touched">
@@ -203,7 +203,7 @@
               </div>
             </h5>
 
-            <h6 class="card-subtitle mb-2 text-muted">ID: {{ utilisateur.idDimUtilisateur }}</h6>
+            <h6 class="card-subtitle mb-2 text-muted" *ngIf="false">ID: {{ utilisateur.idDimUtilisateur }}</h6>
 
             <!-- Infos principales -->
             <ul class="list-unstyled mt-3 mb-4 small">

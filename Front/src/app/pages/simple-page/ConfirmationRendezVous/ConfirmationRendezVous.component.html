@@ -131,74 +131,94 @@
 
   </div>
   
-  <!-- Formulaire ajout -->
-  <div class="card mb-4 shadow-sm rounded-3">
-    <div class="card-header bg-light">
-      <h5 class="mb-0">➕ Ajouter un rendez-vous</h5>
+ <!-- Formulaire ajout -->
+<div class="card mb-4 shadow-sm rounded-3">
+  <div class="card-header bg-light">
+    <h5 class="mb-0">➕ Ajouter un rendez-vous</h5>
+  </div>
+
+  <div class="card-body">
+    <form #addForm="ngForm" (ngSubmit)="addRendezVous()">
+  <div class="row g-3">
+    <div class="col-md-4">
+      <label>Patient *</label>
+      <select [(ngModel)]="newRdv.idPatient" name="idPatient" class="form-select" required>
+        <option value="">-- Sélectionner un patient --</option>
+        <option *ngFor="let p of patients" [ngValue]="p.idPatient">
+          {{ p.nom }} {{ p.prenom }}
+        </option>
+      </select>
     </div>
-    <div class="card-body">
-      <form #addForm="ngForm" (ngSubmit)="addRendezVous()" novalidate>
-        <div class="row g-3">
-          <div class="col-md-3">
-            <label class="form-label">ID *</label>
-            <input type="number" class="form-control" name="id" [(ngModel)]="newRdv.id" required>
-          </div>
-          <div class="col-md-3">
-            <label class="form-label">Patient *</label>
-            <input type="number" class="form-control" name="idPatient" [(ngModel)]="newRdv.idPatient" required>
-          </div>
-          <div class="col-md-3">
-            <label class="form-label">Acte *</label>
-            <input type="text" class="form-control" name="idActe" [(ngModel)]="newRdv.idActe" required>
-          </div>
-          <div class="col-md-3">
-            <label class="form-label">Personnel *</label>
-            <input type="text" class="form-control" name="idPersonnel" [(ngModel)]="newRdv.idPersonnel" required>
-          </div>
-          <div class="col-md-3">
-            <label class="form-label">Fauteuil</label>
-            <input type="text" class="form-control" name="idFauteuil" [(ngModel)]="newRdv.idFauteuil">
-          </div>
-          <div class="col-md-3">
-            <label class="form-label">Date RDV *</label>
-            <input type="date" class="form-control" name="dateRdvConfirme" [(ngModel)]="newRdv.dateRdvConfirme" required>
-          </div>
-          <div class="col-md-3">
-            <label class="form-label">Heure RDV *</label>
-            <input type="time" class="form-control" name="heureRdvConfirme" [(ngModel)]="newRdv.heureRdvConfirme" required>
-          </div>
-          <div class="col-md-3">
-            <label class="form-label">Durée (min)</label>
-            <input type="number" class="form-control" name="rdvDuree" [(ngModel)]="newRdv.rdvDuree">
-          </div>
-        </div>
 
-        <div class="row g-3 mt-2">
-          <div class="col-md-3">
-            <label class="form-label">Date arrivée</label>
-            <input type="date" class="form-control" name="dateArriveePatient" [(ngModel)]="newRdv.dateArriveePatient">
-          </div>
-          <div class="col-md-3">
-            <label class="form-label">Heure arrivée</label>
-            <input type="time" class="form-control" name="heureArriveePatient" [(ngModel)]="newRdv.heureArriveePatient">
-          </div>
-          <div class="col-md-3">
-            <label class="form-label">Salle attente</label>
-            <input type="time" class="form-control" name="heureSalleAttente" [(ngModel)]="newRdv.heureSalleAttente">
-          </div>
-          <div class="col-md-3">
-            <label class="form-label">Heure sortie</label>
-            <input type="time" class="form-control" name="heureSortie" [(ngModel)]="newRdv.heureSortie">
-          </div>
-        </div>
+    <div class="col-md-4">
+      <label>Acte *</label>
+      <select [(ngModel)]="newRdv.idActe" name="idActe" class="form-select" required>
+        <option value="">-- Sélectionner un acte --</option>
+        <option *ngFor="let a of actes" [ngValue]="a.idActe">{{ a.acteLibelle }}</option>
+      </select>
+    </div>
 
-        <div class="mt-3 text-end">
-          <button type="submit" class="btn btn-success" [disabled]="addForm.invalid">Ajouter</button>
-          <button type="button" class="btn btn-outline-secondary ms-2" (click)="resetAddForm(addForm)">Réinitialiser</button>
-        </div>
-      </form>
+    <div class="col-md-4">
+      <label>Personnel *</label>
+      <select [(ngModel)]="newRdv.idPersonnel" name="idPersonnel" class="form-select" required>
+        <option value="">-- Sélectionner un personnel --</option>
+        <option *ngFor="let perso of personnelsList" [ngValue]="perso.idUtilisateur">
+          {{ perso.nom }} {{ perso.prenom }}
+        </option>
+      </select>
     </div>
   </div>
+
+
+      <!-- Date, Heure, Durée, Fauteuil -->
+      <div class="row g-3 mt-3">
+        <div class="col-md-3">
+          <label class="form-label">Fauteuil</label>
+          <input type="text" class="form-control" name="idFauteuil" [(ngModel)]="newRdv.idFauteuil">
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Date RDV *</label>
+          <input type="date" class="form-control" name="dateRdvConfirme" [(ngModel)]="newRdv.dateRdvConfirme" required>
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Heure RDV *</label>
+          <input type="time" class="form-control" name="heureRdvConfirme" [(ngModel)]="newRdv.heureRdvConfirme" required>
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Durée (min)</label>
+          <input type="number" class="form-control" name="rdvDuree" [(ngModel)]="newRdv.rdvDuree">
+        </div>
+      </div>
+
+      <!-- Autres -->
+      <div class="row g-3 mt-2">
+        <div class="col-md-3">
+          <label class="form-label">Date arrivée</label>
+          <input type="date" class="form-control" name="dateArriveePatient" [(ngModel)]="newRdv.dateArriveePatient">
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Heure arrivée</label>
+          <input type="time" class="form-control" name="heureArriveePatient" [(ngModel)]="newRdv.heureArriveePatient">
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Heure salle attente</label>
+          <input type="time" class="form-control" name="heureSalleAttente" [(ngModel)]="newRdv.heureSalleAttente">
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Heure sortie</label>
+          <input type="time" class="form-control" name="heureSortie" [(ngModel)]="newRdv.heureSortie">
+        </div>
+      </div>
+
+      <div class="mt-3 text-end">
+        <button type="submit" class="btn btn-success">Ajouter</button>
+        <button type="button" class="btn btn-outline-secondary ms-2" (click)="resetAddForm(addForm)">Réinitialiser</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+
 <!-- Liste des rdvs -->
   <div class="cards-scroll-wrapper">
   <div class="cards-container">
@@ -218,14 +238,12 @@
           </h5>
 
           <h6 class="card-subtitle mb-2 text-muted">
-            ID Dim: {{ rdv.idDimConfirmationRendezVous }}
           </h6>
-
           <ul class="list-unstyled mt-3 mb-4 small" *ngIf="editRendezVousId !== rdv.idDimConfirmationRendezVous">
             <li hidden>{{ rdv.idActe }}</li>
-            <li><i class="icofont icofont-hospital text-info"></i> Acte: {{ getActeLibelle(rdv.idActe) }}</li> 
             <li><i class="icofont icofont-user text-primary"></i>Patient: {{ getPatientNom(rdv.idPatient) }}</li>
-            <li><i class="icofont icofont-doctor text-warning"></i> Personnel: {{ rdv.idPersonnel }}</li>
+            <li><i class="icofont icofont-hospital text-info"></i> Acte: {{ getActeLibelle(rdv.idActe) }}</li> 
+            <li><i class="icofont icofont-doctor text-warning"></i> Personnel: {{ getPersonnelNom(rdv.idPersonnel) }}</li>
             <li><i class="icofont icofont-chair text-secondary"></i> Fauteuil: {{ rdv.idFauteuil }}</li>
             <li><i class="icofont icofont-calendar text-success"></i> Date RDV: {{ rdv.dateRdvConfirme }}</li>
             <li><i class="icofont icofont-clock-time text-primary"></i> Heure RDV: {{ rdv.heureRdvConfirme }}</li>

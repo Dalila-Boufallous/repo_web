@@ -12,6 +12,7 @@ export interface RendezVousNonConfirmes  {
   datePrevisionnelle: string;
   heurePrevisionnelle: string;
   commentaires: string;
+  nomPatient?: string;
 }
 
 export interface RappelPatient {
@@ -83,20 +84,40 @@ export class RendezVousNonConfirmesComponent implements OnInit {
   selectedRdvId: number | null = null;
   selectedCardId: number | null = null;
   weekNonConfirmed: RendezVousNonConfirmes[] = []; 
-
-
+  patients: any[] = [];
   sendingEmailId: number | null = null;
-
+  patientMap: { [id: number]: any } = {}; 
 
   constructor(private http: HttpClient) {}
 
-  ngOnInit(): void {
-    const currentYear = new Date().getFullYear();
-    for (let y = currentYear - 5; y <= currentYear + 5; y++) this.yearRange.push(y);
-    this.getAll();
-    this.buildCalendar();
-    this.calculerStats();
+ ngOnInit(): void {
+  const currentYear = new Date().getFullYear();
+  for (let y = currentYear - 5; y <= currentYear + 5; y++) this.yearRange.push(y);
+
+  // Charger d’abord les patients
+ this.http.get<any[]>('http://localhost:8081/api/patients').subscribe(pats => {
+  this.patients = pats;
+  this.patientMap = {};
+  this.patients.forEach(p => {
+    this.patientMap[p.id] = p;
+  });
+  this.getAll(); // ← ici c’est bien
+});
+
+  this.buildCalendar();
+  this.calculerStats();
+}
+
+ getPatientName(id: number): string {
+  const p = this.patientMap[Number(id)];
+  if (p) {
+    return `${p.nom} ${p.prenom || ''}`;
+  } else {
+    return 'Inconnu';
   }
+}
+
+
 
   // ==================== FORMULAIRE RDV ====================
   initForm(): RendezVousNonConfirmes {
@@ -116,13 +137,31 @@ export class RendezVousNonConfirmesComponent implements OnInit {
 
   // ==================== CRUD RDV ====================
   getAll(): void {
-    this.http.get<RendezVousNonConfirmes[]>(this.listUrl).subscribe(data => {
-      this.rendezVousList = data;
-      this.filteredRendezVous = data.slice();
-      this.todayRendezVousCount = data.filter(r => r.datePrevisionnelle === this.formatDate(new Date())).length;
-      this.applyFilters();
+  this.http.get<RendezVousNonConfirmes[]>(this.listUrl).subscribe(data => {
+    // Affecter la liste
+    this.rendezVousList = data;
+
+    // Ajouter le nom du patient pour chaque RDV
+    this.rendezVousList.forEach(rdv => {
+      rdv.nomPatient = this.getPatientName(rdv.idDimPatient);
     });
-  }
+
+    console.table(this.rendezVousList.map(r => ({
+  rdvId: r.id,
+  patientId: r.idDimPatient,
+  nomTrouve: this.getPatientName(r.idDimPatient)
+})));
+
+
+    this.filteredRendezVous = this.rendezVousList.slice();
+    this.todayRendezVousCount = this.rendezVousList.filter(r => r.datePrevisionnelle === this.formatDate(new Date())).length;
+    this.applyFilters();
+  });
+  console.log('Rendez-vous IDs:', this.rendezVousList.map(r => r.idDimPatient));
+console.log('Patient IDs:', this.patients.map(p => p.id));
+
+}
+
 
 
 private toHHmmss(t: string | null | undefined): string | null {

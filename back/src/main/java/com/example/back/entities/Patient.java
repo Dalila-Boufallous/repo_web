@@ -6,6 +6,7 @@ import lombok.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.List;
 
 @Entity
 @Table(name = "dim_patient")
@@ -20,7 +21,7 @@ public class Patient {
     @Column(name = "id_dim_patient")
     private Integer idDimPatient;
 
-    @Column(name = "id_personne", nullable = false)
+    @Column(name = "id_personne", nullable = true)
     private Integer idPersonne;
 
     @Column(name = "nom", length = 100)

@@ -298,7 +298,9 @@
           </form>
 
           <!-- Mode affichage -->
+           
           <div *ngIf="editingRendezVousId !== rdv.idFactPriseRendezVous">
+            <p><b>Patient :</b> {{ rdv.nomPatient }}</p>
             <p><b>Date :</b> {{ rdv.datePrevisionnelle }}</p>
             <p><b>Heure :</b> {{ rdv.heurePrevisionnelle }}</p>
             <p><b>Commentaires :</b> {{ rdv.commentaires || '-' }}</p>

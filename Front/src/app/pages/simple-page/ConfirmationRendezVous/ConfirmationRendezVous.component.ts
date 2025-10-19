@@ -2,7 +2,13 @@ import { Component, OnInit } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
+import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { forkJoin, of } from 'rxjs';
+import { switchMap, map } from 'rxjs/operators';
+import { v4 as uuidv4 } from 'uuid';
+import { NgForm } from '@angular/forms';
+
 
 interface Utilisateur {
   idUtilisateur: number;
@@ -61,11 +67,21 @@ export class ConfirmationRendezVousComponent implements OnInit {
   selectedId: number | null = null;
   deleteSuccess = false;
   saveSuccess = false;
+  
 
   todayRendezVous: ConfirmationRendezVous[] = [];
   todayRendezVousCount = 0;
 
-  newRdv: Partial<ConfirmationRendezVous> = {};
+  newRdv: Partial<ConfirmationRendezVous> = {
+  idPatient: null,
+  idPersonnel: null,
+  idActe: null,
+  idFauteuil: '',
+  dateRdvConfirme: '',
+  heureRdvConfirme: ''
+};
+
+
   addSuccess = false;
 
   selectedDate = '';
@@ -84,13 +100,16 @@ export class ConfirmationRendezVousComponent implements OnInit {
   constructor(private http: HttpClient, private router: Router) {}
 
   ngOnInit(): void {
-    this.getRendezVous();
     this.initCalendar();
     this.calculateWeeklyRendezVous();
     this.loadActes();
     this.loadPatients();
+    this.loadPersonnels();
+    this.getRendezVous();
+   
+    
   }
-
+  
   // ---- Récupération RDV ----
   getRendezVous(): void {
     this.loading = true;
@@ -169,6 +188,26 @@ export class ConfirmationRendezVousComponent implements OnInit {
   const acte = this.actes.find(a => a.acteLibelle === libelle);
   return acte ? acte.idActe : null;
 }
+resetAddForm(form: NgForm) {
+  // Réinitialise l'objet lié au formulaire
+  this.newRdv = {
+    idPatient: null,
+    idActe: null,
+    idPersonnel: null,
+    idFauteuil: '',
+    dateRdvConfirme: '',
+    heureRdvConfirme: '',
+    rdvDuree: null,
+    dateArriveePatient: '',
+    heureArriveePatient: '',
+    heureSalleAttente: '',
+    heureSortie: ''
+  };
+
+  // Réinitialise la validation et l'état du formulaire
+  form.resetForm();
+}
+
 
 
   saveRendezVous(rdv: ConfirmationRendezVous): void { 
@@ -221,52 +260,99 @@ export class ConfirmationRendezVousComponent implements OnInit {
       });
   }
 
-  // ---- Ajout ----
-  addRendezVous(): void {
-    this.errorMessage = '';
+  
+addRendezVous(): void {
+  this.errorMessage = '';
 
-    if (!this.newRdv.id) {
-      this.errorMessage = 'Veuillez saisir un ID pour le rendez-vous.';
-      return;
-    }
-    if (this.rendezVousList.some(r => r.id === this.newRdv.id)) {
-      this.errorMessage = 'L’ID du rendez-vous existe déjà.';
-      return;
-    }
-    if (!this.newRdv.idPatient) {
-      this.errorMessage = 'Veuillez sélectionner un patient.';
-      return;
-    }
-    if (!this.newRdv.idActe) {
-      this.errorMessage = 'Veuillez sélectionner un acte.';
-      return;
-    }
-    if (!this.newRdv.idPersonnel) {
-      this.errorMessage = 'Veuillez sélectionner un personnel.';
-      return;
-    }
-    if (!this.newRdv.idFauteuil) {
-      this.errorMessage = 'Veuillez sélectionner un fauteuil.';
-      return;
-    }
-
-    const payload: any = { ...this.newRdv };
-    delete payload.idDimConfirmationRendezVous;
-
-    this.http.post<ConfirmationRendezVous>(this.apiUrl, payload)
-      .pipe(catchError(error => this.handleError(error)))
-      .subscribe({
-        next: addedRdv => {
-          this.rendezVousList.push(addedRdv);
-          this.applyDateFilter();
-          this.newRdv = {};
-          this.addSuccess = true;
-          setTimeout(() => this.addSuccess = false, 3000);
-          this.calculateWeeklyRendezVous();
-        },
-        error: () => this.errorMessage = 'Erreur lors de l’ajout'
-      });
+  if (!this.newRdv.idPatient || !this.newRdv.idPersonnel || !this.newRdv.idActe) {
+    this.errorMessage = 'Veuillez sélectionner le patient, le personnel et l’acte.';
+    return;
   }
+
+  const generatedId = Math.floor(Math.random() * 1000000000);
+  const idActe = this.getActeIdByLibelle(this.newRdv.idActe as string);
+  if (idActe === null) {
+    this.errorMessage = 'Acte invalide.';
+    return;
+  }
+
+  const payload = {
+  id: Math.floor(Math.random() * 1000000000),
+  idPatient: this.newRdv.idPatient,
+  idPersonnel: this.newRdv.idPersonnel,
+  idActe: this.newRdv.idActe,
+  idFauteuil: this.newRdv.idFauteuil || null,
+  dateRdvConfirme: this.newRdv.dateRdvConfirme,
+  heureRdvConfirme: this.newRdv.heureRdvConfirme,
+};
+console.log('Payload:', payload);
+
+  this.http.post<ConfirmationRendezVous>(this.apiUrl, payload)
+    .subscribe({
+      next: (addedRdv) => {
+        this.rendezVousList.push(addedRdv);
+        this.applyDateFilter();
+        this.newRdv = {};
+        this.addSuccess = true;
+        setTimeout(() => this.addSuccess = false, 3000);
+      },
+      error: (err) => {
+        console.error('Erreur lors de l’ajout du RDV:', err);
+        this.errorMessage = 'Erreur lors de l’ajout du rendez-vous.';
+      }
+    });
+}
+
+private findOrCreatePatient(nom: string, prenom: string) {
+  return this.http.get<any[]>(`http://localhost:8081/api/patients?nom=${nom}&prenom=${prenom}`)
+    .pipe(
+      switchMap(patients => {
+        if (patients.length > 0) return of(patients[0].idDimPatient); // <-- ici
+        const newPatient = { nom, prenom };
+        return this.http.post<any>('http://localhost:8081/api/patients', newPatient)
+          .pipe(map(created => created.idDimPatient)); // <-- ici
+      }),
+      catchError(err => {
+        console.error('Erreur patient', err);
+        return throwError(() => err);
+      })
+    );
+}
+
+private findOrCreatePersonnel(nom: string, prenom: string) {
+  return this.http.get<any[]>(`http://localhost:8081/api/utilisateurs?nom=${nom}&prenom=${prenom}`)
+    .pipe(
+      switchMap(personnels => {
+        if (personnels.length > 0) return of(personnels[0].idDimUtilisateur); 
+        const newPerso = { nom, prenom };
+        return this.http.post<any>('http://localhost:8081/api/utilisateurs', newPerso)
+          .pipe(map(created => created.idDimUtilisateur)); 
+      }),
+      catchError(err => {
+        console.error('Erreur personnel', err);
+        return throwError(() => err);
+      })
+    );
+}
+
+
+
+private findOrCreateActe(libelle: string) {
+  return this.http.get<any[]>(`http://localhost:8081/api/actes?libelle=${libelle}`)
+    .pipe(
+      switchMap(actes => {
+        if (actes.length > 0) return of(actes[0].idActe);
+        const newActe = { acteLibelle: libelle };
+        return this.http.post<any>('http://localhost:8081/api/actes', newActe)
+          .pipe(map(created => created.idActe));
+      }),
+      catchError(err => {
+        console.error('Erreur acte', err);
+        return throwError(() => err);
+      })
+    );
+}
+
 
   private handleError(error: HttpErrorResponse) {
     let message = '';
@@ -510,18 +596,30 @@ loadActes() {
 
 getActeLibelle(idActe: number): string { return this.actesMap.get(idActe) || 'Acte inconnu'; }
 patientsMap: Map<number, string> = new Map();
-
 loadPatients() {
   this.http.get<any[]>('http://localhost:8081/api/patients') 
-    .subscribe(data => {
-      data.forEach(p => this.patientsMap.set(p.idPersonne, `${p.nom} ${p.prenom}`));
-      console.log('Patients map:', this.patientsMap);
+    .subscribe({
+      next: data => {
+        console.log('Données reçues du backend:', data);
+        this.patients = data;
+
+        // Remplissage du map pour l'affichage
+        this.patientsMap.clear();
+        data.forEach(p => {
+          this.patientsMap.set(Number(p.idPersonne), `${p.nom} ${p.prenom}`);
+        });
+      },
+      error: err => console.error('Erreur chargement patients:', err)
     });
-    
 }
-getPatientNom(idPatient: number): string {
-  return this.patientsMap.get(idPatient) || 'Patient inconnu';
+
+getPatientNom(idPatient: number | string): string {
+  if (!idPatient) return 'Patient inconnu';
+  const id = Number(idPatient);
+  return this.patientsMap.get(id) || 'Patient inconnu';
 }
+
+
 
 applyDateRangeFilter(): void {
   if (!this.startDate && !this.endDate) {
@@ -550,6 +648,22 @@ clearDateRange(): void {
   this.startDate = '';
   this.endDate = '';
   this.applyDateRangeFilter();
+}
+
+personnelsMap: Map<number, string> = new Map();
+
+loadPersonnels() {
+  this.http.get<Utilisateur[]>('http://localhost:8081/api/utilisateurs')
+    .subscribe(data => {
+      this.personnelsList = data;
+      data.forEach(p => this.personnelsMap.set(p.idUtilisateur, `${p.nom} ${p.prenom}`));
+      console.log('Personnels map:', this.personnelsMap);
+    });
+}
+
+getPersonnelNom(idPersonnel: number | string): string {
+  const id = Number(idPersonnel);
+  return this.personnelsMap.get(id) || 'Personnel inconnu';
 }
 
 }

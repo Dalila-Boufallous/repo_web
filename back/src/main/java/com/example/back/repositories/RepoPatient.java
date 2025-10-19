@@ -10,5 +10,9 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface RepoPatient extends JpaRepository<Patient, Integer> {
       Optional<Patient> findByIdPersonne(Integer idPersonne);
+
+      
+Optional<Patient> findByIdDimPatient(Integer idDimPatient);
+      
 }
 

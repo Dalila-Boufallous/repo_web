@@ -5,6 +5,7 @@ import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 
 @Entity
 @Table(name = "dim_confirmation_rendez_vous")
@@ -17,8 +18,8 @@ public class ConfirmationRendezVous {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_dim_confirmation_rendez_vous")
     private Integer idDimConfirmationRendezVous;
-
-    @Column(name = "id_patient")
+    
+   @Column(name = "id_patient")
     private Integer idPatient;
 
     @Column(name = "id")
@@ -26,7 +27,7 @@ public class ConfirmationRendezVous {
 
     @Column(name = "id_acte")
     private Integer idActe;
-
+    
     @Column(name = "id_personnel")
     private Integer idPersonnel;
 
@@ -52,8 +53,6 @@ public class ConfirmationRendezVous {
 
     @Column(name = "heure_sortie")
     private String heureSortie;
-
-
 
 
     public Integer getIdDimConfirmationRendezVous() {

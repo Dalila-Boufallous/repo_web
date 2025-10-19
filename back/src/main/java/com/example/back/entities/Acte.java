@@ -7,6 +7,7 @@ import jakarta.persistence.*;
 public class Acte {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_acte")
     private Integer idActe;
 
@@ -20,5 +21,13 @@ public class Acte {
 
     public String getActeLibelle() {
         return acteLibelle;
+    }
+    // === Setters ===
+    public void setIdActe(Integer idActe) {
+        this.idActe = idActe;
+    }
+
+    public void setActeLibelle(String acteLibelle) {
+        this.acteLibelle = acteLibelle;
     }
 }

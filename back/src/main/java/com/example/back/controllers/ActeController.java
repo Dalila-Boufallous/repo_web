@@ -21,4 +21,9 @@ public class ActeController {
     public List<Acte> getAllActes() {
         return repoActe.findAll();
     }
+     // === POST  ===
+    @PostMapping
+    public Acte createActe(@RequestBody Acte acte) {
+        return repoActe.save(acte);
+    }
 }
