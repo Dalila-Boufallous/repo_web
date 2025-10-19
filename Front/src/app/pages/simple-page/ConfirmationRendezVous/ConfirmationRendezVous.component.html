@@ -142,30 +142,30 @@
   <div class="row g-3">
     <div class="col-md-4">
       <label>Patient *</label>
-      <select [(ngModel)]="newRdv.idPatient" name="idPatient" class="form-select" required>
-        <option value="">-- Sélectionner un patient --</option>
-        <option *ngFor="let p of patients" [ngValue]="p.idPatient">
-          {{ p.nom }} {{ p.prenom }}
-        </option>
-      </select>
+          <select [(ngModel)]="newRdv.idPatient" name="idPatient" class="form-select" required>
+            <option [ngValue]="null">-- Sélectionner un patient --</option>
+            <option *ngFor="let p of patients" [ngValue]="p.idPersonne">
+              {{ p.nom }} {{ p.prenom }}
+            </option>
+          </select>
     </div>
 
     <div class="col-md-4">
       <label>Acte *</label>
-      <select [(ngModel)]="newRdv.idActe" name="idActe" class="form-select" required>
-        <option value="">-- Sélectionner un acte --</option>
-        <option *ngFor="let a of actes" [ngValue]="a.idActe">{{ a.acteLibelle }}</option>
-      </select>
+          <select [(ngModel)]="newRdv.idActe" name="idActe" class="form-select" required>
+            <option [ngValue]="null">-- Sélectionner un acte --</option>
+            <option *ngFor="let a of actes" [ngValue]="a.idActe">{{ a.acteLibelle }}</option>
+          </select>
     </div>
 
     <div class="col-md-4">
       <label>Personnel *</label>
-      <select [(ngModel)]="newRdv.idPersonnel" name="idPersonnel" class="form-select" required>
-        <option value="">-- Sélectionner un personnel --</option>
-        <option *ngFor="let perso of personnelsList" [ngValue]="perso.idUtilisateur">
-          {{ perso.nom }} {{ perso.prenom }}
-        </option>
-      </select>
+          <select [(ngModel)]="newRdv.idPersonnel" name="idPersonnel" class="form-select" required>
+            <option [ngValue]="null">-- Sélectionner un personnel --</option>
+            <option *ngFor="let perso of personnelsList" [ngValue]="perso.idUtilisateur">
+              {{ perso.nom }} {{ perso.prenom }}
+            </option>
+          </select>
     </div>
   </div>
 

@@ -188,24 +188,18 @@ export class ConfirmationRendezVousComponent implements OnInit {
   const acte = this.actes.find(a => a.acteLibelle === libelle);
   return acte ? acte.idActe : null;
 }
-resetAddForm(form: NgForm) {
-  // Réinitialise l'objet lié au formulaire
+
+resetAddForm(form?: NgForm) {
   this.newRdv = {
     idPatient: null,
-    idActe: null,
     idPersonnel: null,
+    idActe: null,
     idFauteuil: '',
     dateRdvConfirme: '',
     heureRdvConfirme: '',
-    rdvDuree: null,
-    dateArriveePatient: '',
-    heureArriveePatient: '',
-    heureSalleAttente: '',
-    heureSortie: ''
+    rdvDuree: null
   };
-
-  // Réinitialise la validation et l'état du formulaire
-  form.resetForm();
+  if (form) form.resetForm(); 
 }
 
 
@@ -259,49 +253,79 @@ resetAddForm(form: NgForm) {
         }
       });
   }
+getIdPatient(nom: string, prenom: string): number | null {
+  const patient = this.patients.find(
+    p => p.nom.toLowerCase() === nom.toLowerCase() && p.prenom.toLowerCase() === prenom.toLowerCase()
+  );
+  return patient ? patient.idPatient : null;
+}
+// À placer dans la classe ConfirmationRendezVousComponent
 
-  
-addRendezVous(): void {
-  this.errorMessage = '';
+// Lorsqu’un patient est sélectionné
+onPatientChange(nomPrenom: string) {
+  const [nom, prenom] = nomPrenom.split(' ');
+  const patient = this.patients.find(p => p.nom === nom && p.prenom === prenom);
+  this.newRdv.idPatient = patient ? patient.idPersonne : null;
+}
 
-  if (!this.newRdv.idPatient || !this.newRdv.idPersonnel || !this.newRdv.idActe) {
-    this.errorMessage = 'Veuillez sélectionner le patient, le personnel et l’acte.';
-    return;
-  }
+// Lorsqu’un personnel est sélectionné
+onPersonnelChange(nomPrenom: string) {
+  const [nom, prenom] = nomPrenom.split(' ');
+  const perso = this.personnelsList.find(p => p.nom === nom && p.prenom === prenom);
+this.newRdv.idPersonnel = perso ? String(perso.idUtilisateur) : null;
+}
 
-  const generatedId = Math.floor(Math.random() * 1000000000);
-  const idActe = this.getActeIdByLibelle(this.newRdv.idActe as string);
-  if (idActe === null) {
-    this.errorMessage = 'Acte invalide.';
+// Lorsqu’un acte est sélectionné
+onActeChange(libelle: string) {
+  const acte = this.actes.find(a => a.acteLibelle === libelle);
+  this.newRdv.idActe = acte ? acte.idActe : null;
+}
+
+  personnels: any[] = [];
+getIdPersonnel(nom: string, prenom: string): number | null {
+  const personnel = this.personnels.find(
+    p => p.nom.toLowerCase() === nom.toLowerCase() && p.prenom.toLowerCase() === prenom.toLowerCase()
+  );
+  return personnel ? personnel.idPersonnel : null;
+}
+  addRendezVous(): void {
+  if (!this.newRdv.idPatient || !this.newRdv.idPersonnel || !this.newRdv.idActe || !this.newRdv.dateRdvConfirme) {
+    this.errorMessage = 'Veuillez remplir tous les champs obligatoires.';
     return;
   }
 
   const payload = {
-  id: Math.floor(Math.random() * 1000000000),
-  idPatient: this.newRdv.idPatient,
-  idPersonnel: this.newRdv.idPersonnel,
-  idActe: this.newRdv.idActe,
-  idFauteuil: this.newRdv.idFauteuil || null,
-  dateRdvConfirme: this.newRdv.dateRdvConfirme,
-  heureRdvConfirme: this.newRdv.heureRdvConfirme,
-};
-console.log('Payload:', payload);
+    id: Math.floor(Math.random() * 1000000000),
+    idPatient: String(this.newRdv.idPatient),
+    idPersonnel: String(this.newRdv.idPersonnel),
+    idActe: String(this.newRdv.idActe),
+    idFauteuil: this.newRdv.idFauteuil || null,
+    dateRdvConfirme: this.newRdv.dateRdvConfirme,
+    heureRdvConfirme: this.newRdv.heureRdvConfirme,
+    rdvDuree: this.newRdv.rdvDuree || null,
+    dateArriveePatient: this.newRdv.dateArriveePatient || null,
+    heureArriveePatient: this.newRdv.heureArriveePatient || null,
+    heureSalleAttente: this.newRdv.heureSalleAttente || null,
+    heureSortie: this.newRdv.heureSortie || null
+  };
 
-  this.http.post<ConfirmationRendezVous>(this.apiUrl, payload)
-    .subscribe({
-      next: (addedRdv) => {
-        this.rendezVousList.push(addedRdv);
-        this.applyDateFilter();
-        this.newRdv = {};
-        this.addSuccess = true;
-        setTimeout(() => this.addSuccess = false, 3000);
-      },
-      error: (err) => {
-        console.error('Erreur lors de l’ajout du RDV:', err);
-        this.errorMessage = 'Erreur lors de l’ajout du rendez-vous.';
-      }
-    });
+  console.log('Payload RDV:', payload);
+
+  this.http.post<ConfirmationRendezVous>(this.apiUrl, payload).subscribe({
+    next: (addedRdv) => {
+      this.rendezVousList.push(addedRdv);
+      this.applyDateFilter();
+      //this.resetAddForm({} as NgForm); // reset form
+      this.addSuccess = true;
+      setTimeout(() => this.addSuccess = false, 3000);
+    },
+    error: (err) => {
+      console.error('Erreur ajout RDV:', err);
+      this.errorMessage = 'Erreur lors de l’ajout du rendez-vous.';
+    }
+  });
 }
+
 
 private findOrCreatePatient(nom: string, prenom: string) {
   return this.http.get<any[]>(`http://localhost:8081/api/patients?nom=${nom}&prenom=${prenom}`)
