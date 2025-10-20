@@ -101,7 +101,7 @@ export class RendezVousNonConfirmesComponent implements OnInit {
   this.patients.forEach(p => {
     this.patientMap[p.id] = p;
   });
-  this.getAll(); // ← ici c’est bien
+  this.getAll(); 
 });
 
   this.buildCalendar();
@@ -116,8 +116,6 @@ export class RendezVousNonConfirmesComponent implements OnInit {
     return 'Inconnu';
   }
 }
-
-
 
   // ==================== FORMULAIRE RDV ====================
   initForm(): RendezVousNonConfirmes {
@@ -196,7 +194,7 @@ create(): void {
       setTimeout(() => { this.addSuccess = false; }, 3000);
     },
     (err: any) => {
-      // >>> ICI la version sans "?."
+      
       var msg =
         (err && err.error && typeof err.error === 'object' && err.error.message) ? err.error.message :
         (err && err.error && typeof err.error === 'string') ? err.error :
@@ -207,9 +205,6 @@ create(): void {
     }
   );
 }
-
-
-
 
   edit(rdv: RendezVousNonConfirmes): void {
     this.editingRendezVous = { ...rdv };
@@ -521,7 +516,7 @@ deleteRendezVous(): void {
     this.selectedCardId = null;
   }
 
-getRdvId(r: RendezVousNonConfirmes): number {
+  getRdvId(r: RendezVousNonConfirmes): number {
   if (!r) { return 0; }
   return (r.idFactPriseRendezVous !== undefined && r.idFactPriseRendezVous !== null)
     ? r.idFactPriseRendezVous
@@ -574,7 +569,7 @@ alert('Échec suppression RDV : ' + msg);
 
   const rdvId = this.getRdvId(r);
 
-  // ✅ Si la carte cliquée est déjà sélectionnée → la désélectionner
+  //  Si la carte cliquée est déjà sélectionnée → la désélectionner
   if (this.selectedCardId === rdvId) {
     this.selectedCardId = null;
     this.rappel = {
@@ -587,7 +582,7 @@ alert('Échec suppression RDV : ' + msg);
     return;
   }
 
-  // ✅ Sinon → sélectionner la carte et remplir le formulaire
+  //  Sinon → sélectionner la carte et remplir le formulaire
   this.selectedCardId = rdvId;
   this.rappel.idRdv = rdvId;
   this.rappel.idPatient = r.idDimPatient;

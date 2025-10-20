@@ -29,8 +29,8 @@ export interface ConfirmationRendezVous {
   idDimConfirmationRendezVous?: number;
   id: number;
   idPatient: number;
-  idActe: number | string;
-  idPersonnel: string;
+  idActe: number ;
+  idPersonnel: number;
   idFauteuil: string;
   dateRdvConfirme: string;
   heureRdvConfirme: string;
@@ -41,6 +41,8 @@ export interface ConfirmationRendezVous {
   heureSortie: string;
   reminderCount?: number;
   nomPatient?: string; 
+  personnelNom?: string;
+  acteLibelle?: string;
 }
 
 interface EmailResponse {
@@ -156,6 +158,24 @@ export class ConfirmationRendezVousComponent implements OnInit {
       return acc + (rdvDate === today ? 1 : 0);
     }, 0);
   }
+updatePatientId() {
+  if (!this.editedRendezVous.nomPatient) return;
+  const patient = this.patients.find(p => `${p.nom} ${p.prenom}` === this.editedRendezVous.nomPatient);
+  this.editedRendezVous.idPatient = patient ? patient.idPersonne : null;
+}
+
+updatePersonnelId() {
+  if (!this.editedRendezVous.personnelNom) return;
+  const personnel = this.personnelsList.find(p => `${p.nom} ${p.prenom}` === this.editedRendezVous.personnelNom);
+  this.editedRendezVous.idPersonnel = personnel ? personnel.idUtilisateur : null;
+}
+
+updateActeId() {
+  if (!this.editedRendezVous.acteLibelle) return;
+  const acte = this.actes.find(a => a.acteLibelle === this.editedRendezVous.acteLibelle);
+  this.editedRendezVous.idActe = acte ? acte.idActe : null;
+}
+
 
   showTodayRendezVous(): void {
     const todayStr = this.formatDate(new Date());
@@ -178,6 +198,7 @@ export class ConfirmationRendezVousComponent implements OnInit {
   editRendezVous(rdv: ConfirmationRendezVous): void {
     this.editRendezVousId = rdv.idDimConfirmationRendezVous || null;
     this.editedRendezVous = { ...rdv };
+    this.selectedPatientNomPrenom = this.getPatientNom(rdv.idPatient);
   }
 
   cancelEdit(): void {
@@ -203,11 +224,21 @@ resetAddForm(form?: NgForm) {
 }
 
 
-
-  saveRendezVous(rdv: ConfirmationRendezVous): void { 
+saveRendezVous(rdv: ConfirmationRendezVous): void { 
   if (!rdv.idDimConfirmationRendezVous) return;
 
-  this.http.put<ConfirmationRendezVous>(this.apiUrl + '/' + rdv.idDimConfirmationRendezVous, rdv)
+  // Mise à jour des IDs avant l'envoi
+  this.updatePatientId();
+  this.updatePersonnelId();
+  this.updateActeId();
+
+  // Vérification que tous les IDs sont bien définis
+  if (!this.editedRendezVous.idPatient || !this.editedRendezVous.idPersonnel || !this.editedRendezVous.idActe) {
+    this.errorMessage = 'Patient, personnel ou acte non défini.';
+    return;
+  }
+
+  this.http.put<ConfirmationRendezVous>(`${this.apiUrl}/${rdv.idDimConfirmationRendezVous}`, this.editedRendezVous)
     .pipe(catchError(error => this.handleError(error)))
     .subscribe({
       next: updatedRdv => {
@@ -221,6 +252,7 @@ resetAddForm(form?: NgForm) {
       error: error => this.errorMessage = error
     });
 }
+
 
 
   // ---- Suppression ----
@@ -259,29 +291,47 @@ getIdPatient(nom: string, prenom: string): number | null {
   );
   return patient ? patient.idPatient : null;
 }
-// À placer dans la classe ConfirmationRendezVousComponent
+selectedPatientNomPrenom: string = '';
 
 // Lorsqu’un patient est sélectionné
-onPatientChange(nomPrenom: string) {
-  const [nom, prenom] = nomPrenom.split(' ');
-  const patient = this.patients.find(p => p.nom === nom && p.prenom === prenom);
-  this.newRdv.idPatient = patient ? patient.idPersonne : null;
+onEditPatientChange(nomPrenom: string) {
+  const patient = this.patients.find(p => `${p.nom} ${p.prenom}` === nomPrenom);
+  if (patient) {
+    this.newRdv.idPatient = Number(patient.idPersonne); // mettre à jour l’ID
+    this.newRdv.nomPatient = `${patient.nom} ${patient.prenom}`; // pour affichage si nécessaire
+  } else {
+    this.newRdv.idPatient = null;
+  }
 }
 
-// Lorsqu’un personnel est sélectionné
 onPersonnelChange(nomPrenom: string) {
-  const [nom, prenom] = nomPrenom.split(' ');
-  const perso = this.personnelsList.find(p => p.nom === nom && p.prenom === prenom);
-this.newRdv.idPersonnel = perso ? String(perso.idUtilisateur) : null;
+  const perso = this.personnelsList.find(p => `${p.nom} ${p.prenom}` === nomPrenom);
+  if (!perso) return;
+
+  const id = Number(perso.idUtilisateur);
+  if (this.editRendezVousId) {
+    this.editedRendezVous.idPersonnel = id;
+    this.editedRendezVous.personnelNom = `${perso.nom} ${perso.prenom}`;
+  } else {
+    this.newRdv.idPersonnel = id;
+  }
 }
 
-// Lorsqu’un acte est sélectionné
 onActeChange(libelle: string) {
   const acte = this.actes.find(a => a.acteLibelle === libelle);
-  this.newRdv.idActe = acte ? acte.idActe : null;
+  if (!acte) return;
+
+  const id = Number(acte.idActe);
+  if (this.editRendezVousId) {
+    this.editedRendezVous.idActe = id;
+    this.editedRendezVous.acteLibelle = acte.acteLibelle;
+  } else {
+    this.newRdv.idActe = id;
+  }
 }
 
-  personnels: any[] = [];
+
+personnels: any[] = [];
 getIdPersonnel(nom: string, prenom: string): number | null {
   const personnel = this.personnels.find(
     p => p.nom.toLowerCase() === nom.toLowerCase() && p.prenom.toLowerCase() === prenom.toLowerCase()
