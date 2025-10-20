@@ -255,9 +255,9 @@
        (ngSubmit)="saveRendezVous(rdv)"
        class="card shadow-sm border-0 p-4 mt-4 rounded-3 bg-light edit-rdv-form"
         >
-      <h5 class="mb-4 text-primary fw-bold">
+      <h6 class="mb-4 text-primary fw-bold">
         ✏️ Modifier le rendez-vous de {{ rdv.nomPatient || 'Patient inconnu' }}
-      </h5>
+      </h6>
 
   <div class="form-group mb-3">
     <label class="form-label fw-semibold">Patient *</label>
@@ -352,7 +352,7 @@
   </div>
 
   <!-- Boutons -->
-  <div class="text-end mt-4">
+  <div class="form-buttons">
     <button type="submit" class="btn btn-success me-2">💾 Enregistrer</button>
     <button type="button" class="btn btn-outline-secondary" (click)="cancelEdit()">❌ Annuler</button>
   </div>
@@ -366,17 +366,20 @@
               <i class="icofont icofont-edit"></i> Modifier
             </button>
 
-            <button class="btn btn-sm btn-outline-primary btn-rappel"
-                    (click)="sendEmailReminder(rdv.idDimConfirmationRendezVous)"
-                    [disabled]="isSending(rdv)">
-              <span *ngIf="isSending(rdv)">Envoi…</span>
-              <span *ngIf="!isSending(rdv)"><i class="ti-email"></i> Rappel Par Mail</span>
-            </button>
+           <button *ngIf="editRendezVousId !== rdv.idDimConfirmationRendezVous"
+           class="btn btn-sm btn-outline-primary btn-rappel"
+          (click)="sendEmailReminder(rdv.idDimConfirmationRendezVous)"
+         [disabled]="isSending(rdv)">
+        <span *ngIf="isSending(rdv)">Envoi…</span>
+       <span *ngIf="!isSending(rdv)"><i class="ti-email"></i> Rappel Par Mail</span>
+      </button>
 
-            <button class="btn btn-sm btn-danger"
-                    (click)="confirmDelete(rdv.idDimConfirmationRendezVous)">
-              <i class="icofont icofont-trash"></i> Supprimer
-            </button>
+      <button *ngIf="editRendezVousId !== rdv.idDimConfirmationRendezVous"
+         class="btn btn-sm btn-danger"
+         (click)="confirmDelete(rdv.idDimConfirmationRendezVous)">
+        <i class="icofont icofont-trash"></i> Supprimer
+     </button>
+
           </div>
         </div>
       </div>

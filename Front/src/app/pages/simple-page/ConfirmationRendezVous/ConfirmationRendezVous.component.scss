@@ -420,3 +420,94 @@ button.btn.btn-sm.btn-outline-primary:disabled {
   border-color: #6c63ff;
 }
 
+/* Formulaire d'édition RDV */
+.edit-rdv-form {
+  width: 100%;
+  flex: 0 1 300px;       /* largeur identique aux cartes RDV */
+  max-width: 100%;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  padding: 1px !important;
+  box-sizing: border-box;
+  margin-top: -30px !important;
+  display: flex;
+  flex-direction: column;
+  gap: 0.05rem !important;
+  font-family: "Segoe UI", Tahoma, sans-serif;
+  line-height: 0.2 !important;
+  height: auto;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+
+/* Effet hover identique aux cartes RDV */
+.edit-rdv-form:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+/* Titre */
+.edit-rdv-form h5 {
+  font-weight: 700;
+  font-size: 1.1rem;
+  margin-bottom: 0.8rem;
+  color: #0d6efd; /* bleu */
+}
+
+/* Inputs et selects */
+.edit-rdv-form input,
+.edit-rdv-form select {
+  width: 100%;
+  padding: 0.5rem 0.8rem;
+  border-radius: 8px;
+  border: 1px solid #ced4da;
+  font-size: 0.9rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.edit-rdv-form input:focus,
+.edit-rdv-form select:focus {
+  border-color: #6c63ff;
+}
+
+/* Conteneur des boutons */
+.edit-rdv-form .form-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+/* Boutons */
+.edit-rdv-form .form-buttons .btn {
+  padding: 0.4rem 0.8rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+/* Bouton Enregistrer */
+.edit-rdv-form .form-buttons .btn-primary {
+  background-color: #6c63ff;
+  color: #fff;
+  border: none;
+}
+
+.edit-rdv-form .form-buttons .btn-primary:hover {
+  background-color: #5a32a3;
+}
+
+/* Bouton Annuler */
+.edit-rdv-form .form-buttons .btn-secondary {
+  background-color: #adb5bd;
+  color: #fff;
+  border: none;
+}
+
+.edit-rdv-form .form-buttons .btn-secondary:hover {
+  background-color: #6c757d;
+}

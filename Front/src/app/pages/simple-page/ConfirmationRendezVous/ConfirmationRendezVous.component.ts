@@ -121,6 +121,13 @@ export class ConfirmationRendezVousComponent implements OnInit {
       .subscribe({
         next: data => {
           this.rendezVousList = Array.isArray(data) ? data : [];
+          this.rendezVousList.forEach(rdv => {
+          rdv.heureRdvConfirme = this.formatTimeHHMM(rdv.heureRdvConfirme);
+          rdv.heureArriveePatient = this.formatTimeHHMM(rdv.heureArriveePatient);
+          rdv.heureSalleAttente = this.formatTimeHHMM(rdv.heureSalleAttente);
+          rdv.heureSortie = this.formatTimeHHMM(rdv.heureSortie);
+           });
+           
           this.applyDateFilter();
           this.calculateWeeklyRendezVous();
           this.updateTodayRendezVousCount();
@@ -199,6 +206,21 @@ updateActeId() {
     this.editRendezVousId = rdv.idDimConfirmationRendezVous || null;
     this.editedRendezVous = { ...rdv };
     this.selectedPatientNomPrenom = this.getPatientNom(rdv.idPatient);
+    this.editedRendezVous.heureArriveePatient = this.formatTimeHHMM(rdv.heureArriveePatient);
+     // Copie complète des valeurs dans l'objet de formulaire
+    this.editedRendezVous = {
+    ...rdv,
+    heureRdvConfirme: this.formatTimeHHMM(rdv.heureRdvConfirme),
+    heureArriveePatient: this.formatTimeHHMM(rdv.heureArriveePatient),
+    heureSalleAttente: this.formatTimeHHMM(rdv.heureSalleAttente),
+    heureSortie: this.formatTimeHHMM(rdv.heureSortie)
+  };
+
+  // Pour les noms affichés si tu utilises select/input
+  this.editedRendezVous.nomPatient = this.getPatientNom(rdv.idPatient);
+  this.editedRendezVous.personnelNom = this.getPersonnelNom(rdv.idPersonnel);
+  this.editedRendezVous.acteLibelle = this.getActeLibelle(rdv.idActe);
+
   }
 
   cancelEdit(): void {
@@ -303,6 +325,11 @@ onEditPatientChange(nomPrenom: string) {
     this.newRdv.idPatient = null;
   }
 }
+
+private formatTimeHHMM(time?: string): string {
+  return time ? time.slice(0,5) : '';
+}
+
 
 onPersonnelChange(nomPrenom: string) {
   const perso = this.personnelsList.find(p => `${p.nom} ${p.prenom}` === nomPrenom);
