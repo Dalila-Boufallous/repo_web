@@ -141,26 +141,46 @@
     <form #addForm="ngForm" (ngSubmit)="addRendezVous()">
   <div class="row g-3">
     <div class="col-md-4">
-      <label>Patient *</label>
-          
-          <input class="form-control" list="patientsList" [(ngModel)]="newRdv.idPatientNom" name="idPatientNom" required>
-          <datalist id="patientsList">
+     <label>Patient *</label>
+          <input
+            class="form-control"
+            list="patientsListAdd"
+            [(ngModel)]="newRdv.nomPatient"
+            (change)="onEditPatientChange(newRdv.nomPatient)"
+            name="nomPatientAdd"
+            required
+          />
+          <datalist id="patientsListAdd">
             <option *ngFor="let p of patients" [value]="p.nom + ' ' + p.prenom"></option>
           </datalist>
     </div>
 
     <div class="col-md-4">
       <label>Acte *</label>
-          <input class="form-control" list="actesList" [(ngModel)]="newRdv.idActeLibelle" name="idActeLibelle" required>
-          <datalist id="actesList">
+          <input
+            class="form-control"
+            list="actesListAdd"
+            [(ngModel)]="newRdv.acteLibelle"
+            (change)="onActeChange(newRdv.acteLibelle)"
+            name="acteLibelleAdd"
+            required
+          />
+          <datalist id="actesListAdd">
             <option *ngFor="let a of actes" [value]="a.acteLibelle"></option>
           </datalist>
     </div>
 
     <div class="col-md-4">
       <label>Personnel *</label>
-           <input class="form-control" list="personnelsList" [(ngModel)]="newRdv.idPersonnelNom" name="idPersonnelNom" required>
-          <datalist id="personnelsList">
+          <input
+            class="form-control"
+            list="personnelsListAdd"
+            [(ngModel)]="newRdv.personnelNom"
+            (change)="onPersonnelChange(newRdv.personnelNom)"
+            name="personnelNomAdd"
+            required
+          />
+          <datalist id="personnelsListAdd">
             <option *ngFor="let perso of personnelsList" [value]="perso.nom + ' ' + perso.prenom"></option>
           </datalist>
     </div>
