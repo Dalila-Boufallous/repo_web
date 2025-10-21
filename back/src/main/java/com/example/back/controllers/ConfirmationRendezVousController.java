@@ -81,20 +81,20 @@ public class ConfirmationRendezVousController {
     }
 
     // ---- Envoi email de rappel ----
+@PostMapping("/{idDim}/email-reminder")
+public ResponseEntity<Map<String, Object>> sendEmailReminder(@PathVariable("idDim") Integer idDim) {
+    // 1) RDV
+    ConfirmationRendezVous rdv = repository.findById(idDim)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Rendez-vous " + idDim + " introuvable"));
 
-    @PostMapping("/{id}/email-reminder")
-    public ResponseEntity<Map<String, Object>> sendEmailReminder(@PathVariable Integer id) {
-        // 1) RDV
-        ConfirmationRendezVous rdv = repository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Rendez-vous " + id + " introuvable"));
+    // 2) Patient
+    Integer idPatient = rdv.getIdPatient();
+    if (idPatient == null) {
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Ce rendez-vous n’a pas de patient (idPatient null)");
+    }
+    Patient patient = patientRepo.findByIdPersonne(idPatient)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Patient " + idPatient + " introuvable"));
 
-        // 2) Patient
-        Integer idPatient = rdv.getIdPatient();
-        if (idPatient == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Ce rendez-vous n’a pas de patient (idPatient null)");
-        }
-        Patient patient = patientRepo.findById(idPatient)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Patient " + idPatient + " introuvable"));
 
         // 3) Construire l’email
         String subject = "Rappel de rendez-vous";
@@ -117,7 +117,7 @@ public class ConfirmationRendezVousController {
                     "messageId", messageId
             ));
         } catch (RuntimeException ex) {
-            log.error("Échec envoi email rdv={} patient={}", id, idPatient, ex);
+            log.error("Échec envoi email rdv={} patient={}", idDim, idPatient, ex);
             throw new ResponseStatusException(HttpStatus.BAD_GATEWAY, "Échec envoi email: " + ex.getMessage());
         }
     }

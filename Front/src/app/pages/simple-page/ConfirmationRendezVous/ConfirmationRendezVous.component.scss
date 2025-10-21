@@ -511,3 +511,47 @@ button.btn.btn-sm.btn-outline-primary:disabled {
 .edit-rdv-form .form-buttons .btn-secondary:hover {
   background-color: #6c757d;
 }
+
+/* Popup email (succès / erreur) */
+.popup-email {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #6c63ff; /* violet par défaut */
+  color: #fff;
+  padding: 1rem 2rem;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 1rem;
+  text-align: center;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+  z-index: 1060;
+  opacity: 0;
+  animation: fadeInOutEmail 3s forwards;
+}
+
+/* Popup email succès */
+.popup-email.success {
+  background-color: #28a745; /* vert succès */
+}
+
+/* Popup email erreur */
+.popup-email.error {
+  background-color: #dc3545; /* rouge erreur */
+}
+
+/* Animation apparition / disparition */
+@keyframes fadeInOutEmail {
+  0% { opacity: 0; transform: translate(-50%, -60%); }
+  10% { opacity: 1; transform: translate(-50%, -50%); }
+  90% { opacity: 1; transform: translate(-50%, -50%); }
+  100% { opacity: 0; transform: translate(-50%, -60%); }
+}
+
+/* Texte et icône */
+.popup-email i {
+  margin-right: 0.5rem;
+  font-size: 1.2rem;
+  vertical-align: middle;
+}

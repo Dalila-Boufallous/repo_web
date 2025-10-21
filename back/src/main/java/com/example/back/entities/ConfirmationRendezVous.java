@@ -19,7 +19,7 @@ public class ConfirmationRendezVous {
     @Column(name = "id_dim_confirmation_rendez_vous")
     private Integer idDimConfirmationRendezVous;
     
-   @Column(name = "id_patient")
+    @Column(name = "id_patient")
     private Integer idPatient;
 
     @Column(name = "id")

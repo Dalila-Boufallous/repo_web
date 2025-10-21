@@ -387,18 +387,20 @@
             </button>
 
            <button *ngIf="editRendezVousId !== rdv.idDimConfirmationRendezVous"
-           class="btn btn-sm btn-outline-primary btn-rappel"
-          (click)="sendEmailReminder(rdv.idDimConfirmationRendezVous)"
-         [disabled]="isSending(rdv)">
-        <span *ngIf="isSending(rdv)">Envoi…</span>
-       <span *ngIf="!isSending(rdv)"><i class="ti-email"></i> Rappel Par Mail</span>
-      </button>
-
+             class="btn btn-sm btn-outline-primary btn-rappel"
+             (click)="sendEmailReminderFromRow(rdv)"
+             [disabled]="isSending(rdv)">
+             <span *ngIf="isSending(rdv)">Envoi…</span>
+             <span *ngIf="!isSending(rdv)"><i class="ti-email"></i> Rappel Par Mail</span>
+           </button>
+          
       <button *ngIf="editRendezVousId !== rdv.idDimConfirmationRendezVous"
          class="btn btn-sm btn-danger"
          (click)="confirmDelete(rdv.idDimConfirmationRendezVous)">
         <i class="icofont icofont-trash"></i> Supprimer
      </button>
+
+     
 
           </div>
         </div>
@@ -412,6 +414,8 @@
   <div *ngIf="addSuccess" class="popup-success">✅ Rendez-vous ajouté</div>
   <div *ngIf="saveSuccess" class="popup-success">✅ Données sauvegardées</div>
   <div *ngIf="deleteSuccess" class="popup-success">✅ Rendez-vous supprimé</div>
+  
+  
 
   <!-- Confirmation suppression -->
   <div *ngIf="showDeleteConfirm" class="modal-backdrop">
