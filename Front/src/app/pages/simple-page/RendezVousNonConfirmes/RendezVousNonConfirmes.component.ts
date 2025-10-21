@@ -95,11 +95,11 @@ export class RendezVousNonConfirmesComponent implements OnInit {
   for (let y = currentYear - 5; y <= currentYear + 5; y++) this.yearRange.push(y);
 
   // Charger d’abord les patients
- this.http.get<any[]>('http://localhost:8081/api/patients').subscribe(pats => {
+  this.http.get<any[]>('http://localhost:8081/api/patients').subscribe(pats => {
   this.patients = pats;
   this.patientMap = {};
   this.patients.forEach(p => {
-    this.patientMap[p.id] = p;
+  this.patientMap[p.idDimPatient] = p;
   });
   this.getAll(); 
 });
