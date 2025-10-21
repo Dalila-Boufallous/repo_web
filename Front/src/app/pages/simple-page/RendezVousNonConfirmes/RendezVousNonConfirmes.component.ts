@@ -32,7 +32,7 @@ export class RendezVousNonConfirmesComponent implements OnInit {
   // ==================== Données & états ====================
   rendezVousList: RendezVousNonConfirmes[] = [];
   filteredRendezVous: RendezVousNonConfirmes[] = [];
-  newRendezVous: RendezVousNonConfirmes = this.initForm();
+  newRendezVous: RendezVousNonConfirmes & { selectedPatientId?: number } = this.initForm();
   editingRendezVous: RendezVousNonConfirmes | null = null;
   editingRendezVousId: number | null = null;
 
@@ -100,6 +100,7 @@ export class RendezVousNonConfirmesComponent implements OnInit {
   this.patientMap = {};
   this.patients.forEach(p => {
   this.patientMap[p.idDimPatient] = p;
+  
   });
   this.getAll(); 
 });
@@ -144,7 +145,7 @@ export class RendezVousNonConfirmesComponent implements OnInit {
       rdv.nomPatient = this.getPatientName(rdv.idDimPatient);
     });
 
-    console.table(this.rendezVousList.map(r => ({
+  console.table(this.rendezVousList.map(r => ({
   rdvId: r.id,
   patientId: r.idDimPatient,
   nomTrouve: this.getPatientName(r.idDimPatient)
@@ -156,7 +157,7 @@ export class RendezVousNonConfirmesComponent implements OnInit {
     this.applyFilters();
   });
   console.log('Rendez-vous IDs:', this.rendezVousList.map(r => r.idDimPatient));
-console.log('Patient IDs:', this.patients.map(p => p.id));
+  console.log('Patient IDs:', this.patients.map(p => p.idDimPatient));
 
 }
 
@@ -171,40 +172,52 @@ private toHHmmss(t: string | null | undefined): string | null {
 
 
 
-
 create(): void {
-  // Construire un payload propre (évite les valeurs undefined)
-  const payload: any = {
-    id: this.newRendezVous && typeof this.newRendezVous.id === 'number' ? this.newRendezVous.id : 0,
-    idDimPatient: this.newRendezVous && typeof this.newRendezVous.idDimPatient === 'number' ? this.newRendezVous.idDimPatient : 0,
-    idDimActe: (this.newRendezVous && typeof this.newRendezVous.idDimActe === 'number') ? this.newRendezVous.idDimActe : 0,
-    idDimConfirmationRendezVous: (this.newRendezVous && typeof this.newRendezVous.idDimConfirmationRendezVous === 'number') ? this.newRendezVous.idDimConfirmationRendezVous : 0,
-    idDimDevis: (this.newRendezVous && typeof this.newRendezVous.idDimDevis === 'number') ? this.newRendezVous.idDimDevis : 0,
-    datePrevisionnelle: this.newRendezVous && this.newRendezVous.datePrevisionnelle ? this.newRendezVous.datePrevisionnelle : '',
-    heurePrevisionnelle: this.newRendezVous && this.newRendezVous.heurePrevisionnelle ? this.newRendezVous.heurePrevisionnelle : '',
-    commentaires: this.newRendezVous && this.newRendezVous.commentaires ? this.newRendezVous.commentaires : ''
+  this.newRendezVous.idDimPatient = this.newRendezVous.selectedPatientId;
+  console.log('ID patient sélectionné :', this.newRendezVous.selectedPatientId);
+  console.log('Payload complet :', this.newRendezVous);
+  const lastId = Math.max(...this.rendezVousList.map(r => r.id), 0);
+  this.newRendezVous.id = lastId + 1;
+
+  console.log('ID généré pour le RDV :', this.newRendezVous.id);
+
+
+  if (!this.newRendezVous.selectedPatientId) {
+    alert('Veuillez sélectionner un patient');
+    return;
+  }
+
+  const payload = {
+    id: this.newRendezVous.id, 
+    idDimPatient: this.newRendezVous.selectedPatientId,
+    idDimActe: this.newRendezVous.idDimActe || 0,
+    idDimConfirmationRendezVous: this.newRendezVous.idDimConfirmationRendezVous || 0,
+    idDimDevis: this.newRendezVous.idDimDevis || 0,
+    datePrevisionnelle: this.newRendezVous.datePrevisionnelle || '',
+    heurePrevisionnelle: this.newRendezVous.heurePrevisionnelle || '',
+    commentaires: this.newRendezVous.commentaires || ''
   };
 
-  this.http.post(this.baseUrl, payload).subscribe(
-    (res) => {
+  this.http.post(this.baseUrl, payload).subscribe({
+    next: (res) => {
       this.getAll();
       this.newRendezVous = this.initForm();
       this.addSuccess = true;
       this.showAutoHidePopup('Rendez-vous ajouté avec succès.', 2500);
       setTimeout(() => { this.addSuccess = false; }, 3000);
     },
-    (err: any) => {
-      
-      var msg =
-        (err && err.error && typeof err.error === 'object' && err.error.message) ? err.error.message :
-        (err && err.error && typeof err.error === 'string') ? err.error :
+    error: (err: any) => {
+      console.error('Erreur création RDV', err);
+      let msg =
+        (err && err.error && err.error.message) ? err.error.message :
         (err && err.message) ? err.message :
-        'voir logs serveur';
+        'Voir logs serveur';
       alert('Échec création RDV : ' + msg);
-      console.error('Échec création RDV :', err);
     }
-  );
+  });
 }
+
+
 
   edit(rdv: RendezVousNonConfirmes): void {
     this.editingRendezVous = { ...rdv };

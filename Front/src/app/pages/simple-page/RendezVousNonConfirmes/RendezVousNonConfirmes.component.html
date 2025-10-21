@@ -156,30 +156,21 @@
   <div class="card-body">
     <form #addForm="ngForm" (ngSubmit)="create()" novalidate>
       <div class="row g-3">
-        <!-- ID RDV (obligatoire) -->
-        <div class="col-md-3">
-          <label class="form-label">ID *</label>
-          <input
-            type="number"
-            class="form-control"
-            name="id"
-            [(ngModel)]="newRendezVous.id"
+        <!-- Patient (liste déroulante) -->
+        <div class="col-md-6">
+          <label class="form-label">Patient *</label>
+          <select
+            class="form-select"
+            name="patient"
+            [(ngModel)]="newRendezVous.selectedPatientId"
             required
-          />
-          <div class="form-text">Identifiant interne du rendez-vous.</div>
-        </div>
-
-        <!-- ID Patient (obligatoire) -->
-        <div class="col-md-3">
-          <label class="form-label">ID Patient *</label>
-          <input
-            type="number"
-            class="form-control"
-            name="idDimPatient"
-            [(ngModel)]="newRendezVous.idDimPatient"
-            required
-          />
-          <div class="form-text">Référence du patient (dimension).</div>
+          >
+            <option [ngValue]="null" disabled selected>-- Sélectionnez un patient --</option>
+            <option *ngFor="let p of patients" [ngValue]="p.idDimPatient">
+              {{ p.nom }} {{ p.prenom }}
+            </option>
+          </select>
+          <div class="form-text">Choisir le patient pour ce rendez-vous.</div>
         </div>
 
         <!-- Date prévisionnelle -->
@@ -232,6 +223,7 @@
     </form>
   </div>
 </div>
+
 
 
   <!-- ===== Liste des RDV ===== -->
