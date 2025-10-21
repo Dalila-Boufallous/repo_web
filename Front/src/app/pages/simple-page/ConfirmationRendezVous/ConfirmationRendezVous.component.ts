@@ -607,6 +607,7 @@ private findOrCreateActe(libelle: string) {
     this.calYear = now.getFullYear();
     this.calMonth = now.getMonth();
     this.buildCalendar();
+    this.updateTodayRendezVousCount();
   }
 
   goToPatient(id: number | null | undefined): void {
@@ -623,72 +624,51 @@ private findOrCreateActe(libelle: string) {
     return !!this.sendingMap[key];
   }
 
-emailSuccessMap: { [key: number]: boolean } = {};
-emailErrorMap: { [key: number]: boolean } = {};
-
 // Envoi Mail
 
+// Ajouter au début de ton composant
+popupState: { [id: number]: { show: boolean, message: string } } = {};
+// Ta fonction sendEmailReminderFromRow
 sendEmailReminderFromRow(rdv: ConfirmationRendezVous) {
-
-  this.emailSuccessMap[rdv.id] = false;
-  this.emailErrorMap[rdv.id] = false;
-
-  // --- Clé du RDV côté backend ---
+  const patientName = rdv.nomPatient || 'Patient';
   const idRdv = rdv.idDimConfirmationRendezVous != null ? rdv.idDimConfirmationRendezVous : rdv.id;
-  if (!idRdv) {
-    
-    alert('RDV invalide : idDim manquant.');
+
+  if (!idRdv || !rdv.idPatient) {
+    alert('RDV ou patient invalide');
     return;
   }
 
-  // --- Récupérer le patient ---
-  let patientId: number | null = rdv.idPatient != null ? rdv.idPatient : null;
+  // Marquer en cours d’envoi
+  this.sendingMap[rdv.id] = true;
 
-  if (!patientId && rdv.nomPatient) {
-    const found = this.patients.find(function(p) {
-      const fullName = ((p.nom ? p.nom : '') + ' ' + (p.prenom ? p.prenom : '')).trim().toLowerCase();
-      return fullName === rdv.nomPatient.trim().toLowerCase();
-    });
-    if (found) {
-      patientId = found.idPersonne != null ? found.idPersonne : (found.idPatient != null ? found.idPatient : null);
-    }
-  }
+  this.http.post<{status: string, to?: string}>(`${this.apiUrl}/${idRdv}/email-reminder`, { patientId: rdv.idPatient })
+    .subscribe({
+      next: (res) => {
+        this.sendingMap[rdv.id] = false;
 
-  if (!patientId) {
-    alert('Impossible d’envoyer le rappel : patient introuvable.');
-    return;
-  }
+        this.popupState[rdv.id] = {
+          show: true,
+          message: res.status === 'sent' ? `✅ Rappel envoyé à ${res.to || patientName}` : `❌ Échec de l’envoi pour ${patientName}`
+        };
 
-  // --- Vérifier que le patient a un email ---
-  const patientObj = this.patients.find(function(p) {
-    const idP = p.idPersonne != null ? p.idPersonne : (p.idPatient != null ? p.idPatient : null);
-    return idP === patientId;
-  });
-  if (!patientObj || !patientObj.email) {
-    alert('Impossible d’envoyer : le patient sélectionné n’a pas d’adresse email.');
-    return;
-  }
+        setTimeout(() => {
+          this.popupState[rdv.id].show = false;
+        }, 3000);
+      },
+      error: (err) => {
+        this.sendingMap[rdv.id] = false;
 
-  // --- Appel HTTP ---
-  this.http.post<{ status: string, messageId?: string, to?: string }>(
-    this.apiUrl + '/' + idRdv + '/email-reminder',
-    { patientId: patientId }
-  ).subscribe({
-    next: function(response) {
-      if (response.status === 'sent') {
-        
-        alert('✅ Rappel envoyé à ' + (response.to ? response.to : rdv.nomPatient));
-      } else {
-        alert('❌ Échec de l’envoi du rappel.');
+        this.popupState[rdv.id] = {
+          show: true,
+          message: `❌ Erreur serveur pour ${patientName}`
+        };
+
+        setTimeout(() => {
+          this.popupState[rdv.id].show = false;
+        }, 3000);
       }
-    },
-    error: function(err) {
-      console.error('Erreur envoi email pour rdv', idRdv, err);
-      alert('❌ Erreur serveur lors de l’envoi du rappel.');
-    }
-  });
+    });
 }
-
 
 
 

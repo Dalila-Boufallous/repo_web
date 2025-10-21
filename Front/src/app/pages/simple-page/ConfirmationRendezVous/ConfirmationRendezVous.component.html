@@ -393,7 +393,10 @@
              <span *ngIf="isSending(rdv)">Envoi…</span>
              <span *ngIf="!isSending(rdv)"><i class="ti-email"></i> Rappel Par Mail</span>
            </button>
-          
+         <div *ngIf="popupState[rdv.id]?.show" class="popup-success">
+         {{ popupState[rdv.id].message }}
+        </div>
+                
       <button *ngIf="editRendezVousId !== rdv.idDimConfirmationRendezVous"
          class="btn btn-sm btn-danger"
          (click)="confirmDelete(rdv.idDimConfirmationRendezVous)">
@@ -414,6 +417,7 @@
   <div *ngIf="addSuccess" class="popup-success">✅ Rendez-vous ajouté</div>
   <div *ngIf="saveSuccess" class="popup-success">✅ Données sauvegardées</div>
   <div *ngIf="deleteSuccess" class="popup-success">✅ Rendez-vous supprimé</div>
+  
   
   
 

@@ -95,16 +95,19 @@
 
 /* Popup succès */
 .popup-success {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  background: #28a745;
-  color: white;
-  padding: 0.8rem 1.2rem;
-  border-radius: 8px;
-  font-weight: 500;
-  animation: fadeInOut 3s forwards;
+  position: fixed !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important; /* centre exact */
+  background: #7bdf7e !important;
+  color: white !important;
+  padding: 2rem 1.5rem !important;
+  border-radius: 8px !important;
+  font-weight: 500 !important;
+  z-index: 1050 !important; /* au-dessus de tout */
+  animation: fadeInOut 4s forwards !important;
 }
+
 
 @keyframes fadeInOut {
   0% { opacity: 0; transform: translateY(20px); }
