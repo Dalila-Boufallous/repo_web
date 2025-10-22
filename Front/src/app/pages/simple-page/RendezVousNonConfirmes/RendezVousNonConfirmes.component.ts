@@ -690,7 +690,7 @@ resetWeekRendezVous() {
   this.applyFilters();       // rafraîchit la liste des rendez-vous
 }
 selectedRappel: any = null;
-showRappelModal: boolean = true;
+showRappelModal: boolean = false;
 hasRappel: boolean = false;
 
 
