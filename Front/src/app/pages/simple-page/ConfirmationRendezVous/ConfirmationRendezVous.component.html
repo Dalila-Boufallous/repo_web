@@ -48,7 +48,8 @@
       type="text"
       class="form-control"
       placeholder="🔍 Rechercher un rendez-vous..."
-      [(ngModel)]="searchRdv"
+       [(ngModel)]="searchText"
+      (input)="applySearchFilter()"
     >
   </div>
 
@@ -239,7 +240,7 @@
 <!-- Liste des rdvs -->
   <div class="cards-scroll-wrapper">
   <div class="cards-container">
-    <div class="patient-card" *ngFor="let rdv of filteredRendezVous">
+    <div class="patient-card" *ngFor="let rdv of filteredRendezVousList">
       <div class="card shadow-sm rounded-3 h-100">
         <div class="card-body">
           <h5 class="card-title">

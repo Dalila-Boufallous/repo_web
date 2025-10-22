@@ -59,8 +59,8 @@ interface EmailResponse {
 })
 export class ConfirmationRendezVousComponent implements OnInit {
 
-  rendezVousList: ConfirmationRendezVous[] = [];
-  filteredRendezVousList: ConfirmationRendezVous[] = [];
+  rendezVousList: any[] = [];
+  filteredRendezVousList: any[] = [];
   loading = false;
   errorMessage = '';
   editRendezVousId: number | null = null;
@@ -114,31 +114,45 @@ export class ConfirmationRendezVousComponent implements OnInit {
   
   // ---- Récupération RDV ----
   getRendezVous(): void {
-    this.loading = true;
-    this.errorMessage = '';
-    this.http.get<ConfirmationRendezVous[]>(this.apiUrl)
-      .pipe(catchError(error => this.handleError(error)))
-      .subscribe({
-        next: data => {
-          this.rendezVousList = Array.isArray(data) ? data : [];
-          this.rendezVousList.forEach(rdv => {
+  this.loading = true;
+  this.errorMessage = '';
+
+  this.http.get<ConfirmationRendezVous[]>(this.apiUrl)
+    .pipe(catchError(error => this.handleError(error)))
+    .subscribe({
+      next: data => {
+        this.rendezVousList = Array.isArray(data) ? data : [];
+
+        this.rendezVousList.forEach(rdv => {
           rdv.heureRdvConfirme = this.formatTimeHHMM(rdv.heureRdvConfirme);
           rdv.heureArriveePatient = this.formatTimeHHMM(rdv.heureArriveePatient);
           rdv.heureSalleAttente = this.formatTimeHHMM(rdv.heureSalleAttente);
           rdv.heureSortie = this.formatTimeHHMM(rdv.heureSortie);
-           });
-           
-          this.applyDateFilter();
-          this.calculateWeeklyRendezVous();
-          this.updateTodayRendezVousCount();
-          this.loading = false;
-        },
-        error: err => {
-          this.errorMessage = err;
-          this.loading = false;
-        }
-      });
-  }
+
+          // Remplir le nom du patient si tu as une fonction getPatientNom
+          rdv.nomPatient = this.getPatientNom(rdv.idPatient); // utiliser l'id correct correspondant au patient
+
+          // Remplir le nom du personnel si tu as une fonction getPersonnelNom
+          rdv.personnelNom = this.getPersonnelNom(rdv.idPersonnel); // utiliser l'id correct correspondant au personnel
+
+          // Si un acte est associé, tu peux faire pareil
+          rdv.acteLibelle = this.getActeLibelle ? this.getActeLibelle(rdv.idActe) : '';
+        });
+
+        this.applyDateFilter();
+        this.calculateWeeklyRendezVous();
+        this.updateTodayRendezVousCount();
+        this.applySearchFilter();
+
+        this.loading = false;
+      },
+      error: err => {
+        this.errorMessage = err;
+        this.loading = false;
+      }
+    });
+}
+
 
   applyDateFilter(): void {
     if (!this.selectedDate) {
@@ -165,13 +179,13 @@ export class ConfirmationRendezVousComponent implements OnInit {
       return acc + (rdvDate === today ? 1 : 0);
     }, 0);
   }
-updatePatientId() {
+  updatePatientId() {
   if (!this.editedRendezVous.nomPatient) return;
   const patient = this.patients.find(p => `${p.nom} ${p.prenom}` === this.editedRendezVous.nomPatient);
   this.editedRendezVous.idPatient = patient ? patient.idPersonne : null;
 }
 
-updatePersonnelId() {
+ updatePersonnelId() {
   if (!this.editedRendezVous.personnelNom) return;
   const personnel = this.personnelsList.find(p => `${p.nom} ${p.prenom}` === this.editedRendezVous.personnelNom);
   this.editedRendezVous.idPersonnel = personnel ? personnel.idUtilisateur : null;
@@ -393,6 +407,8 @@ getIdPersonnel(nom: string, prenom: string): number | null {
       
       this.rendezVousList.push(addedRdv);
       this.applyDateFilter();
+      // ⚡ Réinitialiser le formulaire après ajout
+      this.resetAddForm();
       //this.resetAddForm({} as NgForm); // reset form
       this.addSuccess = true;
       setTimeout(() => this.addSuccess = false, 3000);
@@ -565,22 +581,10 @@ private findOrCreateActe(libelle: string) {
 
     this.calculateWeeklyRendezVous();
   }
-   
 
- get filteredRendezVous(): ConfirmationRendezVous[] {
-  return this.filteredRendezVousList.filter(rdv => {
-    const matchRdv = this.searchIdRdv
-      ? String(rdv.id).includes(this.searchIdRdv) ||
-        (rdv.idDimConfirmationRendezVous != null && String(rdv.idDimConfirmationRendezVous).includes(this.searchIdRdv))
-      : true;
+ 
 
-    const matchPatient = this.searchIdPatient
-      ? String(rdv.idPatient).includes(this.searchIdPatient)
-      : true;
 
-    return matchRdv && matchPatient;
-  });
-}
 
 
   showToday(): void {
@@ -799,5 +803,32 @@ getPersonnelNom(idPersonnel: number | string): string {
   const id = Number(idPersonnel);
   return this.personnelsMap.get(id) || 'Personnel inconnu';
 }
+
+searchText: string = '';
+
+
+applySearchFilter(): void {
+  const lowerSearch = (this.searchText || '').toLowerCase().trim();
+
+  this.filteredRendezVousList = this.rendezVousList.filter(rdv => {
+    const patientNom = (this.getPatientNom(rdv.idPatient) || '').toLowerCase();
+    const personnelNom = (this.getPersonnelNom(rdv.idPersonnel) || '').toLowerCase();
+    const acte = (rdv.acteLibelle || '').toLowerCase();
+    const fauteuil = (rdv.idFauteuil || '').toString().toLowerCase();
+    const dateRdv = (rdv.dateRdvConfirme || '').toLowerCase();
+    const heureRdv = (rdv.heureRdvConfirme || '').toLowerCase();
+
+    const fields = [patientNom, personnelNom, acte, fauteuil, dateRdv, heureRdv];
+
+    return lowerSearch === '' || fields.some(f => f.includes(lowerSearch));
+  });
+}
+
+
+
+
+
+
+
 
 }
