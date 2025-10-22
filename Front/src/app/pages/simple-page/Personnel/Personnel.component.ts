@@ -53,22 +53,30 @@ export class PersonnelComponent implements OnInit {
 
   saveNewUtilisateur(addForm: any): void {
   if (addForm.invalid) {
-    // Marque tous les champs comme touchés pour afficher les messages d'erreur
     Object.keys(addForm.controls).forEach(field => {
       const control = addForm.controls[field];
       control.markAsTouched({ onlySelf: true });
     });
-    return; // Arrête l'ajout si formulaire invalide
+    return;
   }
 
-  // Si tout est valide, on ajoute
-  this.http.post<Utilisateur>(this.baseUrl, this.newUtilisateur).subscribe({
+  // Générer un idUtilisateur unique avant l'ajout
+  const utilisateurToAdd: Utilisateur = {
+    ...this.newUtilisateur,
+    idUtilisateur: Math.floor(Math.random() * 1000000) // ID aléatoire
+  };
+
+  this.http.post<Utilisateur>(this.baseUrl, utilisateurToAdd).subscribe({
     next: () => {
       this.addSuccess = true;
       setTimeout(() => this.addSuccess = false, 3000);
+
+      // Réinitialiser le formulaire
       this.newUtilisateur = {};
+      addForm.resetForm();
+
+      // Recharger la liste
       this.loadUtilisateurs();
-      addForm.resetForm(); // Réinitialise le formulaire
     },
     error: err => console.error('Erreur ajout', err)
   });
@@ -131,6 +139,12 @@ get filteredUtilisateurs() {
   const term = this.searchTerm ? this.searchTerm.trim().toLowerCase() : '';
 
   return this.utilisateurs.filter(u => {
+    const formatDateFr = (dateStr?: string): string => {
+      if (!dateStr) return '';
+      const d = new Date(dateStr);
+      if (isNaN(d.getTime())) return dateStr;
+      return d.toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' }); // ex: 22 oct. 2025
+    };
     // Filtrage texte
     const matchesText = !term ||
       (u.nom && u.nom.toLowerCase().includes(term)) ||
@@ -138,10 +152,13 @@ get filteredUtilisateurs() {
       (u.idDimUtilisateur && u.idDimUtilisateur.toString().includes(term)) ||
       (u.genre && u.genre.toLowerCase().includes(term)) ||
       (u.type && u.type.toLowerCase().includes(term)) ||
+      (formatDateFr(u.dateEmbauche).toLowerCase().includes(term)) ||
+      (formatDateFr(u.dateFinContrat).toLowerCase().includes(term)) ||
+      (formatDateFr(u.dateNaissance).toLowerCase().includes(term)) ||
       (u.categorie && u.categorie.toLowerCase().includes(term));
 
     // Filtrage type
-    const matchesType = !selectedType || (u.type && u.type.trim().toLowerCase() === selectedType);
+    const matchesType = !selectedType || (u.categorie && u.categorie.trim().toLowerCase() === selectedType);
 
     return matchesText && matchesType;
   });

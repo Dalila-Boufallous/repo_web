@@ -69,15 +69,7 @@
         <div class="row g-3">
 
           <!-- Champs du formulaire  -->
-          <div class="col-md-3">
-            <label class="form-label d-none">ID Utilisateur *</label>
-            <input type="number" class="form-control" name="idUtilisateur"
-                   [(ngModel)]="newUtilisateur.idUtilisateur" required #idUser="ngModel">
-            <div class="form-text text-danger" *ngIf="idUser.invalid && idUser.touched">
-              ID requis
-            </div>
-          </div>
-
+          
           <div class="col-md-3">
             <label class="form-label">Nom *</label>
             <input type="text" class="form-control" name="nom"
@@ -116,31 +108,16 @@
           </div>
 
           <div class="col-md-3">
-            <label class="form-label">Type</label>
+            <label class="form-label">Fonction</label>
             <input type="text" class="form-control" name="type"
-                   [(ngModel)]="newUtilisateur.type" placeholder="Ex: CDI / CDD / Intérim">
-          </div>
-
-          <div class="col-md-3">
-            <label class="form-label">Catégorie</label>
-            <input type="text" class="form-control" name="categorie"
-                   [(ngModel)]="newUtilisateur.categorie" placeholder="Ex: Technique, Admin">
-          </div>
-
-          <div class="col-md-3">
-            <label class="form-label">Perso Actif</label>
-            <select class="form-select" name="persoActif"
-                    [(ngModel)]="newUtilisateur.persoActif">
-              <option value="">--</option>
-              <option [ngValue]="true">Oui</option>
-              <option [ngValue]="false">Non</option>
-            </select>
+                   [(ngModel)]="newUtilisateur.categorie" placeholder="Ex: MED">
           </div>
 
           <div class="col-md-3">
             <label class="form-label">Date Embauche</label>
             <input type="date" class="form-control" name="dateEmbauche"
-                   [(ngModel)]="newUtilisateur.dateEmbauche">
+                   [(ngModel)]="newUtilisateur.dateEmbauche ">
+                   
           </div>
 
           <div class="col-md-3">
@@ -231,35 +208,16 @@
 
               <li>
                 <i class="icofont icofont-badge"></i>
-                🏷️ Type :
-                <span *ngIf="editingId !== utilisateur.idDimUtilisateur">{{ utilisateur.type }}</span>
-                <input *ngIf="editingId === utilisateur.idDimUtilisateur"
-                       name="editType{{utilisateur.idDimUtilisateur}}"
-                       [(ngModel)]="utilisateur.type" class="form-control form-control-sm">
-              </li>
-
-              <li>
-                <i class="icofont-layers"></i>
-                📌 Catégorie :
+                🏷️ Fonction :
                 <span *ngIf="editingId !== utilisateur.idDimUtilisateur">{{ utilisateur.categorie }}</span>
                 <input *ngIf="editingId === utilisateur.idDimUtilisateur"
-                       name="editCategorie{{utilisateur.idDimUtilisateur}}"
+                       name="editType{{utilisateur.idDimUtilisateur}}"
                        [(ngModel)]="utilisateur.categorie" class="form-control form-control-sm">
               </li>
 
-              <li>
-                <i class="icofont icofont-check-circled"></i>
-                ✅ Actif :
-                <span *ngIf="editingId !== utilisateur.idDimUtilisateur">
-                  {{ utilisateur.persoActif === true ? 'Oui' : utilisateur.persoActif === false ? 'Non' : '' }}
-                </span>
-                <select *ngIf="editingId === utilisateur.idDimUtilisateur"
-                        name="editActif{{utilisateur.idDimUtilisateur}}"
-                        [(ngModel)]="utilisateur.persoActif" class="form-select form-select-sm">
-                  <option [ngValue]="true">Oui</option>
-                  <option [ngValue]="false">Non</option>
-                </select>
-              </li>
+              
+
+              
 
               <li>
                 <i class="icofont icofont-building"></i>
@@ -272,7 +230,7 @@
               <li>
                 <i class="icofont icofont-calendar"></i>
                 📅 Embauche :
-                <span *ngIf="editingId !== utilisateur.idDimUtilisateur">{{ utilisateur.dateEmbauche | date }}</span>
+                <span *ngIf="editingId !== utilisateur.idDimUtilisateur">{{ utilisateur.dateEmbauche | date:'dd MMM yyyy':'':'fr-FR' }}</span>
                 <input *ngIf="editingId === utilisateur.idDimUtilisateur"
                        name="editDateEmbauche{{utilisateur.idDimUtilisateur}}"
                        type="date" [(ngModel)]="utilisateur.dateEmbauche" class="form-control form-control-sm">
@@ -281,7 +239,7 @@
               <li>
                 <i class="icofont icofont-calendar"></i>
                 ⏳ Fin contrat :
-                <span *ngIf="editingId !== utilisateur.idDimUtilisateur">{{ utilisateur.dateFinContrat | date }}</span>
+                <span *ngIf="editingId !== utilisateur.idDimUtilisateur">{{ utilisateur.dateFinContrat | date:'dd MMM yyyy':'':'fr-FR' }}</span>
                 <input *ngIf="editingId === utilisateur.idDimUtilisateur"
                        name="editDateFin{{utilisateur.idDimUtilisateur}}"
                        type="date" [(ngModel)]="utilisateur.dateFinContrat" class="form-control form-control-sm">
@@ -290,7 +248,7 @@
               <li>
                 <i class="icofont icofont-birthday-cake"></i>
                 🎉 Naissance :
-                <span *ngIf="editingId !== utilisateur.idDimUtilisateur">{{ utilisateur.dateNaissance | date }}</span>
+                <span *ngIf="editingId !== utilisateur.idDimUtilisateur">{{ utilisateur.dateNaissance | date:'dd MMM yyyy':'':'fr-FR' }}</span>
                 <input *ngIf="editingId === utilisateur.idDimUtilisateur"
                        name="editNaissance{{utilisateur.idDimUtilisateur}}"
                        type="date" [(ngModel)]="utilisateur.dateNaissance" class="form-control form-control-sm">
