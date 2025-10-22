@@ -50,9 +50,9 @@
            [style.minWidth.px]="searchWidth">
 
            <div *ngIf="selectedPatientId" class="alert alert-info d-flex justify-content-between align-items-center">
-  <span>Filtré sur le patient #{{ selectedPatientId }}</span>
-  <button class="btn btn-sm btn-outline-secondary" (click)="clearPatientFilter()">Retirer le filtre</button>
-</div>
+          <span>Filtré sur le patient #{{ selectedPatientId }}</span>
+         <button class="btn btn-sm btn-outline-secondary" (click)="clearPatientFilter()">Retirer le filtre</button>
+        </div>
 
 
   </div>
@@ -65,10 +65,7 @@
     <div class="card-body">
       <form #addForm="ngForm" (ngSubmit)="addPatient()" novalidate>
         <div class="row g-3">
-          <div class="col-md-3">
-            <label class="form-label">ID Patient *</label>
-            <input type="number" class="form-control" name="idPersonne" [(ngModel)]="newPatient.idPersonne" required>
-          </div>
+          
           <div class="col-md-3">
             <label class="form-label">Nom *</label>
             <input type="text" class="form-control" name="nom" [(ngModel)]="newPatient.nom" required>
@@ -97,14 +94,7 @@
             <label class="form-label">Date Création</label>
             <input type="date" class="form-control" name="dateCreation" [(ngModel)]="newPatient.dateCreation">
           </div>
-          <div class="col-md-3">
-            <label class="form-label">Assistante Responsable</label>
-            <input type="number" class="form-control" name="assistanteResp" [(ngModel)]="newPatient.assistanteResp">
-          </div>
-          <div class="col-md-3">
-            <label class="form-label">Praticien Responsable</label>
-            <input type="number" class="form-control" name="praticienResp" [(ngModel)]="newPatient.praticienResp">
-          </div>
+          
           <div class="col-md-3">
             <label class="form-label">Région</label>
             <input type="text" class="form-control" name="region" [(ngModel)]="newPatient.region">
@@ -186,24 +176,15 @@
             </li>
             <li>
               <i class="icofont icofont-birthday-cake text-danger"></i> Date Naissance:
-              <span *ngIf="editingPatientId !== patient.idDimPatient">{{ patient.dateNaissance | date }}</span>
+              <span *ngIf="editingPatientId !== patient.idDimPatient">{{ patient.dateNaissance | date:'dd MMM yyyy' }}</span>
               <input *ngIf="editingPatientId === patient.idDimPatient" type="date" [(ngModel)]="editedPatient.dateNaissance" class="form-control form-control-sm">
             </li>
             <li>
               <i class="icofont icofont-calendar text-success"></i> Date Création:
-              <span *ngIf="editingPatientId !== patient.idDimPatient">{{ patient.dateCreation | date }}</span>
+              <span *ngIf="editingPatientId !== patient.idDimPatient">{{ patient.dateCreation | date:'dd MMM yyyy' }}</span>
               <input *ngIf="editingPatientId === patient.idDimPatient" type="date" [(ngModel)]="editedPatient.dateCreation" class="form-control form-control-sm">
             </li>
-            <li>
-              <i class="icofont icofont-nurse text-info"></i> Assistante Responsable:
-              <span *ngIf="editingPatientId !== patient.idDimPatient">{{ patient.assistanteResp }}</span>
-              <input *ngIf="editingPatientId === patient.idDimPatient" type="number" [(ngModel)]="editedPatient.assistanteResp" class="form-control form-control-sm">
-            </li>
-            <li>
-              <i class="icofont icofont-doctor text-warning"></i> Praticien Responsable:
-              <span *ngIf="editingPatientId !== patient.idDimPatient">{{ patient.praticienResp }}</span>
-              <input *ngIf="editingPatientId === patient.idDimPatient" type="number" [(ngModel)]="editedPatient.praticienResp" class="form-control form-control-sm">
-            </li>
+           
             <li>
               <i class="icofont icofont-location-pin text-secondary"></i> Région:
               <span *ngIf="editingPatientId !== patient.idDimPatient">{{ patient.region }}</span>
