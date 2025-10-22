@@ -78,15 +78,22 @@
         <form #rappelForm="ngForm" (ngSubmit)="envoyerRappel()">
           <div class="row g-2">
             <div class="col-6">
-              <label class="form-label">ID RDV</label>
+              <label class="form-label">Rendez-vous</label>
               <input type="number" class="form-control" name="idRdv" [(ngModel)]="rappel.idRdv" required>
             </div>
-            <div class="col-6">
-              <label class="form-label">ID Patient</label>
-              <input type="number" class="form-control" name="idPatient" [(ngModel)]="rappel.idPatient" required>
-            </div>
+            
           </div>
-
+               <!-- Patient -->
+    <div class="mb-3">
+      <label class="form-label">Patient :</label>
+      <!-- Affichage lisible -->
+      <input
+        type="text"
+        class="form-control"
+        [value]="rappel.idPatient ? getPatientName(rappel.idPatient) : ''"
+        readonly
+      />
+      </div>
           <div class="row g-2 mt-1">
             <div class="col-6">
               <label class="form-label">Tentatives</label>
