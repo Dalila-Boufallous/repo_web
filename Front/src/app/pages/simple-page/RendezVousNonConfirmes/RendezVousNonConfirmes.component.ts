@@ -162,12 +162,40 @@ export class RendezVousNonConfirmesComponent implements OnInit {
 }
 
 
-
 private toHHmmss(t: string | null | undefined): string | null {
   if (!t) return null;                 // "14:05" -> "14:05:00"
   if (/^\d{2}:\d{2}$/.test(t)) return t + ':00';
   if (/^\d{2}:\d{2}:\d{2}$/.test(t)) return t;
   return null;
+}
+
+
+filteredPatients(): any[] {
+  if (!this.editingRendezVous || !this.editingRendezVous.nomPatient) {
+    return this.patients; // renvoie tous les patients si le champ est vide
+  }
+  const search = this.editingRendezVous.nomPatient.toLowerCase();
+  return this.patients.filter(p => 
+    (`${p.nom} ${p.prenom}`).toLowerCase().includes(search)
+  );
+}
+
+// Retourne la liste filtrée des patients pour l'édition
+getFilteredPatients(): any[] {
+  if (!this.editingRendezVous || !this.editingRendezVous.nomPatient) {
+    return this.patients;
+  }
+  const search = this.editingRendezVous.nomPatient.toLowerCase();
+  if (!search) return this.patients; 
+  return this.patients.filter(p =>
+    (`${p.nom} ${p.prenom}`).toLowerCase().includes(search)
+  );
+}
+
+// Pour mettre à jour l'idDimPatient lors de la sélection
+selectEditingPatient(p: any) {
+  this.editingRendezVous!.idDimPatient = p.idDimPatient;
+  this.editingRendezVous!.nomPatient = `${p.nom} ${p.prenom}`;
 }
 
 
@@ -662,19 +690,63 @@ resetWeekRendezVous() {
   this.applyFilters();       // rafraîchit la liste des rendez-vous
 }
 selectedRappel: any = null;
-showRappelModal: boolean = false;
+showRappelModal: boolean = true;
+hasRappel: boolean = false;
+
 
 openHistoriquePopup(patientId: number) {
+  console.log('openHistoriquePopup patientId=', patientId);
+
   this.http.get<any[]>(`http://localhost:8081/api/rappels_patients/patient/${patientId}`)
     .subscribe({
       next: (rappels) => {
-        if (!rappels || rappels.length === 0) return;
-        this.selectedRappel = rappels[rappels.length - 1];
-        this.showRappelModal = true; // ← active le modal
+        if (!rappels || rappels.length === 0) {
+          console.log('Aucun rappel pour patient', patientId);
+          this.selectedRappel = null;
+          this.hasRappel = false;   // ← pas de rappel
+          this.showRappelModal = true;
+          return;
+        }
+
+        // S’il y a des rappels
+        const last = rappels[rappels.length - 1];
+
+        const raw = (last.motif !== undefined && last.motif !== null)
+          ? String(last.motif)
+          : ((last.motifRappel !== undefined) ? String(last.motifRappel) : '');
+
+        let motifRappel = '';
+        let motifRetour = '';
+
+        if (raw) {
+          const idx = raw.indexOf(':');
+          if (idx >= 0) {
+            motifRappel = raw.substring(0, idx);
+            motifRetour = raw.substring(idx + 1);
+          } else {
+            motifRappel = raw;
+            motifRetour = '';
+          }
+        }
+
+        last.motifRappel = motifRappel;
+        last.motifRetour = motifRetour;
+
+        this.selectedRappel = last;
+        this.hasRappel = true;   // ← il y a un rappel
+        this.showRappelModal = true;
       },
-      error: (err) => console.error(err)
+      error: (err) => {
+        console.error('Erreur openHistoriquePopup', err);
+        this.selectedRappel = null;
+        this.hasRappel = false;   // ← en cas d’erreur, on n’a pas de rappel
+        this.showRappelModal = true;
+      }
     });
 }
+
+
+
 
 closeRappelModal() {
   this.showRappelModal = false; // ← cache le modal

@@ -263,6 +263,24 @@
           <!-- Formulaire édition -->
           <form *ngIf="editingRendezVousId === rdv.idFactPriseRendezVous"
                 (ngSubmit)="update()" #editForm="ngForm" (click)="$event.stopPropagation()">
+
+            <label>Patient :</label>
+           <input type="text" class="form-control"
+           [(ngModel)]="editingRendezVous!.nomPatient"
+           name="editPatient{{rdv.idFactPriseRendezVous}}"
+           required
+           autocomplete="off">
+
+          <ul class="patient list" 
+            *ngIf="editingRendezVous">
+            <li class="list-group-item list-group-item-action"
+              *ngFor="let p of getFilteredPatients()"
+              (click)="selectEditingPatient(p)">
+               {{ p.nom }} {{ p.prenom }}
+            </li>
+         </ul>
+
+                
             <div class="mb-2">
               <label>Date :</label>
               <input type="date" class="form-control"
@@ -309,7 +327,7 @@
 
 
             </div>
-            <!-- 🕓 Nouveau bouton Historique --> 
+            <!--  bouton Historique --> 
             <div class="mt-2 text-center">
             <button class="btn btn-info btn-sm"
             (click)="openHistoriquePopup(rdv.idDimPatient); $event.stopPropagation()">
@@ -330,9 +348,17 @@
       <span class="close-btn" (click)="closeRappelModal()">&times;</span>
     </div>
     <div class="modal-body">
-      <p><strong>Motif :</strong> {{ selectedRappel?.motifRappel || 'Non spécifié' }}</p>
-      <p><strong>Motif retour :</strong> {{ selectedRappel?.motifRetour || '-' }}</p>
-    </div>
+      <ng-container *ngIf="hasRappel; else noRappel">
+        <p><strong>Motif :</strong> {{ selectedRappel?.motifRappel || 'Non spécifié' }}</p>
+        <p><strong>Motif retour :</strong> {{ selectedRappel?.motifRetour || '-' }}</p>
+      </ng-container>
+    <!--  Si le patient n'a pas d'historique -->
+      <ng-template #noRappel>
+        <p class="text-muted text-center mt-3">
+          🚫 Aucun historique de rappel trouvé pour ce patient.
+        </p>
+      </ng-template>
+    
     <div class="modal-footer">
       <button class="btn" (click)="closeRappelModal()">Fermer</button>
     </div>
