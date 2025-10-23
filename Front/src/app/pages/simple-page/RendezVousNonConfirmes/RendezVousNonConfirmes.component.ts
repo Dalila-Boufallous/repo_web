@@ -45,7 +45,7 @@ export class RendezVousNonConfirmesComponent implements OnInit {
   calendarWeeks: (Date | null)[][] = [];
   selectedDate: string = '';
   todayRendezVousCount: number = 0;
-
+  
   // API
   private baseUrl = 'http://localhost:8081/api/rendezvous-non-confirme';
   private listUrl = this.baseUrl + '/non-confirmes';
@@ -64,7 +64,8 @@ export class RendezVousNonConfirmesComponent implements OnInit {
   patientIdQuery: string = '';
   rdvIdQuery: string = '';
 
-  
+  showAddForm = false;
+
 
   // Formulaire rappel
   rappel: {
@@ -825,6 +826,36 @@ sendConfirmationEmail(rdv: RendezVousNonConfirmes): void {
     });
 }
 
+confirmRdv(rdv: RendezVousNonConfirmes): void {
+const id = (rdv.idDimConfirmationRendezVous !== undefined && rdv.idDimConfirmationRendezVous !== null)
+  ? rdv.idDimConfirmationRendezVous
+  : rdv.id;
+  if (!id) {
+    alert('ID du rendez-vous introuvable.');
+    return;
+  }
+
+  // Optionnel : bloquer double clic
+  if (this.sendingConfirmIds.has(id)) return;
+  this.sendingConfirmIds.add(id);
+
+  this.http.post(`http://localhost:8081/api/rendezvous-non-confirme/${id}/confirm`, {})
+    .subscribe({
+      next: (res: any) => {
+        this.showAutoHidePopup('Rendez-vous confirmé avec succès.', 2500);
+
+        // Supprimer le RDV confirmé de la liste filtrée pour mettre à jour l'affichage
+        this.rendezVousList = this.rendezVousList.filter(r => this.getRdvId(r) !== id);
+        this.applyFilters(); // rafraîchir filteredRendezVous
+        this.sendingConfirmIds.delete(id);
+      },
+      error: (err) => {
+        console.error('Erreur confirmation RDV', err);
+        alert('Échec de confirmation du rendez-vous.');
+        this.sendingConfirmIds.delete(id);
+      }
+    });
+}
 
 
 }

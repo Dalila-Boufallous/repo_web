@@ -7,9 +7,10 @@
 /* Mini-cards */
 .mini-card {
   display: flex;
+  height: 70px;
   align-items: center;
   padding: 1rem;
-  border-radius: 12px;
+  border-radius: 15px !important;
   background: #fff;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 

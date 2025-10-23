@@ -1,8 +1,9 @@
 <div class="container mt-4">
-  <h2 class="mb-3 text-center">📅 Rendez-vous non confirmés</h2>
-  <div class="row g-3 mb-4">
-    <div class="col-md-4">
-      <div class="mini-card shadow-sm">
+  <h2 class="mb-3 text-center"> Rendez-vous non confirmés</h2>
+
+  <div class="cards-row">
+    <div class="col-card">
+      <div class="mini-card">
         <div class="icon blue">
           <i class="icofont icofont-calendar"></i>
         </div>
@@ -12,19 +13,32 @@
         </div>
       </div>
     </div>
-    <div class="col-md-4">
-  <div class="mini-card shadow-sm">
-    <div class="icon alert">
-      <i class="icofont icofont-alarm"></i>
+
+    <div class="col-card">
+      <div class="mini-card">
+        <div class="icon alert">
+          <i class="icofont icofont-alarm"></i>
+        </div>
+        <div class="content">
+          <span class="title">Rendez-Vous Proches Non Confirmés</span>
+          <h4>{{ upcomingRendezVous }}</h4>
+        </div>
+      </div>
     </div>
-    <div class="content">
-      <span class="title">Rendez-Vous Proches Non Confirmés</span>
-      <h4>{{ upcomingRendezVous }}</h4>
+
+    <div class="col-card">
+      <div class="mini-card">
+        <div class="icon blue">
+          <i class="icofont icofont-ui-close"></i>
+        </div>
+        <div class="content">
+          <span class="title">Patients Sans Rappel reçu</span>
+          <h4>{{ totalRendezVous }}</h4>
+        </div>
+      </div>
     </div>
   </div>
 </div>
-
-
   <!-- ===== OUTILS EN HAUT : Calendrier + Formulaire Rappel ===== -->
   <div class="top-tools">
     <!-- 🗓️ Calendrier -->
@@ -76,15 +90,15 @@
 
       <div class="card-body">
         <form #rappelForm="ngForm" (ngSubmit)="envoyerRappel()">
-          <div class="row g-2">
-            <div class="col-6">
+          <div class="form-group">
+         <!--   <div class="col-6">-->
               <label class="form-label">Rendez-vous</label>
               <input type="number" class="form-control" name="idRdv" [(ngModel)]="rappel.idRdv" required>
-            </div>
+           
             
           </div>
                <!-- Patient -->
-    <div class="mb-3">
+    <div class="form-group">
       <label class="form-label">Patient :</label>
       <!-- Affichage lisible -->
       <input
@@ -94,15 +108,14 @@
         readonly
       />
       </div>
-          <div class="row g-2 mt-1">
-            <div class="col-6">
+          <div class="form-group">
+          
               <label class="form-label">Tentatives</label>
               <div class="input-group">
                 <input type="number" class="form-control" name="tentatives" [(ngModel)]="rappel.tentatives" readonly>
                 <button type="button" class="btn btn-outline-primary" (click)="incrementTentative()">+1</button>
-              </div>
             </div>
-            <div class="col-6">
+            <div class="form-group">
               <label class="form-label">Motif</label>
               <select class="form-select" name="motifRappel" [(ngModel)]="rappel.motifRappel" required>
                 <option value="mail">Mail</option>
@@ -113,7 +126,7 @@
             
           </div>
 
-          <div class="mt-2" *ngIf="rappel.motifRappel === 'telephone'">
+          <div class="form-group" *ngIf="rappel.motifRappel === 'telephone'">
             <label class="form-label">Motif retour</label>
             <select class="form-select" name="motifRetour" [(ngModel)]="rappel.motifRetour">
               <option value="occupé">Occupé</option>
@@ -130,38 +143,18 @@
       </div>
     </div>
   </div>
-<!-- Bouton rdv de la semaine -->
- <div style="display:inline-block;">
-<button (click)="showWeekNonConfirmed()" class="btn-rdv" >
-  Afficher les rendez-vous de la semaine
-</button>
-  <button (click)="resetWeekRendezVous()" class="btn-rdv-reset">
-    Réinitialiser
-  </button>
-</div>
-
-
-  <!-- ===== Filtres ===== -->
-  <div class="filters mb-3">
-    <input type="text" class="form-control" placeholder="🔎 Rechercher (tous champs)…"
-           [(ngModel)]="searchRdv" (input)="applyFilters()" [ngModelOptions]="{standalone: true}">
-    <input type="text" inputmode="numeric" pattern="[0-9, ]*" class="form-control"
-           placeholder="👤 ID(s) patient (ex: 12 ou 12, 34)"
-           [(ngModel)]="patientIdQuery" (input)="applyFilters()" [ngModelOptions]="{standalone: true}">
-    <input type="text" inputmode="numeric" pattern="[0-9, ]*" class="form-control"
-           placeholder="📅 ID(s) RDV (ex: 10 ou 10, 101)"
-           [(ngModel)]="rdvIdQuery" (input)="applyFilters()" [ngModelOptions]="{standalone: true}">
-  </div>
 
 
 
   <div class="card mb-4 shadow-sm rounded-3 add-rdv-card">
-  <div class="card-header bg-light d-flex align-items-center">
+  <div class="card-header bg-light d-flex align-items-center" (click)="showAddForm = !showAddForm"
+  >
     <h5 class="mb-0">➕ Ajouter un rendez-vous</h5>
+    <span class="ms-auto">{{ showAddForm ? '▲' : '▼' }}</span>
   </div>
 
-  <div class="card-body">
-    <form #addForm="ngForm" (ngSubmit)="create()" novalidate>
+  <div class="card-body" *ngIf="showAddForm">
+    <form #addForm="ngForm" (ngSubmit)="create()" novalidate >
       <div class="row g-3">
         <!-- Patient (liste déroulante) -->
         <div class="col-md-6">
@@ -231,8 +224,27 @@
   </div>
 </div>
 
+<!-- ===== Filtres ===== -->
+  <div class="filters mb-3">
+    <input type="text" class="form-control" placeholder="🔎 Rechercher (tous champs)…"
+           [(ngModel)]="searchRdv" (input)="applyFilters()" [ngModelOptions]="{standalone: true}">
+    <input type="text" inputmode="numeric" pattern="[0-9, ]*" class="form-control"
+           placeholder="👤 ID(s) patient (ex: 12 ou 12, 34)"
+           [(ngModel)]="patientIdQuery" (input)="applyFilters()" [ngModelOptions]="{standalone: true}">
+    <input type="text" inputmode="numeric" pattern="[0-9, ]*" class="form-control"
+           placeholder="📅 ID(s) RDV (ex: 10 ou 10, 101)"
+           [(ngModel)]="rdvIdQuery" (input)="applyFilters()" [ngModelOptions]="{standalone: true}">
+  </div>
 
-
+  <!-- Bouton rdv de la semaine -->
+ <div class="btn-group-week">
+<button (click)="showWeekNonConfirmed()" class="btn-rdv" >
+  Rendez-vous cette semaine
+</button>
+  <button (click)="resetWeekRendezVous()" class="btn-rdv-reset">
+    Réinitialiser
+  </button>
+</div>
   <!-- ===== Liste des RDV ===== -->
 <div class="container">
   <div class="row row-cols-1 row-cols-md-3 g-4">
@@ -327,12 +339,10 @@
                       (click)="edit(rdv); $event.stopPropagation()">Modifier</button>
               <button class="btn btn-danger btn-sm"
                       (click)="confirmDelete(getRdvId(rdv), $event)">Supprimer</button>
-    <button class="btn btn-sm btn-primary"
+              <button class="btn btn-sm btn-primary btn-email"
         (click)="sendConfirmationEmail(rdv); $event.stopPropagation()">
-  Envoyer email de confirmation
-</button>
-
-
+         Envoyer email de confirmation
+        </button>
             </div>
             <!--  bouton Historique --> 
             <div class="mt-2 text-center">

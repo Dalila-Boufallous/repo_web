@@ -41,13 +41,7 @@
 </div>
   
 
-  <!-- Champ de recherche en haut à gauche -->
-  <div class="mb-3" style="text-align: left;">
-    <input type="text"
-           class="form-control"
-           placeholder="🔍 Rechercher un personnel..."
-           [(ngModel)]="searchTerm">
-  </div>
+ 
   <h6 class="mb-1 fw-semibold">Filtrer par type personnel :</h6>
   
   <select [(ngModel)]="selectedType" class="form-select mb-2">
@@ -59,12 +53,13 @@
  </select>
 
   <!-- Formulaire AJOUT  -->
-  <div class="card mb-4 shadow-sm rounded-3">
+  <div class="card mb-4 shadow-sm rounded-3" (click)="showAddForm = !showAddForm">
     <div class="card-header bg-light">
       <h5 class="mb-0">➕ Ajouter un utilisateur</h5>
+      <span class="ms-auto">{{ showAddForm ? '▲' : '▼' }}</span>
     </div>
 
-    <div class="card-body">
+    <div class="card-body"*ngIf="showAddForm" >
       <form #addForm="ngForm" (ngSubmit)="saveNewUtilisateur(addForm)" novalidate>
         <div class="row g-3">
 
@@ -152,7 +147,13 @@
       </form>
     </div>
   </div>
-
+   <!-- Champ de recherche en haut à gauche -->
+  <div class="mb-3" style="text-align: left;">
+    <input type="text"
+           class="form-control"
+           placeholder="🔍 Rechercher un personnel..."
+           [(ngModel)]="searchTerm">
+  </div>
   <!-- Liste du personnel en cartes avec scroll -->
   <div class="cards-scroll-wrapper" style="max-height: none; overflow: visible; padding-right:10px; padding-bottom:10px;">
     <div class="row g-4">

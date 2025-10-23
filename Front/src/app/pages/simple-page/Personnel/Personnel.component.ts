@@ -50,7 +50,7 @@ export class PersonnelComponent implements OnInit {
       this.utilisateurs = data;
     });
   }
-
+  showAddForm = false;
   saveNewUtilisateur(addForm: any): void {
   if (addForm.invalid) {
     Object.keys(addForm.controls).forEach(field => {

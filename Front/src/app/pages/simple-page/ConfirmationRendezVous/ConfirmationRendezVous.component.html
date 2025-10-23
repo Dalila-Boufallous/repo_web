@@ -40,30 +40,7 @@
     </div>
   </div>
 
- <!-- Conteneur flex pour les recherches -->
-<div class="d-flex justify-content-center mb-3 gap-2 flex-wrap">
-  <!-- Barre de recherche RDV -->
-  <div style="flex: 1 1 200px; max-width: 400px;">
-    <input
-      type="text"
-      class="form-control"
-      placeholder="🔍 Rechercher un rendez-vous..."
-       [(ngModel)]="searchText"
-      (input)="applySearchFilter()"
-    >
-  </div>
-
-  <!-- Barre de recherche par ID Patient -->
-  <div style="flex: 1 1 200px; max-width: 400px;">
-    <input
-      type="number"
-      class="form-control"
-      placeholder="🧑‍⚕️ Rechercher par ID Patient..."
-      (input)="searchByIdPatient($event.target.valueAsNumber)"
-    >
-  </div>
-</div>
-
+ 
 <!-- Bouton pour réinitialiser -->
 <div class="text-center mb-4">
   <button class="btn btn-outline-secondary btn-sm" (click)="resetFilters()">
@@ -134,11 +111,13 @@
   
  <!-- Formulaire ajout -->
 <div class="card mb-4 shadow-sm rounded-3">
-  <div class="card-header bg-light">
+  <div class="card-header bg-light d-flex justify-content-between align-items-center clickable-header"
+       (click)="showAddForm = !showAddForm">
     <h5 class="mb-0">➕ Ajouter un rendez-vous</h5>
+    <span class="ms-auto">{{ showAddForm ? '▲' : '▼' }}</span>
   </div>
 
-  <div class="card-body">
+  <div class="card-body" *ngIf="showAddForm">
     <form #addForm="ngForm" (ngSubmit)="addRendezVous()">
   <div class="row g-3">
     <div class="col-md-4">
@@ -235,6 +214,32 @@
     </form>
   </div>
 </div>
+
+
+<!-- Conteneur flex pour les recherches -->
+<div class="d-flex justify-content-center mb-3 gap-2 flex-wrap">
+  <!-- Barre de recherche RDV -->
+  <div style="flex: 1 1 200px; max-width: 400px;">
+    <input
+      type="text"
+      class="form-control"
+      placeholder="🔍 Rechercher un rendez-vous..."
+       [(ngModel)]="searchText"
+      (input)="applySearchFilter()"
+    >
+  </div>
+
+  <!-- Barre de recherche par ID Patient -->
+  <div style="flex: 1 1 200px; max-width: 400px;">
+    <input
+      type="number"
+      class="form-control"
+      placeholder="🧑‍⚕️ Rechercher par ID Patient..."
+      (input)="searchByIdPatient($event.target.valueAsNumber)"
+    >
+  </div>
+</div>
+
 
 
 <!-- Liste des rdvs -->

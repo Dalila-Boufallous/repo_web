@@ -2,7 +2,9 @@ package com.example.back.controllers;
 
 import com.example.back.entities.ConfirmationRendezVous;
 import com.example.back.entities.Patient;
+import com.example.back.entities.RendezVousNonConfirme;
 import com.example.back.repositories.RepoConfirmationRendezVous;
+import com.example.back.repositories.RepoRendezVousNonConfirme;
 import com.example.back.repositories.RepoPatient;
 import com.example.back.services.EmailService;
 import org.slf4j.Logger;
@@ -15,6 +17,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @CrossOrigin(origins = "http://localhost:4200", allowCredentials = "true")
 @RestController
@@ -22,15 +25,16 @@ import java.util.Map;
 public class ConfirmationRendezVousController {
 
     private static final Logger log = LoggerFactory.getLogger(ConfirmationRendezVousController.class);
-
+    private final RepoRendezVousNonConfirme nonConfirmeRepo;
     private final RepoConfirmationRendezVous repository;
     private final RepoPatient patientRepo;
     private final EmailService emailService;
 
     public ConfirmationRendezVousController(RepoConfirmationRendezVous repository,
                                             RepoPatient patientRepo,
-                                            EmailService emailService) {
+                                            EmailService emailService,RepoRendezVousNonConfirme nonConfirmeRepo) {
         this.repository = repository;
+        this.nonConfirmeRepo = nonConfirmeRepo; 
         this.patientRepo = patientRepo;
         this.emailService = emailService;
     }
@@ -124,5 +128,28 @@ public ResponseEntity<Map<String, Object>> sendEmailReminder(@PathVariable("idDi
 
     private String safe(Object o) {
         return o == null ? "" : String.valueOf(o);
+    }
+
+    @PostMapping("/confirm/{id}")
+    public ResponseEntity<String> confirmRdv(@PathVariable Integer id) {
+        Optional<RendezVousNonConfirme> rdvOpt = nonConfirmeRepo.findById(id);
+        if (rdvOpt.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Rendez-vous non confirmé introuvable");
+        }
+
+        RendezVousNonConfirme rdvNC = rdvOpt.get();
+
+        ConfirmationRendezVous rdvC = new ConfirmationRendezVous();
+        rdvC.setIdPatient(rdvNC.getIdDimPatient().intValue()); // conversion Long → Integer si nécessaire
+        if (rdvNC.getIdDimActe() != null) {
+            rdvC.setIdActe(rdvNC.getIdDimActe().intValue());
+        }
+        rdvC.setDateRdvConfirme(rdvNC.getDatePrevisionnelle());
+        rdvC.setHeureRdvConfirme(rdvNC.getHeurePrevisionnelle());
+
+        repository.save(rdvC);        // sauvegarde dans table confirmée
+        nonConfirmeRepo.delete(rdvNC);     // suppression de la table non confirmée
+
+        return ResponseEntity.ok("Rendez-vous confirmé avec succès !");
     }
 }

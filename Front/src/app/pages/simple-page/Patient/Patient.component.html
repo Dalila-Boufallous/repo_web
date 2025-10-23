@@ -41,28 +41,15 @@
     </div>
   </div>
 
-  <!-- Recherche -->
-  <div class="mb-3" [style.width.px]="searchWidth">
-    <input type="text"
-           class="form-control"
-           placeholder="🔍 Rechercher un patient..."
-           [(ngModel)]="searchPatient"
-           [style.minWidth.px]="searchWidth">
-
-           <div *ngIf="selectedPatientId" class="alert alert-info d-flex justify-content-between align-items-center">
-          <span>Filtré sur le patient #{{ selectedPatientId }}</span>
-         <button class="btn btn-sm btn-outline-secondary" (click)="clearPatientFilter()">Retirer le filtre</button>
-        </div>
-
-
-  </div>
+ 
 
   <!-- Formulaire ajout -->
   <div class="card mb-4 shadow-sm rounded-3">
-    <div class="card-header bg-light">
+    <div class="card-header bg-light" (click)="showAddForm = !showAddForm">
       <h5 class="mb-0">➕ Ajouter un patient</h5>
+      <span class="ms-auto">{{ showAddForm ? '▲' : '▼' }}</span>
     </div>
-    <div class="card-body">
+    <div class="card-body" *ngIf="showAddForm">
       <form #addForm="ngForm" (ngSubmit)="addPatient()" novalidate>
         <div class="row g-3">
           
@@ -120,6 +107,20 @@
         </div>
       </form>
     </div>
+  </div>
+
+   <!-- Recherche -->
+  <div class="mb-3" [style.width.px]="searchWidth">
+    <input type="text"
+           class="form-control"
+           placeholder="🔍 Rechercher un patient..."
+           [(ngModel)]="searchPatient"
+           [style.minWidth.px]="searchWidth">
+
+           <div *ngIf="selectedPatientId" class="alert alert-info d-flex justify-content-between align-items-center">
+          <span>Filtré sur le patient #{{ selectedPatientId }}</span>
+         <button class="btn btn-sm btn-outline-secondary" (click)="clearPatientFilter()">Retirer le filtre</button>
+        </div>
   </div>
 
  <!-- Liste Patients avec scroll vertical & horizontal -->

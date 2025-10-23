@@ -8,6 +8,8 @@ import { forkJoin, of } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 import { v4 as uuidv4 } from 'uuid';
 import { NgForm } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+
 
 
 interface Utilisateur {
@@ -825,6 +827,8 @@ applySearchFilter(): void {
 }
 
 
+
+showAddForm = false;
 
 
 

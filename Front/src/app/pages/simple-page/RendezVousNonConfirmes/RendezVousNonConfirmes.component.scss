@@ -304,6 +304,8 @@ html body .page-wrapper > .mini-calendar-wrapper,
 .btn-primary {
   background-color: #6f42c1 !important;
   border-color: #6f42c1 !important;
+  justify-content: center !important;
+  display: flex !important; 
 }
 .btn-primary:hover {
   background-color: #5a32a3 !important;
@@ -867,6 +869,9 @@ html body .page-wrapper > .mini-calendar-wrapper,
 /* ===== Filtres compacts ===== */
 .filters{
   gap: 8px;
+  width: 980px;
+  margin-left: 70px;
+  margin-bottom: 22px !important;
 }
 .filters .form-control{
   padding: 8px 10px;
@@ -912,8 +917,12 @@ form[ngform] .form-control[type="time"]{
 
 /* Colonne cartes : plus de cartes visibles à l’écran */
 @media (min-width: 1200px){
-  .row > .col-md-4{ max-width: 31%; flex: 0 0 31%; }
+  .row > .col-md-4{ max-width: 25%; flex: 0 0 25%;  }
+
 }
+
+
+
 
 /* ===== Séparer calendrier (gauche) et rappel (droite) ===== */
 
@@ -950,11 +959,15 @@ form[ngform] .form-control[type="time"]{
   padding: 12px !important;
 }
 .mini-card {
+  width: 330px !important; /* 🔹 Réduit la largeur */
+  height: 70px !important; /* 🔹 Augmente la hauteur */
   display: flex;
   align-items: center;
   background: #fff;
-  border-radius: 12px;
-  padding: 16px 20px;
+  gap: 15px !important;
+  border-radius: 12px !important;
+  padding: 16px 20px !important;
+  margin-right: 30px !important;
   box-shadow: 0 3px 8px rgba(0, 0, 0, 0.05);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
@@ -962,6 +975,11 @@ form[ngform] .form-control[type="time"]{
 .mini-card:hover {
   transform: translateY(-4px);
   box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+}
+.col-md-5.custom-size {
+  flex: 0 0 auto;
+  width: 30% !important; /* 🔹 Mets ici la largeur que tu veux */
+  max-width: 40%;
 }
 
 .mini-card .icon {
@@ -1047,25 +1065,25 @@ form[ngform] .form-control[type="time"]{
 .rdv-list {
   display: flex;
   flex-wrap: wrap;
-  gap: 16px; /* espace entre cartes */
+  gap: 11px; /* espace entre cartes */
   margin-top: 10px;
 }
 .rdv-list .rdv-card {
-  flex: 0 0 calc(33.333% - 16px); /* 3 colonnes avec gap */
-  min-width: 250px; /* minimum pour mobile */
+  flex: 0 0 calc(25% - 16px) !important; /* 4 colonnes avec gap */
+  min-width: 220px !important; /* tu peux réduire un peu le minimum si nécessaire */
 }
 @media (max-width: 992px) {
   .rdv-list .rdv-card {
-    flex: 0 0 100%;
+    flex: 0 0 100% !important; 
   }
 }
 .btn-rdv {
     display: inline-block;
+    
     width: 180px;                /* largeur fixe pour contrôler le wrapping */
     padding: 10px;               /* espace intérieur confortable */
-    font-size: 13px;             /* texte lisible */
+    font-size: 11px;             /* texte lisible */
     font-weight : bold ;
-
     line-height: 1.2;            /* permet 2 lignes sans être trop serré */
     text-align: center;          /* centrer le texte */
     border-radius: 12px;         /* coins bien arrondis */
@@ -1078,10 +1096,9 @@ form[ngform] .form-control[type="time"]{
     transition: all 0.2s ease;
     word-wrap: break-word;        /* couper le texte si nécessaire */
     /* Ajout d'espacement */
-    margin-top: 20px;   /* espace au-dessus */
-    margin-bottom: 20px; /* espace en dessous */
-    margin-left: 15px;  /* espace à gauche */
+    margin-left: 1px;  /* espace à gauche */
     margin-right: 15px; /* espace à droite */
+    margin-bottom: 18px;
 }
 
 .btn-rdv:hover {
@@ -1123,14 +1140,14 @@ form[ngform] .form-control[type="time"]{
 }
 
 .btn-rdv-reset {
-    margin-left: 18px;
     display: flex;                /* flex pour centrer le texte verticalement et horizontalement */
     justify-content: center;
     align-items: center;
     width: 180px;                 /* largeur fixe */
-    height: 60px;                 /* hauteur fixe identique pour tous les boutons */
+    height: 38x;  
+    margin-bottom: 18px;               
     padding: 10px 12px;
-    font-size: 13px;
+    font-size: 11px;
     font-weight: bold;
     line-height: 1.2;
     text-align: center;
@@ -1351,4 +1368,182 @@ form[ngForm] {
 
 .patient-list li:hover {
   background-color: #f2f2f2;
+}
+
+ .cards-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px; /* <- très petit espace */
+  }
+
+  .col-card {
+    flex: 0 0 calc(33.333% - 4px);
+    box-sizing: border-box;
+  }
+
+  .mini-card {
+    width: 100%;
+    padding: 6px; /* padding minimal */
+    border-radius: 6px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    background-color: white;
+  }
+
+  .mini-card .icon {
+    width: 36px;
+    height: 36px;
+    margin-bottom: 4px;
+  }
+
+  @media (max-width: 767px) {
+    .col-card { flex: 0 0 100%; }
+  }
+  @media (min-width: 768px) and (max-width: 991px) {
+    .col-card { flex: 0 0 calc(50% - 4px); }
+  }
+
+.btn-group-week {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+
+.d-flex.justify-content-between.mt-2 {
+  display: flex;        /* Flexbox */
+  gap: 5px;            /* espace entre les boutons */
+  flex-wrap: wrap;      /* permet le retour à la ligne si écran petit */
+}
+
+.btn-email {
+  margin-left: auto;    /* pousse le bouton vers la droite */
+  margin-right: auto;   /* centre horizontalement */
+  display: block;       /* nécessaire pour que le margin auto fonctionne */
+  background-color: #8049e4  !important; /* couleur personnalisée */
+  color: #fff;
+  padding: 0.4rem 0.8rem;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.btn-email:hover {
+  background-color: #8049e4 !important; /* couleur au survol */
+  transform: translateY(-1px);
+}
+
+.rappel-card .card-body {
+  width: 100% !important;
+  max-width: 100% !important;
+  position: relative !important;
+  padding: 1rem 1.5rem;
+  background-color: #fff;
+  display: flex;
+  flex-direction: column;
+}
+/* Carte principale */
+.rappel-card {
+  width: 700px !important;
+  position: relative !important;
+  max-width: 100% !important;
+  // margin: 10px auto !important;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+}
+.rappel-card .card-body {
+  width: 700px !important;
+  padding: 1.5rem !important;
+  
+  background: #fff;
+}
+/* Formulaire horizontal */
+.rappel-card form {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 1rem !important;
+  width: 700px !important;
+}
+
+/* Groupe de champs compact */
+.rappel-card .form-group {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  flex: 1 1 auto !important;
+  white-space: nowrap !important;
+  
+}
+
+/* Labels et champs */
+.rappel-card label {
+  font-weight: 600 !important;
+  font-size: 0.85rem !important;
+  margin-bottom: 0 !important;
+  min-width: 90px !important; /* largeur fixe du label */
+  text-align: right !important;
+}
+.rappel-card .form-control,
+.rappel-card .form-select {
+  flex: 1 !important;
+  height: 36px !important;
+  padding: 4px 8px !important;
+  border-radius: 6px !important;
+  font-size: 0.9rem !important;
+  
+}
+
+/* ➕ Groupe input + bouton */
+.rappel-card .input-group {
+  display: flex !important;
+  align-items: center !important;
+  flex: 1;
+}
+
+.rappel-card .input-group .btn {
+  margin-left: 5px !important;
+  height: 36px !important;
+  white-space: nowrap !important;
+}
+
+/* 🔘 Boutons finaux */
+.rappel-card .d-flex.gap-2 {
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.5rem !important;
+  margin-left: auto !important; /* pousse les boutons à droite */
+}
+
+/* 📱 Responsive : retour vertical sur petit écran */
+@media (max-width: 992px) {
+  .rappel-card form {
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+  .rappel-card .form-group {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+  }
+  .rappel-card label {
+    text-align: left !important;
+    min-width: auto !important;
+  }
+}
+.top-tools {
+  display: flex;
+  gap: 20px;
+  width: 100%;
+}
+
+.cal-card {
+  flex: 0 0 40%;
+}
+
+.rappel-card {
+  flex: 1; /* prendra le reste */
+  max-width: 60%;
+}
+
+.rappel-card .card-body {
+  width: 100%;
 }

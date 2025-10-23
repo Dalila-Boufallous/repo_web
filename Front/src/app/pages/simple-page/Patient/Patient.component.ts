@@ -89,7 +89,7 @@ export class PatientComponent implements OnInit {
       this.patients = Array.isArray(data) ? data : [];
     });
   }
-
+  showAddForm = false;
   saveEditedPatient(patient: Patient): void {
     const updatedPatient = { ...patient, ...this.editedPatient };
     this.http.put<Patient>(`${this.baseUrl}/${patient.idDimPatient}`, updatedPatient)

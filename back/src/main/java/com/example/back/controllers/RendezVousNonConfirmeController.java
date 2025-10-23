@@ -1,6 +1,7 @@
 package com.example.back.controllers;
 
 import com.example.back.entities.RendezVousNonConfirme;
+import com.example.back.entities.ConfirmationRendezVous;
 import com.example.back.entities.Patient;
 import com.example.back.repositories.RepoRendezVousNonConfirme;
 import com.example.back.repositories.RepoPatient;
@@ -237,4 +238,6 @@ public class RendezVousNonConfirmeController {
     private String safe(Object o) {
         return o == null ? "" : String.valueOf(o);
     }
+
+    
 }
