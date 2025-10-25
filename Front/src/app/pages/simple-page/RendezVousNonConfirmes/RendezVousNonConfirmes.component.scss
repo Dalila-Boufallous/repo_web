@@ -51,6 +51,7 @@
 
 /* Jours de la semaine */
 .mc-weekdays {
+  flex: 1;
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   text-align: center;
@@ -62,6 +63,7 @@
 
 /* Grille des semaines */
 .mc-weeks {
+  flex: 1;
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -69,13 +71,16 @@
 }
 
 .mc-week {
+  flex: 1;
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   gap: 4px;
+  width: 100%;
 }
 
 /* Boutons des jours */
 .mc-day {
+  height: 100%;
   aspect-ratio: 1/1;           /* Carré parfait */
   border: none;
   border-radius: 8px;
@@ -198,6 +203,8 @@
 }
 
 .mc-day {
+  flex: 1;
+  display: flex;
   aspect-ratio: 1/1;
   border: none;
   border-radius: 8px;
@@ -289,10 +296,10 @@
 html body .page-wrapper > .mini-calendar-wrapper,
 .mini-calendar-wrapper {
   background: white!important;
-  width: 320px !important;
-  min-width: 320px !important;
+  //width: 320px !important;
+  //min-width: 320px !important;
   max-width: 320px !important;
-  flex: 0 0 320px !important;     /* empêche le flexbox de redimensionner */
+  //flex: 0 0 320px !important;     /* empêche le flexbox de redimensionner */
   box-sizing: border-box !important;
 }
 .mini-calendar, .mini-calendar * {
@@ -655,7 +662,7 @@ html body .page-wrapper > .mini-calendar-wrapper,
 }
 
 /* ===== Carte calendrier ===== */
-.cal-card .card-body{ padding:14px; }
+.cal-card .card-body{ padding:14px;flex: 1;  }
 
 .mc-weekdays{
   display:grid;
@@ -668,6 +675,7 @@ html body .page-wrapper > .mini-calendar-wrapper,
   font-weight:600;
   font-size:.85rem;
   color:#6f42c1;
+  flex: 1;
 }
 
 .mc-weeks{ display:flex; flex-direction:column; gap:6px; }
@@ -803,10 +811,13 @@ html body .page-wrapper > .mini-calendar-wrapper,
 .cal-card .card-header .form-select{
   padding: 2px 8px;
   font-size: var(--compact-text-sm);
-  height: 30px;
+ // height: 30px;
 }
 .cal-card .card-body{
   padding: 10px 12px;
+  height: 100% !important;
+   // height: 270px;
+
 }
 
 /* semaine + jours plus denses */
@@ -830,11 +841,12 @@ html body .page-wrapper > .mini-calendar-wrapper,
 .cal-card .card-body .btn{
   padding: 4px 8px;
   font-size: .8rem;
+  
 }
 
 /* ===== Rappel compact ===== */
 .rappel-card{
-  max-width: 360px;
+  max-width: 300px;
 }
 .rappel-card .card-header{
   padding: 8px 12px;
@@ -881,6 +893,9 @@ html body .page-wrapper > .mini-calendar-wrapper,
 
 /* ===== Cartes RDV : marges/polices compactes ===== */
 .rdv-card{
+  width: 100%; /* Ajuste selon besoin */
+ // max-width: 350px;
+  margin: 0 auto;   /* Centre la carte dans sa colonne */
   padding: 12px !important;
 }
 .rdv-card .card-title{
@@ -921,9 +936,6 @@ form[ngform] .form-control[type="time"]{
 
 }
 
-
-
-
 /* ===== Séparer calendrier (gauche) et rappel (droite) ===== */
 
 /* 1) Donne un vrai "gap" entre les deux colonnes du haut */
@@ -944,8 +956,8 @@ form[ngform] .form-control[type="time"]{
 
 /* 3) Espace côté formulaire (au cas où le gap est écrasé ailleurs) */
 #rappelCard{
-  margin-left: 24px;       /* petit coussin à droite du calendrier */
-  max-width: 380px;        /* limite sa largeur pour rester compact */
+  margin-left: 7px;       /* petit coussin à droite du calendrier */
+  max-width: 200px;        /* limite sa largeur pour rester compact */
 }
 @media (max-width: 992px){
   #rappelCard{
@@ -956,7 +968,7 @@ form[ngform] .form-control[type="time"]{
 
 /* 4) Optionnel : réduis un peu le padding interne pour paraître moins massif */
 #rappelCard.card{
-  padding: 12px !important;
+  padding: 10px !important;
 }
 .mini-card {
   width: 330px !important; /* 🔹 Réduit la largeur */
@@ -1052,7 +1064,7 @@ form[ngform] .form-control[type="time"]{
 }
 .rdv-list {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  grid-template-columns: repeat(4, 1fr) ; /* 4 cartes par ligne */
   gap: 1rem; /* espace entre cartes */
 }
 
@@ -1069,13 +1081,13 @@ form[ngform] .form-control[type="time"]{
   margin-top: 10px;
 }
 .rdv-list .rdv-card {
-  flex: 0 0 calc(25% - 16px) !important; /* 4 colonnes avec gap */
-  min-width: 220px !important; /* tu peux réduire un peu le minimum si nécessaire */
+  flex: 1 1 calc(25% - 1rem) !important; /* 4 colonnes avec gap */
+  min-width: 220px ; /* tu peux réduire un peu le minimum si nécessaire */
 }
 @media (max-width: 992px) {
-  .rdv-list .rdv-card {
-    flex: 0 0 100% !important; 
-  }
+ // .rdv-list .rdv-card {
+    // flex: 0 0 100% !important; 
+ // }
 }
 .btn-rdv {
     display: inline-block;
@@ -1144,7 +1156,7 @@ form[ngform] .form-control[type="time"]{
     justify-content: center;
     align-items: center;
     width: 180px;                 /* largeur fixe */
-    height: 38x;  
+    height: 38px;  
     margin-bottom: 18px;               
     padding: 10px 12px;
     font-size: 11px;
@@ -1294,6 +1306,7 @@ form[ngform] .form-control[type="time"]{
 
 /* Effet au survol */
 .btn-historique:hover {
+  height: 20px !important;
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(0,0,0,0.25);
 }
@@ -1377,7 +1390,7 @@ form[ngForm] {
   }
 
   .col-card {
-    flex: 0 0 calc(33.333% - 4px);
+    flex: 1 1 calc(25% - 1rem) !important; /* 4 cartes par ligne */
     box-sizing: border-box;
   }
 
@@ -1399,7 +1412,7 @@ form[ngForm] {
     .col-card { flex: 0 0 100%; }
   }
   @media (min-width: 768px) and (max-width: 991px) {
-    .col-card { flex: 0 0 calc(50% - 4px); }
+    .col-card { flex: 1 1 calc(25% - 1rem) !important; }
   }
 
 .btn-group-week {
@@ -1432,8 +1445,8 @@ form[ngForm] {
 }
 
 .rappel-card .card-body {
-  width: 100% !important;
-  max-width: 100% !important;
+ // width: 100% !important;
+//  max-width: 100% !important;
   position: relative !important;
   padding: 1rem 1.5rem;
   background-color: #fff;
@@ -1442,7 +1455,7 @@ form[ngForm] {
 }
 /* Carte principale */
 .rappel-card {
-  width: 700px !important;
+  width: 300px !important;
   position: relative !important;
   max-width: 100% !important;
   // margin: 10px auto !important;
@@ -1450,9 +1463,8 @@ form[ngForm] {
   border: 1px solid #ddd;
 }
 .rappel-card .card-body {
-  width: 700px !important;
+  width: 300px !important;
   padding: 1.5rem !important;
-  
   background: #fff;
 }
 /* Formulaire horizontal */
@@ -1472,6 +1484,7 @@ form[ngForm] {
   gap: 8px !important;
   flex: 1 1 auto !important;
   white-space: nowrap !important;
+  height: 30px;
   
 }
 
@@ -1498,6 +1511,7 @@ form[ngForm] {
   display: flex !important;
   align-items: center !important;
   flex: 1;
+
 }
 
 .rappel-card .input-group .btn {
@@ -1537,13 +1551,27 @@ form[ngForm] {
 
 .cal-card {
   flex: 0 0 40%;
+  //  height: 270px;
+
 }
 
 .rappel-card {
   flex: 1; /* prendra le reste */
   max-width: 60%;
+  height: 270px;
 }
 
 .rappel-card .card-body {
-  width: 100%;
+  width: 600%;
+}
+
+:host ::ng-deep .rdv-list .rdv-card {
+    flex: 1 1 calc(25% - 1rem) !important; /* 4 cartes par ligne */
+   // min-width: 200px !important;
+}
+ 
+
+.calendar-wrapper {
+height: 270px !important;        /* Hauteur fixe souhaitée */
+ // overflow: hidden;     /* Masque tout dépassement */
 }

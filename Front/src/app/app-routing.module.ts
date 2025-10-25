@@ -62,6 +62,11 @@ const routes: Routes = [
         path: 'rendezvousnonconfirmes',
         loadChildren: () => import('./pages/simple-page/RendezVousNonConfirmes/RendezVousNonConfirmes.module')
           .then(m => m.RendezVousNonConfirmesModule) 
+      },
+      {
+        path: 'acceuil',
+        loadChildren: () => import('./pages/simple-page/Acceuil/Accueil.module')
+          .then(m => m.AccueilModule) 
       }
     ]
   },

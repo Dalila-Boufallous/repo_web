@@ -39,8 +39,13 @@
     </div>
   </div>
 </div>
+
+
+<div class="zoom-out-container">
   <!-- ===== OUTILS EN HAUT : Calendrier + Formulaire Rappel ===== -->
+   
   <div class="top-tools">
+    <div class="calendar-wrapper">
     <!-- 🗓️ Calendrier -->
     <div class="card cal-card shadow-sm">
       <div class="card-header d-flex align-items-center justify-content-between">
@@ -80,7 +85,7 @@
         </div>
       </div>
     </div>
-
+</div>
     <!-- 🔔 Formulaire Rappel -->
     <div class="card rappel-card shadow-sm" id="rappelCard">
       <div class="card-header d-flex align-items-center justify-content-between">
@@ -247,8 +252,8 @@
 </div>
   <!-- ===== Liste des RDV ===== -->
 <div class="container">
-  <div class="row row-cols-1 row-cols-md-3 g-4">
-    <div class="col" *ngFor="let rdv of filteredRendezVous">
+  <div class="row row-cols-1 row-cols-sm-2 row-cols-md-4 g-4">
+    <div class="col-md-3" *ngFor="let rdv of filteredRendezVous">
       <div
         class="card shadow-sm p-3 h-100 d-flex flex-column selectable rdv-card"
         (click)="onCardClick(rdv)"
@@ -401,6 +406,6 @@
   </div>
 </div>
 
-
+</div>
 </div>
 
