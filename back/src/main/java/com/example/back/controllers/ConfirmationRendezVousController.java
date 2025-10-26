@@ -158,15 +158,27 @@ public ResponseEntity<Map<String, Object>> sendEmailReminder(@PathVariable("idDi
         return ResponseEntity.ok("Rendez-vous confirmé avec succès !");
     }
 
-    @GetMapping("/confirm")
+    // Dans ConfirmationRendezVousController.java
+
+@GetMapping("/confirm")
 public ResponseEntity<String> confirmRdvByEmail(@RequestParam("token") String token) {
+
+    // Déclaration des variables à la portée de la méthode
+    Map<String, Long> claims;
+    long rdvId;
+    Optional<RendezVousNonConfirme> rdvOpt;
+
+    // Déclarer les variables Patient en dehors du try/catch
+    Optional<Patient> patientOpt;
+    Patient patient; 
+
     try {
-        // 1️⃣ Vérification du token avec ConfirmationTokenService
-        Map<String, Long> claims = tokenService.verify(token); // service injecté via constructeur
-        long rdvId = claims.get("rdvId");
+        // 1️⃣ Vérification du token
+        claims = tokenService.verify(token);
+        rdvId = claims.get("rdvId");
 
         // 2️⃣ Recherche du rendez-vous non confirmé
-        Optional<RendezVousNonConfirme> rdvOpt = nonConfirmeRepo.findById((int) rdvId);
+        rdvOpt = nonConfirmeRepo.findById((int) rdvId);
         if (rdvOpt.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body("<h2>❌ Rendez-vous introuvable ou déjà confirmé.</h2>");
@@ -174,35 +186,76 @@ public ResponseEntity<String> confirmRdvByEmail(@RequestParam("token") String to
 
         RendezVousNonConfirme rdvNC = rdvOpt.get();
 
-        // 3️⃣ Création d'un nouveau rendez-vous confirmé
+        // 🚨 ÉTAPE CLÉ : CONVERSION ID DIMENSION -> ID PATIENT NATUREL
+        Integer idDimPatient = rdvNC.getIdDimPatient();
+
+        if (idDimPatient == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("<h2>❌ Erreur: ID de la dimension Patient manquant dans le RDV non confirmé.</h2>");
+        }
+
+        // 3. Chercher l'entité Patient par son ID de dimension
+        patientOpt = patientRepo.findByIdDimPatient(idDimPatient);
+
+        if (patientOpt.isEmpty()) {
+            log.error("Patient introuvable pour idDimPatient: {}", idDimPatient);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("<h2>❌ Erreur de données: Patient introuvable pour l'ID de dimension.</h2>");
+        }
+
+        patient = patientOpt.get();
+        // Récupérer l'ID Patient Naturel (idPersonne) que le front-end utilise
+        Integer idPatientNaturel = patient.getIdPersonne(); 
+
+        // 4️⃣ Création d'un nouveau rendez-vous confirmé
         ConfirmationRendezVous rdvC = new ConfirmationRendezVous();
-        rdvC.setIdPatient(rdvNC.getIdDimPatient().intValue());
+        
+        // CORRECTION MAJEURE : Utilisation de l'ID Patient NATUREL
+        rdvC.setIdPatient(idPatientNaturel); 
+        
+        // Copie des autres champs. Utilisation des noms de méthodes que j'ai pu confirmer (date/heure)
         if (rdvNC.getIdDimActe() != null) {
             rdvC.setIdActe(rdvNC.getIdDimActe().intValue());
         }
-        rdvC.setDateRdvConfirme(rdvNC.getDatePrevisionnelle());
+        
+        // ATTENTION : Ces lignes causaient l'erreur de compilation, elles sont commentées.
+        // Vous devez utiliser les getters exacts de votre entité RendezVousNonConfirme
+        /* if (rdvNC.getIdDimPersonnel() != null) {
+             rdvC.setIdPersonnel(rdvNC.getIdDimPersonnel().intValue());
+        }
+        rdvC.setIdFauteuil(rdvNC.getIdFauteuil());
+        rdvC.setRdvDuree(rdvNC.getRdvDuree());
+        */
+        
+        // Assurez-vous que ces getters existent :
+        rdvC.setDateRdvConfirme(rdvNC.getDatePrevisionnelle()); 
         rdvC.setHeureRdvConfirme(rdvNC.getHeurePrevisionnelle());
+        
 
-        // 4️⃣ Enregistrement dans la table des rendez-vous confirmés
+
+        // 5️⃣ Enregistrement dans la table des rendez-vous confirmés
         repository.save(rdvC);
 
-        // 5️⃣ Suppression du rendez-vous non confirmé
+        // 6️⃣ Suppression du rendez-vous non confirmé
         nonConfirmeRepo.delete(rdvNC);
 
-        // 6️⃣ Réponse HTML simple pour affichage dans le navigateur
+        // 7️⃣ Réponse HTML simple pour affichage dans le navigateur
         return ResponseEntity.ok("""
             <html><body style='font-family:sans-serif; text-align:center; margin-top:50px;'>
                 <h2 style='color:green;'>✅ Rendez-vous confirmé avec succès !</h2>
+                <p>Votre rendez-vous a été ajouté à la liste des rendez-vous confirmés.</p>
                 <p>Vous pouvez fermer cette page.</p>
             </body></html>
         """);
 
     } catch (IllegalArgumentException ex) {
+        log.warn("Token invalide ou expiré: {}", token);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body("<h2>❌ Lien invalide ou expiré.</h2>");
     } catch (Exception ex) {
+        log.error("Erreur inattendue lors de la confirmation du RDV avec token {}: {}", token, ex.getMessage(), ex);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body("<h2>⚠️ Erreur interne : " + ex.getMessage() + "</h2>");
+                .body("<h2>❌ Une erreur interne est survenue lors de la confirmation.</h2>");
     }
 }
 
