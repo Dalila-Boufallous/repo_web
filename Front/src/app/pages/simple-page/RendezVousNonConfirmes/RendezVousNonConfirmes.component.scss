@@ -8,110 +8,7 @@
 }
 
 /* -------------------- Mini-calendar -------------------- */
-.mini-calendar-wrapper {
-  background: white !important;
-  border-radius: 12px;
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
-  padding: 1rem;
-  font-family: "Segoe UI", Tahoma, sans-serif;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  width: 380px !important; 
-  flex-shrink: 0;
-  position: sticky;
-  top: 20px;
-  transition: all 0.3s ease;
-  margin-left: 0 !important;
-  margin-right: auto !important;
-  float: left !important;
-}
 
-/* Header mois/année */
-.mc-header {
-  display: flex;
-  justify-content: center;
-  gap: 0.5rem;
-  margin-bottom: 0.8rem;
-  width: 100%;
-}
-
-.mc-select {
-  padding: 0.35rem 0.8rem;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  font-size: 0.9rem;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.mc-select:hover {
-  border-color: #6f42c1;
-}
-
-/* Jours de la semaine */
-.mc-weekdays {
-  flex: 1;
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  text-align: center;
-  font-weight: bold;
-  color: #6f42c1;
-  margin-bottom: 0.5rem;
-  gap: 4px;
-}
-
-/* Grille des semaines */
-.mc-weeks {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  width: 100%;
-}
-
-.mc-week {
-  flex: 1;
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 4px;
-  width: 100%;
-}
-
-/* Boutons des jours */
-.mc-day {
-  height: 100%;
-  aspect-ratio: 1/1;           /* Carré parfait */
-  border: none;
-  border-radius: 8px;
-  font-size: 0.8rem;            /* ↓ Réduit la taille des chiffres */
-  background: #f9f9f9;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;      /* Centre le chiffre */
-  padding: 0;                   /* Retirer padding inutile */
-}
-
-.mc-day:hover:not(.empty):not(:disabled) {
-  background: #e9d8fd;
-  transform: scale(1.05);
-}
-
-.mc-day.today {
-  background: #6f42c1;
-  color: #fff;
-  font-weight: bold;
-  font-size: 0.8rem;            /* Harmoniser avec les autres jours */
-}
-
-.mc-day.selected {
-  background: #c194f4;
-  border: 2px solid #6f42c1;
-  font-weight: bold;
-  font-size: 0.8rem;
-}
 
 
 /* Footer calendrier */
@@ -122,190 +19,7 @@
   gap: 0.5rem;
 }
 
-.mc-today, .mc-footer .btn-outline-secondary {
-  padding: 0.5rem 0.9rem;
-  border-radius: 6px;
-  font-weight: 500;
-  border: none;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
 
-.mc-today {
-  background-color: #6f42c1;
-  color: #fff;
-}
-
-.mc-today:hover {
-  background-color: #5a32a3;
-}
-
-.mc-footer .btn-outline-secondary {
-  background-color: #a9a8a8ec;
-  color: #fff;
-}
-
-.mc-footer .btn-outline-secondary:hover {
-  background-color: #6e6c6d;
-  transform: translateY(-2px);
-}
-
-/* -------------------- Main Content -------------------- */
-.main-content {
-  flex: 1;
-  min-width: 320px; /* permet responsive */
-}
-
-/* -------------------- Responsive -------------------- */
-@media (max-width: 768px) {
-  /* -------------------- Page Wrapper -------------------- */
-.page-wrapper {
-  display: flex;
-  gap: 20px;           /* espace entre calendrier et contenu */
-  flex-wrap: wrap;      /* permet responsive sur mobile */
-}
-
-/* -------------------- Calendrier à gauche -------------------- */
-.mini-calendar-wrapper {
-  background: white !important;
-  border-radius: 12px;
-  box-shadow: 0 6px 15px rgba(0,0,0,0.08);
-  padding: 1rem;
-  font-family: "Segoe UI", Tahoma, sans-serif;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 320px;        /* largeur fixe */
-  flex-shrink: 0;      /* ne pas rétrécir */
-  position: sticky;
-  top: 20px;           /* distance du haut lors du scroll */
-}
-
-/* -------------------- Contenu principal -------------------- */
-.main-content {
-  flex: 1;
-  min-width: 320px;    /* permet responsive */
-}
-
-/* -------------------- Mini-calendar interne -------------------- */
-.mini-calendar {
-  width: 100%;
-  max-width: none !important;
-}
-
-/* Grilles et jours */
-.mc-weekdays, .mc-week {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 4px;
-  justify-items: center;
-  width: 100%;
-}
-
-.mc-day {
-  flex: 1;
-  display: flex;
-  aspect-ratio: 1/1;
-  border: none;
-  border-radius: 8px;
-  font-size: 0.8rem;          /* chiffres plus petits */
-  background: #f9f9f9;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.mc-day:hover:not(.empty):not(:disabled) {
-  background: #e9d8fd;
-  transform: scale(1.05);
-}
-
-.mc-day.today {
-  background: #6f42c1;
-  color: #fff;
-  font-weight: bold;
-}
-
-.mc-day.selected {
-  background: #c194f4;
-  border: 2px solid #6f42c1;
-  font-weight: bold;
-}
-
-/* Footer calendrier */
-.mc-footer {
-  margin-top: 0.8rem;
-  display: flex;
-  justify-content: center;
-  gap: 0.5rem;
-}
-
-.mc-today, .mc-footer .btn-outline-secondary {
-  padding: 0.5rem 0.9rem;
-  border-radius: 6px;
-  font-weight: 500;
-  border: none;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.mc-today {
-  background-color: #6f42c1;
-  color: #fff;
-}
-
-.mc-today:hover {
-  background-color: #5a32a3;
-}
-
-.mc-footer .btn-outline-secondary {
-  background-color: #a9a8a8ec;
-  color: #fff;
-}
-
-.mc-footer .btn-outline-secondary:hover {
-  background-color: #6e6c6d;
-  transform: translateY(-2px);
-}
-
-/* -------------------- Responsive -------------------- */
-@media (max-width: 768px) {
-  .page-wrapper {
-    flex-direction: column;
-  }
-  .mini-calendar-wrapper {
-    
-    background: white !important;
-    width: 100%;
-    position: relative;
-    top: auto;
-    margin-bottom: 20px;
-  }
-}
-}
-
-/* === DEBUG : outlines pour repérer les parents qui contraignent la largeur === */
-/* html, body { outline: none !important; }
-.page-wrapper         { outline: 3px dashed rgba(0,128,255,0.45) !important; }
-.container, .wrapper  { outline: 3px dashed rgba(255,128,0,0.35) !important; }
-.mini-calendar-wrapper{ outline: 4px solid rgba(0,200,100,0.6) !important; }
-.main-content         { outline: 2px dashed rgba(200,0,100,0.35) !important; }
-/* === FORCE LARGEUR CALENDRIER (override puissant) === */
-html body .page-wrapper > .mini-calendar-wrapper,
-.mini-calendar-wrapper {
-  background: white!important;
-  //width: 320px !important;
-  //min-width: 320px !important;
-  max-width: 320px !important;
-  //flex: 0 0 320px !important;     /* empêche le flexbox de redimensionner */
-  box-sizing: border-box !important;
-}
-.mini-calendar, .mini-calendar * {
-  width: 100% !important;
-  max-width: none !important;
-}
 
 
 .btn-primary {
@@ -397,6 +111,7 @@ html body .page-wrapper > .mini-calendar-wrapper,
   flex-direction: column;
   gap: 1rem; /* espace entre les champs */
   transition: all 0.3s ease;
+
 }
 
 /* Titre du formulaire */
@@ -406,6 +121,7 @@ html body .page-wrapper > .mini-calendar-wrapper,
   color: #6f42c1;
   text-align: center;
   margin-bottom: 0.8rem;
+
 }
 
 /* Champs du formulaire */
@@ -661,48 +377,116 @@ html body .page-wrapper > .mini-calendar-wrapper,
   .top-tools{ grid-template-columns:1fr; }
 }
 
-/* ===== Carte calendrier ===== */
-.cal-card .card-body{ padding:14px;flex: 1;  }
+/* ================================================================= */
+/* ============= Styles Corrigés et Robustes ============ */
+/* ================================================================= */
 
-.mc-weekdays{
-  display:grid;
-  grid-template-columns:repeat(7,1fr);
-  gap:6px;
-  margin-bottom:6px;
-}
-.mc-wd{
-  text-align:center;
-  font-weight:600;
-  font-size:.85rem;
-  color:#6f42c1;
-  flex: 1;
-}
-
-.mc-weeks{ display:flex; flex-direction:column; gap:6px; }
-.mc-week{ display:grid; grid-template-columns:repeat(7,1fr); gap:6px; }
-
-.mc-day{
-  aspect-ratio:1/1;
-  border:0;
-  border-radius:10px;
-  background:#f6f7fb;
-  font-weight:600;
-  font-size:.95rem;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  transition:.2s ease;
-  box-shadow: inset 0 0 0 1px #e9ecf3;
-}
-.mc-day.empty{ visibility:hidden; }
-.mc-day:hover:not(:disabled){ background:#ece6fb; transform:translateY(-1px); }
-.mc-day.today{ background:#6f42c1; color:#fff; box-shadow:none; }
-.mc-day.selected{
-  background:#c194f4;
-  color:#231942;
-  box-shadow: 0 0 0 2px #6f42c1 inset;
+/* 1. Définir le conteneur principal du corps du calendrier */
+.cal-card .card-body {
+    /* Maintient la hauteur fixe de 270px */
+    height: 270px !important; 
+    display: flex !important;
+    flex-direction: column !important;
+    /* Conserver l'espace intérieur */
+    padding: 10px 12px !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
 }
 
+/* 2. S'assurer que les jours de la semaine ne s'étirent pas */
+.mc-weekdays {
+    /* CRITIQUE : FORCER l'alignement horizontal sur la largeur */
+    /* Utilisation de Flexbox pour une répartition rapide sur une ligne */
+    display: flex !important;
+    
+    /* CRITIQUE : Définir la direction sur LIGNE */
+    flex-direction: row !important; 
+    
+    /* Assure que les éléments s'étirent pour prendre toute la largeur */
+    justify-content: space-between !important;
+    
+    /* Règle de sécurité pour prendre toute la largeur disponible */
+    width: 100% !important; 
+    
+    /* Réinitialiser les marges/paddings s'ils causent des décalages */
+    padding: 0 !important;
+    margin-bottom: 4px !important; 
+}
+
+/* S'assurer que chaque nom de jour prend une part égale de l'espace */
+.mc-weekdays > * {
+    /* Le '*' cible chaque enfant direct (Lun, Mar, Mer, etc.) */
+    flex: 1 !important; /* Chaque nom de jour prend une part égale de la largeur */
+    text-align: center !important; /* Centrer le texte dans sa colonne */
+    /* Empêcher l'interférence avec les règles de hauteur précédentes */
+    height: auto !important;
+}
+
+/* 3. Forcer le conteneur des semaines à prendre tout l'espace vertical restant */
+/* Conteneur de toutes les semaines */
+.mc-weeks { 
+    /* CRITIQUE : Prend tout l'espace vertical restant */
+    flex-grow: 1 !important; 
+    flex: 1; /* <-- Ceci est suspect dans ce contexte */
+   display: grid;
+  grid-template-columns: repeat(7, 1fr); /* <-- Ceci est la bonne règle */
+    /* Active Flexbox pour diviser cet espace entre les semaines */
+    display: flex !important;
+    flex-direction: column !important;
+    
+    /* S'assurer qu'il prend toute la largeur */
+    width: 100% !important; 
+}
+
+/* Chaque semaine prend une part égale */
+.mc-week { 
+    /* CRITIQUE : Chaque semaine prend une part égale de la hauteur */
+    flex-grow: 1 !important; 
+    
+    /* Utilise Grid pour la répartition horizontale des jours */
+    display: grid !important;
+    grid-template-columns: repeat(7, 1fr) !important;
+    
+    /* Force la semaine à prendre la pleine hauteur de l'espace Flexbox */
+    height: 100% !important; 
+}
+
+/* 5. Forcer le bouton de jour à remplir sa cellule */
+/* Boutons des jours (mc-day) */
+/* Boutons des jours */
+.mc-day {
+    /* L'ÉTIRAGE VERTICAL : Oblige le bouton à prendre la pleine hauteur de sa ligne */
+    height: 100% !important; 
+    
+    /* L'ÉTIRAGE HORIZONTAL : Oblige le bouton à prendre la pleine largeur de sa colonne */
+    width: 100% !important; 
+    
+    /* Éliminer les contraintes qui empêchent l'étirement */
+    aspect-ratio: unset !important; 
+    min-height: unset !important;
+    padding: 0 !important;
+    
+    /* Centrer le chiffre */
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+/* 6. S'assurer que les boutons du footer ne s'étirent pas et restent en bas */
+.cal-card .card-body > .d-flex.gap-2.mt-3 {
+    flex-shrink: 0; 
+    margin-top: 8px !important; 
+}
+/* Élément individuel (nom du jour) */
+.mc-wd {
+    /* S'assurer que chaque jour prend juste la largeur nécessaire dans la colonne */
+    width: auto !important; 
+    
+    /* Le 'flex-grow: 1' ou 'flex: 1' sur chaque élément enfant force la répartition égale */
+    flex: 1; 
+    
+    text-align: center !important; /* Centrer le texte dans la colonne */
+}
 /* ===== Carte rappel ===== */
 .rappel-card .card-body{ padding:14px; }
 .rappel-card .form-label{ font-weight:600; font-size:.9rem; }
@@ -1038,7 +822,7 @@ form[ngform] .form-control[type="time"]{
   color: #222;
 }
 .icon.alert {
-  background-color: #ff4d4f; /* rouge/orange d’alerte */
+  background-color: #e9282b; /* rouge/orange d’alerte */
   color: white;
   border-radius: 12px;
   display: flex;
@@ -1463,7 +1247,7 @@ form[ngForm] {
   border: 1px solid #ddd;
 }
 .rappel-card .card-body {
-  width: 300px !important;
+  width: 270px !important;
   padding: 1.5rem !important;
   background: #fff;
 }
@@ -1474,7 +1258,7 @@ form[ngForm] {
   align-items: center !important;
   justify-content: flex-start !important;
   gap: 1rem !important;
-  width: 700px !important;
+  width: 600px !important;
 }
 
 /* Groupe de champs compact */
@@ -1499,7 +1283,7 @@ form[ngForm] {
 .rappel-card .form-control,
 .rappel-card .form-select {
   flex: 1 !important;
-  height: 36px !important;
+  height: 30px !important;
   padding: 4px 8px !important;
   border-radius: 6px !important;
   font-size: 0.9rem !important;
@@ -1516,8 +1300,9 @@ form[ngForm] {
 
 .rappel-card .input-group .btn {
   margin-left: 5px !important;
-  height: 36px !important;
+  height: 30px !important;
   white-space: nowrap !important;
+  
 }
 
 /* 🔘 Boutons finaux */
@@ -1526,6 +1311,7 @@ form[ngForm] {
   align-items: center !important;
   gap: 0.5rem !important;
   margin-left: auto !important; /* pousse les boutons à droite */
+  margin-bottom: px ;
 }
 
 /* 📱 Responsive : retour vertical sur petit écran */
@@ -1549,16 +1335,12 @@ form[ngForm] {
   width: 100%;
 }
 
-.cal-card {
-  flex: 0 0 40%;
-  //  height: 270px;
 
-}
 
 .rappel-card {
   flex: 1; /* prendra le reste */
   max-width: 60%;
-  height: 270px;
+  height: 240px;
 }
 
 .rappel-card .card-body {
@@ -1570,8 +1352,61 @@ form[ngForm] {
    // min-width: 200px !important;
 }
  
-
-.calendar-wrapper {
-height: 270px !important;        /* Hauteur fixe souhaitée */
- // overflow: hidden;     /* Masque tout dépassement */
+.rappel-card .card-body form .d-flex.gap-2.mt-3 button {
+    /* Empêche le bouton de s'étirer (flex-grow: 0) et lui donne sa taille par défaut (auto) */
+    flex: 0 0 auto !important; 
+    width: auto !important; 
+    margin-top: -32px !important; /* Réduire la marge supérieure */
+    margin-bottom: 0 !important ;
 }
+
+/* Arrière-plan sombre qui couvre tout l'écran */
+.popup-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Ombre semi-transparente */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1050; /* Doit être au-dessus de tout (y compris des modales Bootstrap) */
+}
+
+/* Conteneur de la boîte de message */
+.popup-card {
+    background-color: white;
+    padding: 25px 30px;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    max-width: 400px;
+    text-align: center;
+    transform: scale(1);
+    transition: transform 0.2s ease-out;
+}
+
+/* Styles spécifiques au type de message */
+.popup-success {
+    border: 2px solid #28a745; /* Vert */
+    color: #28a745;
+}
+
+.popup-warning {
+    border: 2px solid #ff3907; /* Jaune/Orange */
+    color: #333;
+}
+
+.popup-danger {
+    border: 2px solid #dc3545; /* Rouge */
+    color: #dc3545;
+}
+
+/* Mise en page des boutons */
+.popup-buttons {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+

@@ -232,8 +232,7 @@ create(): void {
       this.getAll();
       this.newRendezVous = this.initForm();
       this.addSuccess = true;
-      this.showAutoHidePopup('Rendez-vous ajouté avec succès.', 2500);
-      setTimeout(() => { this.addSuccess = false; }, 3000);
+      this.showAutoHidePopup('Rappel enregistré avec succès !', 3000);
     },
     error: (err: any) => {
       console.error('Erreur création RDV', err);
@@ -334,6 +333,7 @@ deleteRendezVous(): void {
   if (this.selectedId == null) { return; }
   this.delete(this.selectedId);
   this.cancelDelete();
+  this.showAutoHidePopup('Rappel enregistré avec succès !', 3000);
 }
 
 
@@ -457,7 +457,7 @@ deleteRendezVous(): void {
           retourId = res.id;
         }
       }
-      alert('Rappel enregistré avec succès' + (retourId !== null ? ' (id=' + retourId + ')' : '') + '.');
+      this.showAutoHidePopup('Rappel enregistré avec succès !', 3000);
       this.rappel.tentatives = tentatives;
     },
     error: (err: any) => {

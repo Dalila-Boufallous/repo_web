@@ -4,7 +4,7 @@
   <div class="cards-row">
     <div class="col-card">
       <div class="mini-card">
-        <div class="icon blue">
+        <div class="icon green">
           <i class="icofont icofont-calendar"></i>
         </div>
         <div class="content">
@@ -28,12 +28,12 @@
 
     <div class="col-card">
       <div class="mini-card">
-        <div class="icon blue">
+        <div class="icon pink">
           <i class="icofont icofont-ui-close"></i>
         </div>
         <div class="content">
           <span class="title">Patients Sans Rappel reçu</span>
-          <h4>{{ totalRendezVous }}</h4>
+          <h4>101</h4>
         </div>
       </div>
     </div>
@@ -45,6 +45,7 @@
   <!-- ===== OUTILS EN HAUT : Calendrier + Formulaire Rappel ===== -->
    
   <div class="top-tools">
+    <div class="Calendrier">
     <div class="calendar-wrapper">
     <!-- 🗓️ Calendrier -->
     <div class="card cal-card shadow-sm">
@@ -85,6 +86,7 @@
         </div>
       </div>
     </div>
+</div>
 </div>
     <!-- 🔔 Formulaire Rappel -->
     <div class="card rappel-card shadow-sm" id="rappelCard">
@@ -139,10 +141,11 @@
               <option value="appel_recu">Appel reçu</option>
             </select>
           </div>
-
+          <div class="col-6">
           <div class="d-flex gap-2 mt-3">
-            <button type="button" class="btn btn-outline-secondary flex-fill" (click)="resetRappelForm()">Réinitialiser</button>
-            <button type="submit" class="btn btn-success flex-fill">Enregistrer</button>
+            <button type="button" class="btn btn-outline-secondary flex-fill " (click)="resetRappelForm()">Réinitialiser</button>
+            <button type="submit" class="btn btn-success flex-fill ">Enregistrer</button>
+          </div>
           </div>
         </form>
       </div>
@@ -255,7 +258,7 @@
   <div class="row row-cols-1 row-cols-sm-2 row-cols-md-4 g-4">
     <div class="col-md-3" *ngFor="let rdv of filteredRendezVous">
       <div
-        class="card shadow-sm p-3 h-100 d-flex flex-column selectable rdv-card"
+        class="card shadow-sm p-3  d-flex flex-column selectable rdv-card"
         (click)="onCardClick(rdv)"
         [class.selected]="isSelected(rdv)"
         role="button"
@@ -406,6 +409,23 @@
   </div>
 </div>
 
+</div>
+<div class="popup-backdrop" *ngIf="popupVisible">
+ <div class="popup-card" [ngClass]="{
+ 'popup-success': popupType === 'success',
+ 'popup-warning': popupType === 'warning',
+ 'popup-danger': popupType === 'danger'
+ }">
+ <p>{{ popupMessage }}</p>
+
+ <div class="popup-buttons" *ngIf="popupType === 'warning'">
+<button class="btn btn-secondary" (click)="closePopup(false)">Annuler</button> <button class="btn btn-danger" (click)="closePopup(true)">Confirmer</button>
+ </div>
+
+ <div class="popup-buttons" *ngIf="popupType !== 'warning'">
+ <button class="btn btn-primary" (click)="closePopup()">OK</button>
+ </div>
+ </div>
 </div>
 </div>
 
