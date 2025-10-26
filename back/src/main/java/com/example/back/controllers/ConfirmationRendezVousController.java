@@ -7,6 +7,9 @@ import com.example.back.repositories.RepoConfirmationRendezVous;
 import com.example.back.repositories.RepoRendezVousNonConfirme;
 import com.example.back.repositories.RepoPatient;
 import com.example.back.services.EmailService;
+
+import com.example.back.services.ConfirmationTokenService;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -29,14 +32,16 @@ public class ConfirmationRendezVousController {
     private final RepoConfirmationRendezVous repository;
     private final RepoPatient patientRepo;
     private final EmailService emailService;
+    private final ConfirmationTokenService tokenService;
 
     public ConfirmationRendezVousController(RepoConfirmationRendezVous repository,
                                             RepoPatient patientRepo,
-                                            EmailService emailService,RepoRendezVousNonConfirme nonConfirmeRepo) {
+                                            EmailService emailService,RepoRendezVousNonConfirme nonConfirmeRepo,ConfirmationTokenService tokenService) {
         this.repository = repository;
         this.nonConfirmeRepo = nonConfirmeRepo; 
         this.patientRepo = patientRepo;
         this.emailService = emailService;
+        this.tokenService = tokenService;
     }
 
     // ---- CRUD de base ----
@@ -152,4 +157,53 @@ public ResponseEntity<Map<String, Object>> sendEmailReminder(@PathVariable("idDi
 
         return ResponseEntity.ok("Rendez-vous confirmé avec succès !");
     }
+
+    @GetMapping("/confirm")
+public ResponseEntity<String> confirmRdvByEmail(@RequestParam("token") String token) {
+    try {
+        // 1️⃣ Vérification du token avec ConfirmationTokenService
+        Map<String, Long> claims = tokenService.verify(token); // service injecté via constructeur
+        long rdvId = claims.get("rdvId");
+
+        // 2️⃣ Recherche du rendez-vous non confirmé
+        Optional<RendezVousNonConfirme> rdvOpt = nonConfirmeRepo.findById((int) rdvId);
+        if (rdvOpt.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("<h2>❌ Rendez-vous introuvable ou déjà confirmé.</h2>");
+        }
+
+        RendezVousNonConfirme rdvNC = rdvOpt.get();
+
+        // 3️⃣ Création d'un nouveau rendez-vous confirmé
+        ConfirmationRendezVous rdvC = new ConfirmationRendezVous();
+        rdvC.setIdPatient(rdvNC.getIdDimPatient().intValue());
+        if (rdvNC.getIdDimActe() != null) {
+            rdvC.setIdActe(rdvNC.getIdDimActe().intValue());
+        }
+        rdvC.setDateRdvConfirme(rdvNC.getDatePrevisionnelle());
+        rdvC.setHeureRdvConfirme(rdvNC.getHeurePrevisionnelle());
+
+        // 4️⃣ Enregistrement dans la table des rendez-vous confirmés
+        repository.save(rdvC);
+
+        // 5️⃣ Suppression du rendez-vous non confirmé
+        nonConfirmeRepo.delete(rdvNC);
+
+        // 6️⃣ Réponse HTML simple pour affichage dans le navigateur
+        return ResponseEntity.ok("""
+            <html><body style='font-family:sans-serif; text-align:center; margin-top:50px;'>
+                <h2 style='color:green;'>✅ Rendez-vous confirmé avec succès !</h2>
+                <p>Vous pouvez fermer cette page.</p>
+            </body></html>
+        """);
+
+    } catch (IllegalArgumentException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body("<h2>❌ Lien invalide ou expiré.</h2>");
+    } catch (Exception ex) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("<h2>⚠️ Erreur interne : " + ex.getMessage() + "</h2>");
+    }
+}
+
 }

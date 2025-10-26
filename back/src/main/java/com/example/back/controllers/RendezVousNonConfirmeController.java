@@ -138,7 +138,7 @@ public class RendezVousNonConfirmeController {
         String token = tokenService.generate(rdvIdLong, patientIdLong); // ✅ sans TTL
 
         // 4) Lien de confirmation (backend)
-        String confirmUrl = "http://localhost:8081/api/rendezvous-non-confirme/confirm?token=" + token;
+        String confirmUrl = "http://localhost:8081/api/rendezvous/confirm?token=" + token;
 
         // 5) Email HTML
         String subject = "Confirmez votre rendez-vous";

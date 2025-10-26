@@ -2,7 +2,7 @@ package com.example.back.services;
 
 public final class ConfirmationEmailTemplates {
     private ConfirmationEmailTemplates(){}
-
+    
     public static String buildRdvConfirmationHtml(long rdvId,
                                                   String date,
                                                   String heure,
