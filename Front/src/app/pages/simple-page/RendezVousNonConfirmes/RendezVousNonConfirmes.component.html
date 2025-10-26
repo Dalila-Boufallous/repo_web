@@ -253,6 +253,22 @@
     Réinitialiser
   </button>
 </div>
+
+<div class="card-body text-center">
+    <button
+        type="button"
+        class="btn btn-success py-2 btn-confirmer-manuel"  [disabled]="selectedCardId === null"
+        (click)="confirmerRendezVousSelectionne()"
+    >
+        <i class="fas fa-check"></i> Confirmer le RDV #{{ selectedCardId || '...' }}
+    </button>
+
+    <p *ngIf="selectedCardId === null" class="text-muted mt-2 mb-0">
+        * Sélectionnez un rendez-vous (en cliquant sur sa carte) pour le confirmer manuellement.
+    </p>
+</div>
+
+
   <!-- ===== Liste des RDV ===== -->
 <div class="container">
   <div class="row row-cols-1 row-cols-sm-2 row-cols-md-4 g-4">

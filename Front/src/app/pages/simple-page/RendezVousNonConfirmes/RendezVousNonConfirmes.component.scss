@@ -1410,3 +1410,40 @@ form[ngForm] {
     gap: 10px;
 }
 
+/* ------------------------------------------ */
+/* Styles spécifiques pour le Bouton de Confirmation Manuelle (Version Compacte) */
+/* ------------------------------------------ */
+.btn-confirmer-manuel {
+    /* Nouvelle taille : */
+    max-width: 280px; /* Limite la largeur maximale */
+    width: auto; /* Permet à la largeur de s'adapter au contenu si le max-width est suffisant */
+    padding: 0.6rem 1.25rem; /* Ajuste le padding vertical et horizontal */
+    
+    /* Conserver l'aspect rectangulaire/arrondi : */
+    border-radius: 0.75rem !important; 
+    height: 3rem; /* Légèrement plus petit en hauteur */
+    
+    /* Centrage du contenu et espacement */
+    display: inline-flex; /* Pour qu'il ne prenne pas toute la largeur */
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem; /* Réduction de la taille de la police */
+    font-weight: 600;
+
+    /* Surcharge Bootstrap: */
+    margin: auto; /* Centre le bouton dans le card-body text-center */
+
+    /* Icône de coche */
+    i.fas.fa-check {
+        margin-right: 0.5rem; /* Ajuste l'espacement avec le texte */
+    }
+}
+
+/* Surcharge de l'état désactivé (inchangé) */
+.btn-confirmer-manuel:disabled {
+    background-color: #9ad6b2 !important; 
+    border-color: #a3e2bc !important;
+    color: #495057 !important;
+    cursor: not-allowed;
+    box-shadow: none;
+}

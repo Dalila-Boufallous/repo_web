@@ -4,6 +4,7 @@ import com.example.back.entities.RendezVousNonConfirme;
 import com.example.back.entities.ConfirmationRendezVous;
 import com.example.back.entities.Patient;
 import com.example.back.repositories.RepoRendezVousNonConfirme;
+import com.example.back.repositories.RepoConfirmationRendezVous;
 import com.example.back.repositories.RepoPatient;
 import com.example.back.services.EmailService;
 import com.example.back.services.ConfirmationTokenService;
@@ -14,6 +15,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -23,20 +27,22 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api/rendezvous-non-confirme")
 public class RendezVousNonConfirmeController {
-
+    private static final Logger log = LoggerFactory.getLogger(RendezVousNonConfirmeController.class);
     private final RepoRendezVousNonConfirme repo;
     private final RepoPatient patientRepo;
     private final EmailService emailService;
     private final ConfirmationTokenService tokenService;
+    private final RepoConfirmationRendezVous confirmationRepo;
 
     public RendezVousNonConfirmeController(RepoRendezVousNonConfirme repo,
                                            RepoPatient patientRepo,
                                            EmailService emailService,
-                                           ConfirmationTokenService tokenService) {
+                                           ConfirmationTokenService tokenService,RepoConfirmationRendezVous confirmationRepo) {
         this.repo = repo;
         this.patientRepo = patientRepo;
         this.emailService = emailService;
         this.tokenService = tokenService;
+        this.confirmationRepo = confirmationRepo;
     }
 
     // ===================== CRUD =====================
@@ -239,5 +245,66 @@ public class RendezVousNonConfirmeController {
         return o == null ? "" : String.valueOf(o);
     }
 
+    // Dans RendezVousNonConfirmeController.java
+
+// Dans RendezVousNonConfirmeController.java
+
+@PostMapping("/{id}/confirm-manuel")
+public ResponseEntity<Void> confirmRdvManually(@PathVariable Integer id) {
     
+    // 1️⃣ Recherche du RDV non confirmé par son ID
+    Optional<RendezVousNonConfirme> rdvOpt = repo.findById(id); 
+
+    if (rdvOpt.isEmpty()) {
+        log.warn("Tentative de confirmation manuelle d'un RDV non trouvé : {}", id);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+    }
+
+    RendezVousNonConfirme rdvNC = rdvOpt.get();
+
+    // 2️⃣ Conversion ID DIMENSION -> ID PATIENT NATUREL
+    Integer idDimPatient = rdvNC.getIdDimPatient();
+
+    if (idDimPatient == null) {
+        log.error("RDV non confirmé #{} n'a pas d'ID de dimension patient.", id);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+    }
+
+    // Assurez-vous que patientRepo a bien findByIdDimPatient !
+    Optional<Patient> patientOpt = patientRepo.findByIdDimPatient(idDimPatient); 
+
+    if (patientOpt.isEmpty()) {
+        log.error("Patient introuvable pour idDimPatient: {}", idDimPatient);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+    }
+
+    Patient patient = patientOpt.get();
+    Integer idPatientNaturel = patient.getIdPersonne(); 
+
+    // 3️⃣ Création de l'entité ConfirmationRendezVous
+    ConfirmationRendezVous rdvC = new ConfirmationRendezVous();
+    
+    // Correction cruciale : Utilisation de l'ID Patient NATUREL
+    rdvC.setIdPatient(idPatientNaturel); 
+    
+    // Copie des champs obligatoires (ajustez si besoin, en utilisant les getters réels)
+    if (rdvNC.getIdDimActe() != null) {
+        rdvC.setIdActe(rdvNC.getIdDimActe().intValue());
+    }
+    // rdvC.setIdPersonnel(rdvNC.getIdDimPersonnel().intValue()); // À décommenter/ajuster si ce champ existe
+    // rdvC.setIdFauteuil(rdvNC.getIdFauteuil()); // À décommenter/ajuster si ce champ existe
+
+    rdvC.setDateRdvConfirme(rdvNC.getDatePrevisionnelle());
+    rdvC.setHeureRdvConfirme(rdvNC.getHeurePrevisionnelle());
+    
+
+    // 4️⃣ Enregistrement et Suppression
+    confirmationRepo.save(rdvC); // <-- UTILISATION CORRECTE DU REPO
+    repo.delete(rdvNC);
+
+    log.info("RDV #{} confirmé manuellement (RDV Conf. ID: {})", id, rdvC.getId());
+
+    return ResponseEntity.noContent().build(); 
+}
+
 }

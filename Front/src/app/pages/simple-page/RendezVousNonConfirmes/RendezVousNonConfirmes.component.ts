@@ -826,36 +826,66 @@ sendConfirmationEmail(rdv: RendezVousNonConfirmes): void {
     });
 }
 
+// Dans RendezVousNonConfirmesComponent.ts (à remplacer ou ajuster)
+
 confirmRdv(rdv: RendezVousNonConfirmes): void {
-const id = (rdv.idDimConfirmationRendezVous !== undefined && rdv.idDimConfirmationRendezVous !== null)
-  ? rdv.idDimConfirmationRendezVous
-  : rdv.id;
-  if (!id) {
-    alert('ID du rendez-vous introuvable.');
-    return;
-  }
+    // Utiliser l'ID du RDV non confirmé, quelle que soit sa source (idFactPriseRendezVous ou id)
+    const id = this.getRdvId(rdv); 
+    
+    if (!id) {
+        alert('ID du rendez-vous introuvable.');
+        return;
+    }
 
-  // Optionnel : bloquer double clic
-  if (this.sendingConfirmIds.has(id)) return;
-  this.sendingConfirmIds.add(id);
+    // Optionnel : bloquer double clic
+    if (this.sendingConfirmIds.has(id)) return;
+    this.sendingConfirmIds.add(id);
 
-  this.http.post(`http://localhost:8081/api/rendezvous-non-confirme/${id}/confirm`, {})
-    .subscribe({
-      next: (res: any) => {
-        this.showAutoHidePopup('Rendez-vous confirmé avec succès.', 2500);
+    // L'endpoint doit être celui que nous allons créer au backend :
+    // POST /api/rendezvous-non-confirme/{id}/confirm-manuel
+    // (J'ai ajouté -manuel pour ne pas confondre avec la confirmation par token d'email si elle existe)
+    this.http.post(`http://localhost:8081/api/rendezvous-non-confirme/${id}/confirm-manuel`, {})
+        .subscribe({
+            next: (res: any) => {
+                this.showAutoHidePopup('Rendez-vous confirmé avec succès.', 2500);
 
-        // Supprimer le RDV confirmé de la liste filtrée pour mettre à jour l'affichage
-        this.rendezVousList = this.rendezVousList.filter(r => this.getRdvId(r) !== id);
-        this.applyFilters(); // rafraîchir filteredRendezVous
-        this.sendingConfirmIds.delete(id);
-      },
-      error: (err) => {
-        console.error('Erreur confirmation RDV', err);
-        alert('Échec de confirmation du rendez-vous.');
-        this.sendingConfirmIds.delete(id);
-      }
-    });
+                // Supprimer le RDV confirmé de la liste (rafraîchissement)
+                this.rendezVousList = this.rendezVousList.filter(r => this.getRdvId(r) !== id);
+                this.applyFilters(); 
+                this.sendingConfirmIds.delete(id);
+            },
+            error: (err) => {
+                console.error('Erreur confirmation RDV', err);
+                alert('Échec de confirmation du rendez-vous. Voir logs console.');
+                this.sendingConfirmIds.delete(id);
+            }
+        });
 }
+// Dans RendezVousNonConfirmesComponent.ts, à ajouter avec les autres méthodes d'action (CRUD, Rappel...)
 
+/**
+ * Orchestre la confirmation d'un rendez-vous non confirmé
+ * en utilisant l'ID de carte actuellement sélectionné.
+ */
+confirmerRendezVousSelectionne(): void {
+    if (this.selectedCardId === null) {
+        alert('Veuillez sélectionner un rendez-vous à confirmer.');
+        return;
+    }
+
+    // 1. Trouver l'objet RendezVousNonConfirmes complet à partir de l'ID
+    const rdvAConfirmer = this.rendezVousList.find(r => this.getRdvId(r) === this.selectedCardId);
+
+    if (!rdvAConfirmer) {
+        alert('Erreur: Le rendez-vous sélectionné est introuvable dans la liste.');
+        return;
+    }
+
+    // 2. Appeler la fonction de confirmation (celle qui interagit avec l'API)
+    this.confirmRdv(rdvAConfirmer);
+
+    // 3. Optionnel : Désélectionner après l'action
+    this.selectedCardId = null;
+}
 
 }
