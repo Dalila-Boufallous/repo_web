@@ -33,7 +33,7 @@
         </div>
         <div class="content">
           <span class="title">Patients Sans Rappel reçu</span>
-          <h4>101</h4>
+          <h4>{{ patientsWithoutRappel }}</h4>
         </div>
       </div>
     </div>
@@ -252,6 +252,17 @@
   <button (click)="resetWeekRendezVous()" class="btn-rdv-reset">
     Réinitialiser
   </button>
+  <button 
+        class="btn-rdv"
+        [class.active]="isNoRappelFilterActive"
+        [class.btn-info]="isNoRappelFilterActive"
+        (click)="filterByNoRappelPatients()"
+        title="Bascule pour afficher uniquement les RDV des patients sans historique de rappel reçu"
+    >
+        <i class="icofont icofont-ui-close me-2"></i>
+        <span *ngIf="isNoRappelFilterActive">Désactiver le filtre (Sans Rappel)</span>
+        <span *ngIf="!isNoRappelFilterActive">Afficher {{ patientsWithoutRappel }} Patients Sans Rappel</span>
+    </button>
 </div>
 
 <div class="card-body text-center">
@@ -260,7 +271,7 @@
         class="btn btn-success py-2 btn-confirmer-manuel"  [disabled]="selectedCardId === null"
         (click)="confirmerRendezVousSelectionne()"
     >
-        <i class="fas fa-check"></i> Confirmer le RDV #{{ selectedCardId || '...' }}
+         Confirmer le RDV #{{ selectedCardId || '...' }}
     </button>
 
     <p *ngIf="selectedCardId === null" class="text-muted mt-2 mb-0">

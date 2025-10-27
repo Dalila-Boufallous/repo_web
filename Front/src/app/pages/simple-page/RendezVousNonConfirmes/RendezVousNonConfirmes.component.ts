@@ -35,6 +35,9 @@ export class RendezVousNonConfirmesComponent implements OnInit {
   newRendezVous: RendezVousNonConfirmes & { selectedPatientId?: number } = this.initForm();
   editingRendezVous: RendezVousNonConfirmes | null = null;
   editingRendezVousId: number | null = null;
+  rappelList: RappelPatient[] = []; // Liste des rappels patients chargés
+ patientsWithoutRappel: number = 0; // Compteur pour la mini-card
+ isNoRappelFilterActive: boolean = false; // État du filtre
 
   // Calendrier
   monthNames = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
@@ -92,23 +95,98 @@ export class RendezVousNonConfirmesComponent implements OnInit {
   constructor(private http: HttpClient) {}
 
  ngOnInit(): void {
-  const currentYear = new Date().getFullYear();
-  for (let y = currentYear - 5; y <= currentYear + 5; y++) this.yearRange.push(y);
+    const currentYear = new Date().getFullYear();
+    for (let y = currentYear - 5; y <= currentYear + 5; y++) this.yearRange.push(y);
 
-  // Charger d’abord les patients
-  this.http.get<any[]>('http://localhost:8081/api/patients').subscribe(pats => {
-  this.patients = pats;
-  this.patientMap = {};
-  this.patients.forEach(p => {
-  this.patientMap[p.idDimPatient] = p;
-  
-  });
-  this.getAll(); 
-});
+    this.http.get<any[]>('http://localhost:8081/api/patients').subscribe(pats => {
+        this.patients = pats;
+        this.patientMap = {};
+        this.patients.forEach(p => {
+            this.patientMap[p.idDimPatient] = p;
+        });
 
-  this.buildCalendar();
-  this.calculerStats();
+        // 1. Démarrer le chargement des rappels APRÈS les patients
+        this.loadRappels(); // 💡 Cette fonction doit lancer this.getAll() une fois terminée !
+    });
+
+    this.buildCalendar();
+    this.calculerStats(); 
+    // Retire getAll() et loadRappels() d'ici, car ils sont gérés dans la chaîne asynchrone
 }
+
+
+// Dans RendezVousNonConfirmes.component.ts
+
+/**
+ * Charge tous les rappels patients pour l'historique et le filtre.
+ */
+loadRappels(): void {
+    this.http.get<RappelPatient[]>(this.rappelUrl).subscribe({
+        next: (data) => {
+            this.rappelList = data;
+            this.countPatientsWithoutRappel();
+            console.log('Rappels chargés :', this.rappelList.length);
+            
+            // 2. AJOUT CRITIQUE : Maintenant que les rappels sont là, on charge les RDV
+            this.getAll(); // ⬅️ Lancer la suite ICI !
+        },
+        error: (err) => {
+            console.error('Erreur chargement rappels', err);
+            this.patientsWithoutRappel = 0; 
+            // 3. En cas d'erreur, on lance quand même la suite (avec liste de rappels vide)
+            this.getAll();
+        }
+    });
+}
+
+/**
+ * Calcule le nombre de patients UNIQES parmi les RDV non confirmés n'ayant AUCUN rappel.
+ * (Fonction de STATISTIQUE, pas de FILTRE)
+ */
+// DANS RendezVousNonConfirmesComponent.ts
+/**
+ * Calcule le nombre de patients UNIQES parmi les RDV non confirmés n'ayant AUCUN rappel.
+ */
+countPatientsWithoutRappel(): void {
+    // 🛑 Gérer le cas où il n'y a aucun RDV du tout.
+    if (this.rendezVousList.length === 0) {
+        this.patientsWithoutRappel = 0;
+        return;
+    }
+    
+    // 1. ID de tous les patients uniques dans la liste des RDV non confirmés
+    const allPatientIds = new Set<number>();
+    this.rendezVousList.forEach(rdv => allPatientIds.add(rdv.idDimPatient));
+
+    // 2. ID de tous les patients uniques ayant AU MOINS UN rappel.
+    //    Si this.rappelList est vide, ce Set sera vide, ce qui est correct.
+    const patientIdsWithRappel = new Set<number>();
+    this.rappelList.forEach(rappel => patientIdsWithRappel.add(rappel.idPatient));
+
+    let count = 0;
+    // 3. Compter ceux qui sont dans la liste complète, mais pas dans la liste 'avec rappel'
+    allPatientIds.forEach(id => {
+        if (!patientIdsWithRappel.has(id)) {
+            count++;
+        }
+    });
+
+    this.patientsWithoutRappel = count;
+}
+
+
+/**
+ * Active/Désactive le filtre pour n'afficher que les RDV des patients sans rappel.
+ */
+filterByNoRappelPatients(): void {
+    // 1. Inverse l'état du filtre
+    this.isNoRappelFilterActive = !this.isNoRappelFilterActive; 
+    
+    // 2. Applique tous les filtres
+    this.applyFilters();
+}
+
+
 
  getPatientName(id: number): string {
   const p = this.patientMap[Number(id)];
@@ -136,31 +214,24 @@ export class RendezVousNonConfirmesComponent implements OnInit {
   }
 
   // ==================== CRUD RDV ====================
-  getAll(): void {
-  this.http.get<RendezVousNonConfirmes[]>(this.listUrl).subscribe(data => {
-    // Affecter la liste
-    this.rendezVousList = data;
+  // DANS RendezVousNonConfirmesComponent.ts
+// ...
+getAll(): void {
+    this.http.get<RendezVousNonConfirmes[]>(this.listUrl).subscribe(data => {
+        this.rendezVousList = data;
+        this.rendezVousList.forEach(rdv => {
+            rdv.nomPatient = this.getPatientName(rdv.idDimPatient);
+        });
 
-    // Ajouter le nom du patient pour chaque RDV
-    this.rendezVousList.forEach(rdv => {
-      rdv.nomPatient = this.getPatientName(rdv.idDimPatient);
+        this.filteredRendezVous = this.rendezVousList.slice();
+        this.todayRendezVousCount = this.rendezVousList.filter(r => r.datePrevisionnelle === this.formatDate(new Date())).length;
+        
+        // La liste des rappels est déjà à jour, on recalcule juste les stats et on filtre l'affichage
+        this.countPatientsWithoutRappel(); // ⬅️ Recalculer le compteur
+        this.applyFilters(); // ⬅️ Appliquer les filtres initiaux
     });
-
-  console.table(this.rendezVousList.map(r => ({
-  rdvId: r.id,
-  patientId: r.idDimPatient,
-  nomTrouve: this.getPatientName(r.idDimPatient)
-})));
-
-
-    this.filteredRendezVous = this.rendezVousList.slice();
-    this.todayRendezVousCount = this.rendezVousList.filter(r => r.datePrevisionnelle === this.formatDate(new Date())).length;
-    this.applyFilters();
-  });
-  console.log('Rendez-vous IDs:', this.rendezVousList.map(r => r.idDimPatient));
-  console.log('Patient IDs:', this.patients.map(p => p.idDimPatient));
-
 }
+// ...
 
 
 private toHHmmss(t: string | null | undefined): string | null {
@@ -398,6 +469,7 @@ deleteRendezVous(): void {
     this.patientIdQuery = '';
     this.rdvIdQuery = '';
     this.applyFilters();
+    this.isNoRappelFilterActive = false; // NOUVEAU : réinitialiser l'état du filtre
   }
 
   // ==================== Rappels ====================
@@ -489,53 +561,61 @@ deleteRendezVous(): void {
       .map(t => t.trim())
       .filter(t => t.length > 0);
   }
-
   applyFilters(): void {
     this.calculerStats();
-    // 1) Date
-    let base = this.selectedDate
-      ? this.rendezVousList.filter(r => r.datePrevisionnelle === this.selectedDate)
-      : this.rendezVousList.slice();
+    let tempRendezVous = this.rendezVousList.slice(); // 1. On part de la liste complète
 
-    // 2) ID patient (préfixe)
+    // 1. FILTRAGE PAR DATE SÉLECTIONNÉE (Calendrier)
+    if (this.selectedDate) {
+        tempRendezVous = tempRendezVous.filter(r => r.datePrevisionnelle === this.selectedDate);
+    }
+
+    // 2. FILTRAGE PAR ID PATIENT
     const patientTokens = this.parseIdTokens(this.patientIdQuery);
     if (patientTokens.length > 0) {
-      base = base.filter(r =>
-        patientTokens.some(function(q) { return String(r.idDimPatient).indexOf(q) === 0; })
-      );
+        tempRendezVous = tempRendezVous.filter(r =>
+            patientTokens.some(q => String(r.idDimPatient).indexOf(q) === 0)
+        );
     }
 
-    // 3) ID RDV (préfixe)
+    // 3. FILTRAGE PAR ID RDV
     const rdvTokens = this.parseIdTokens(this.rdvIdQuery);
     if (rdvTokens.length > 0) {
-      base = base.filter(r => {
-        var rid = (r.idFactPriseRendezVous !== undefined && r.idFactPriseRendezVous !== null)
-          ? r.idFactPriseRendezVous
-          : r.id;
-        var ridStr = String(rid);
-        for (let i = 0; i < rdvTokens.length; i++) {
-          if (ridStr.indexOf(rdvTokens[i]) === 0) return true;
-        }
-        return false;
-      });
+        tempRendezVous = tempRendezVous.filter(r => {
+            const rid = this.getRdvId(r);
+            const ridStr = String(rid);
+            return rdvTokens.some(q => ridStr.indexOf(q) === 0);
+        });
     }
 
-    // 4) Texte global
+    // 🏆 4. FILTRAGE "SANS RAPPEL" (Le filtre indépendant)
+    if (this.isNoRappelFilterActive) {
+        // Déterminer les ID de tous les patients ayant un rappel
+        const patientIdsWithRappel = new Set<number>();
+        this.rappelList.forEach(rappel => patientIdsWithRappel.add(rappel.idPatient));
+        
+        // Filtrer : ne garder que les RDV dont l'ID patient n'a PAS de rappel
+        tempRendezVous = tempRendezVous.filter(rdv => 
+            !patientIdsWithRappel.has(rdv.idDimPatient)
+        );
+    }
+    
+    // 5. FILTRAGE PAR RECHERCHE TEXTE GLOBALE (S'applique à la fin)
     const term = this.normalize(this.searchRdv);
-    if (!term) {
-      this.filteredRendezVous = base;
-      return;
+    if (term) { 
+        tempRendezVous = tempRendezVous.filter(rdv => {
+            for (const k in rdv) {
+                if (!Object.prototype.hasOwnProperty.call(rdv, k)) continue;
+                const v = (rdv as any)[k];
+                if (this.normalize(v).indexOf(term) !== -1) return true;
+            }
+            return false;
+        });
     }
-
-    this.filteredRendezVous = base.filter(rdv => {
-      for (const k in rdv) {
-        if (!Object.prototype.hasOwnProperty.call(rdv, k)) continue;
-        const v = (rdv as any)[k];
-        if (this.normalize(v).indexOf(term) !== -1) return true;
-      }
-      return false;
-    });
-  }
+    
+    // Étape Finale : mise à jour de la liste affichée
+    this.filteredRendezVous = tempRendezVous;
+}
 
   prefillRappel(r: RendezVousNonConfirmes) {
     var rdvId = (r.idFactPriseRendezVous !== undefined && r.idFactPriseRendezVous !== null)

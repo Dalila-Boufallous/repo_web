@@ -1447,3 +1447,64 @@ form[ngForm] {
     cursor: not-allowed;
     box-shadow: none;
 }
+
+/* Style pour le bouton de filtre indépendant (hors carte) */
+.btn-rappel-filter {
+    /* Style par défaut (non actif) */
+    background-color: #fce4ec; /* Couleur de fond très clair, rappelant le rose */
+    color: #9c27b0; /* Texte en rose */
+    border: 1px solid #ce93d8;
+    padding: 8px 15px;
+    border-radius: 6px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.btn-rappel-filter:hover:not(.active) {
+    background-color: #f8bbd0; /* Un peu plus foncé au survol */
+    color: #880e4f;
+    border-color: #f06292;
+}
+
+/* Style lorsque le filtre est ACTIF */
+.btn-rappel-filter.active {
+    background-color: #9c27b0; /* Fond principal rose (pink) */
+    color: white;
+    border-color: #9c27b0;
+    box-shadow: 0 4px 8px rgba(156, 39, 176, 0.2); /* Petite ombre pour accentuer l'état */
+}
+
+.btn-rappel-filter.active:hover {
+    background-color: #7b1fa2; /* Couleur plus foncée au survol pour l'état actif */
+}
+
+
+.btn-rdv {
+ display: inline-block;
+
+ width: 220px; /* On peut garder la largeur fixe */
+ padding: 10px;  
+ font-size: 11px; 
+font-weight : bold ;
+ line-height: 1.2; 
+text-align: center; 
+ border-radius: 12px; 
+ background-color: #924af7; 
+ border: 0.5px solid #6f6f6f; 
+ color: white; 
+ 
+    /* 💥 Ligne à modifier/ajouter 💥 */
+ white-space: nowrap; /* Empêche le retour à la ligne */
+    /* white-space: normal; <-- C'était l'ancienne valeur qui forçait 2 lignes */
+    
+ cursor: pointer;
+ box-shadow: 0 2px 4px rgba(0,0,0,0.1); 
+ transition: all 0.2s ease;
+ word-wrap: normal;  /* Assure que le mot n'est pas coupé */
+ /* Ajout d'espacement */
+ margin-left: 1px; 
+ margin-right: 15px; 
+ margin-bottom: 18px;
+}
